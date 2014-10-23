@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="AshtangaTeacher.AddStudentPage">
+	<ContentPage.Padding>
+	    <OnPlatform x:TypeArguments="Thickness" iOS="0, 20, 0, 0"/>
+  	</ContentPage.Padding>
+	<Grid>
+	    <Grid.RowDefinitions>
+	        <RowDefinition Height="Auto" />
+	        <RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+	        <RowDefinition Height="*" />
+	    </Grid.RowDefinitions>
+	    <Grid.ColumnDefinitions>
+	        <ColumnDefinition Width="*" />
+	    </Grid.ColumnDefinitions>
+	        
+		<Entry Text="{Binding Model.Name}" Placeholder="Name" HorizontalOptions="Fill" />
+		<Entry Text="{Binding Model.Email}" Placeholder="Email" HorizontalOptions="Fill" Grid.Row="1" />	
+
+		<StackLayout Grid.Row="2" HorizontalOptions="Fill">
+			<Label Text="Expiry Date"/>
+			<DatePicker Date="{Binding Model.ExpiryDate}" />
+		</StackLayout>
+
+		<Label Text="{Binding ErrorMessage}" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="3" />
+
+		<StackLayout Orientation="Horizontal" Grid.Row="4">
+			<Button Text="Add Student" Command="{Binding AddStudentCommand}"/>
+			<Button Text="Cancel" Command="{Binding CancelCommand}" />
+		</StackLayout>
+
+	</Grid>
+</ContentPage>

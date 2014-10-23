@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="AshtangaTeacher.SignUpPage">
+	<ContentPage.Padding>
+	    <OnPlatform x:TypeArguments="Thickness" iOS="0, 20, 0, 0"/>
+  	</ContentPage.Padding>
+	<Grid Padding="20">
+	    <Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+	        <RowDefinition Height="Auto" />
+	        <RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+	        <RowDefinition Height="*" />
+	    </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+	      <ColumnDefinition Width="*" />
+	    </Grid.ColumnDefinitions>
+	        
+	    <Label Text="New Account" Font="22" VerticalOptions="End" HorizontalOptions="Center"  />
+		<Entry Text="{Binding UserName}" Placeholder="User Name" Grid.Row="1" HorizontalOptions="Fill" />
+		<Entry Text="{Binding Email}" Placeholder="Email Address" Grid.Row="2" HorizontalOptions="Fill" />
+		<Entry Text="{Binding Password}" Placeholder="Password" IsPassword="true" Grid.Row="3" HorizontalOptions="Fill" />
+		<Entry Text="{Binding PasswordDupe}" Placeholder="Re-enter Password" IsPassword="true" Grid.Row="4" HorizontalOptions="Fill" />
+		<Entry Text="{Binding ShalaName}" Placeholder="Shala Name" Grid.Row="5" HorizontalOptions="Fill" />
+
+	 	<StackLayout Orientation="Horizontal" Grid.Row="6">
+	 		<Button Text="Sign Up" Command="{Binding SignUpCommand}" />
+			<Button Text="Cancel" Command="{Binding CancelCommand}" />
+		</StackLayout>
+
+	 	<Label Text="{Binding ErrorMessage}" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="7" />
+
+	</Grid>
+</ContentPage>

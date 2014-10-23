@@ -1,0 +1,9 @@
+.DS_Store
+*.userprefs
+*.suo
+bin
+obj
+Components
+*.apptaster
+
+/packages

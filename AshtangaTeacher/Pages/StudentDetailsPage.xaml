@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="AshtangaTeacher.StudentDetailsPage">
+    <Grid Padding="20,0,20,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid VerticalOptions="Start">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.5*" />
+                <ColumnDefinition Width="0.5*" />
+            </Grid.ColumnDefinitions>
+
+            <Image Source="{Binding Model.Image}"
+                VerticalOptions="StartAndExpand"
+                HorizontalOptions="StartAndExpand" />
+
+            <Button Text="Progress Notes"
+                    Grid.Column="1"
+                    Command="{Binding ShowProgressNotesCommand}"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center" />
+        </Grid>
+
+        <Entry Text="{Binding Model.Name}"
+               Grid.Row="1"
+               TextColor="#fffa28d4"/>
+
+        <Entry Text="{Binding Model.Email}" Grid.Row="2"/>
+
+        <StackLayout Orientation="Horizontal" Grid.Row="3" HorizontalOptions="Fill">
+            <Label Text="Expires on " />
+        	<DatePicker Date="{Binding Model.ExpiryDate}" />
+        </StackLayout>
+
+        <StackLayout Grid.Row="4">
+        	<Button Text="Save"
+			Command="{Binding SaveStudentCommand}"/>
+			<Button Text="Delete Student" 
+			Command="{Binding DeleteStudentCommand}"/>
+        </StackLayout>
+
+    </Grid>
+</ContentPage>
