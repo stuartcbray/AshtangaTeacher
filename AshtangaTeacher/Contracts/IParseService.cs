@@ -6,7 +6,7 @@ namespace AshtangaTeacher
 {
 	public interface IParseService
 	{
-		void Initialize(string appId, string key);
+		void Initialize(string appId, string key, string facebookAppId);
 
 		Task SignUpAsync(Teacher teacher);
 

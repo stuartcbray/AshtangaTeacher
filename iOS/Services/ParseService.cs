@@ -34,9 +34,10 @@ namespace AshtangaTeacher.iOS
 			await user.SignUpAsync ();
 		}
 
-		public void Initialize (string appId, string key)
+		public void Initialize (string appId, string key, string facebookAppId)
 		{
 			ParseClient.Initialize (appId, key);
+			ParseFacebookUtils.Initialize(facebookAppId);
 		}
 
 		public bool ShowLogin ()
