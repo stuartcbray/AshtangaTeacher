@@ -7,6 +7,7 @@ namespace AshtangaTeacher
 {
 	public class LoginViewModel : ViewModelBase
 	{
+		bool isLoading;
 		string userName;
 		string passWord;
 		string errorMessage;
@@ -29,6 +30,15 @@ namespace AshtangaTeacher
 			RaisePropertyChanged (() => SignInButtonText);
 			ErrorMessage = null;
 			UserName = Password = "";
+		}
+
+		public bool IsLoading {
+			get {
+				return isLoading;
+			}
+			set {
+				Set (() => IsLoading, ref isLoading, value);
+			}
 		}
 
 		public bool SignInVisible {
@@ -97,17 +107,19 @@ namespace AshtangaTeacher
 				return signInCommand
 				?? (signInCommand = new RelayCommand (
 					async () => {
-						try {
-							if (parseService.CurrentUser == null) {
-								await parseService.SignInAsync (UserName, Password);
+							if (!IsLoading) {
+								IsLoading = true;
+								try {
+									if (parseService.CurrentUser == null) {
+										await parseService.SignInAsync (UserName, Password);
+									}	
+									App.Locator.Main.GetStudentsCommand.Execute (null);
+								} catch (Exception e) {
+									ErrorMessage = e.Message;
+								}
+								IsLoading = false;
+								navigationService.NavigateTo (ViewModelLocator.MainPageKey, App.Locator.Main);
 							}
-									
-							App.Locator.Main.GetStudentsCommand.Execute (null);
-							navigationService.NavigateTo (ViewModelLocator.MainPageKey, App.Locator.Main);
-						} catch (Exception e) {
-							ErrorMessage = e.Message;
-						}
-
 					}));
 
 			}

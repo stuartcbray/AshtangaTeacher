@@ -99,6 +99,7 @@ namespace AshtangaTeacher.iOS
 
 			// After the SaveAsync we have an ObjectId
 			student.ObjectId = studentObj.ObjectId;
+			student.IsDirty = false;
 			return student;
 		}
 
