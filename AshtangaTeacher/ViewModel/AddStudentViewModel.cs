@@ -7,7 +7,7 @@ namespace AshtangaTeacher
 	public class AddStudentViewModel : ViewModelBase
 	{
 		readonly IStudentsService studentService;
-		readonly INavigationService navigationService;
+		readonly INavigator navigationService;
 		readonly Student student;
 
 		RelayCommand addStudentCommand;
@@ -57,7 +57,7 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public AddStudentViewModel (IStudentsService service, INavigationService nav, Student student)
+		public AddStudentViewModel (IStudentsService service, INavigator nav, Student student)
 		{
 			studentService = service;
 			navigationService = nav;

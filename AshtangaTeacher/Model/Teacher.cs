@@ -6,17 +6,23 @@ namespace AshtangaTeacher
 	{
 		string shalaName;
 		string name;
+		string userName;
 		string email;
 		string password;
+		string imageUrl;
 
 		public string ObjectId {
 			get;
 			set;
 		}
 
-		public string Image {
-			get;
-			set;
+		public string ImageUrl {
+			get {
+				return imageUrl;
+			}
+			set {
+				Set (() => ImageUrl, ref imageUrl, value);
+			}
 		}
 
 		public string Name {
@@ -25,6 +31,15 @@ namespace AshtangaTeacher
 			}
 			set {
 				Set (() => Name, ref name, value);
+			}
+		}
+
+		public string UserName {
+			get {
+				return userName;
+			}
+			set {
+				Set (() => UserName, ref userName, value);
 			}
 		}
 

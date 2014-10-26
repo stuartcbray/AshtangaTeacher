@@ -8,6 +8,7 @@ namespace AshtangaTeacher
 	public class SignUpViewModel : ViewModelBase
 	{
 		string userName;
+		string name;
 		string email;
 		string passWord;
 		string passWordDupe;
@@ -18,10 +19,19 @@ namespace AshtangaTeacher
 		RelayCommand cancelCommand;
 
 		readonly IParseService parseService;
-		readonly INavigationService navigationService;
+		readonly INavigator navigationService;
 		readonly IEmailValidator regExUtils;
 
 		public IParseService ParseService { get { return parseService; } }
+
+		public string Name {
+			get {
+				return name;
+			}
+			set {
+				Set (() => Name, ref name, value);
+			}
+		}
 
 		public string UserName {
 			get {
@@ -38,6 +48,7 @@ namespace AshtangaTeacher
 			}
 			set {
 				Set (() => Email, ref email, value);
+				UserName = value;
 			}
 		}
 			
@@ -94,8 +105,8 @@ namespace AshtangaTeacher
 				?? (signUpCommand = new RelayCommand (
 					async () => {
 						// Perform some simple validation...
-						if (string.IsNullOrEmpty (UserName)) {
-							ErrorMessage = "User Name is empty";
+						if (string.IsNullOrEmpty (Name)) {
+							ErrorMessage = "Name is empty";
 							return;
 						}
 
@@ -120,18 +131,19 @@ namespace AshtangaTeacher
 							return;
 						}
 
-						var teacher = new Teacher { 
-							Name = UserName,
-							Email = Email,
-							ShalaName = ShalaName,
-							Password = Password
-						};
+						var teacher = new Teacher 
+							{ 
+								Name = name,
+								UserName = userName,
+								Email = email,
+								ShalaName = shalaName,
+								Password = passWord
+							};
 
 						try {
 							await parseService.SignUpAsync (teacher);
 
-							App.Locator.Login.NotifyChanged ();
-							navigationService.GoBack ();
+							navigationService.PopToRoot ();
 						} catch (Exception e) {
 							ErrorMessage = e.Message;
 						}
@@ -141,7 +153,7 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public SignUpViewModel (INavigationService navigationService, IParseService parseService, IEmailValidator regExUtils)
+		public SignUpViewModel (INavigator navigationService, IParseService parseService, IEmailValidator regExUtils)
 		{
 			this.parseService = parseService;
 			this.navigationService = navigationService;

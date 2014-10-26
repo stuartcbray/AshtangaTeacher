@@ -11,7 +11,7 @@ namespace AshtangaTeacher
 	{
 		readonly IStudentsService studentsService;
 		readonly IParseService parseService;
-		readonly INavigationService navigationService;
+		readonly INavigator navigationService;
 
 		bool isLoading;
 		RelayCommand getStudentsCommand;
@@ -58,8 +58,7 @@ namespace AshtangaTeacher
 					async () => {
 						Students.Clear ();
 						await parseService.LogOutAsync ();
-						App.Locator.Login.NotifyChanged ();
-						navigationService.GoBack ();
+						navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
 					}));
 			}
 		}
@@ -105,8 +104,16 @@ namespace AshtangaTeacher
 			}
 		}
 
+		public void EnsureAuthenticated ()
+		{
+			if (parseService.ShowLogin ()) {
+				navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
+			} 
+			// Check here if the user has a valid Shala - new user from Facebook?
+		}
+
 		public MainViewModel (
-			INavigationService navigationService,
+			INavigator navigationService,
 			IParseService parseService,
 			IStudentsService studentsService
 		)

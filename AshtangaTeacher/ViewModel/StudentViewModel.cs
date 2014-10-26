@@ -52,7 +52,7 @@ namespace AshtangaTeacher
 				return showProgressNotesCommand
 				?? (showProgressNotesCommand = new RelayCommand (
 					async () => {
-						var nav = ServiceLocator.Current.GetInstance<INavigationService> ();
+							var nav = ServiceLocator.Current.GetInstance<INavigator> ();
 						var notes = await studentService.GetStudentProgressNotesAsync (Model); 
 						Model.ProgressNotes = new ObservableCollection<ProgressNote> (notes);
 						nav.NavigateTo (ViewModelLocator.ProgressNotesPageKey, this);
@@ -65,7 +65,7 @@ namespace AshtangaTeacher
 				return addProgressNoteCommand
 				?? (addProgressNoteCommand = new RelayCommand (
 					() => {
-						var nav = ServiceLocator.Current.GetInstance<INavigationService> ();
+							var nav = ServiceLocator.Current.GetInstance<INavigator> ();
 						nav.NavigateTo (ViewModelLocator.AddProgressNotePageKey, this);
 					}));
 			}
@@ -97,7 +97,7 @@ namespace AshtangaTeacher
 						}
 
 						IsSaving = false;
-						var nav = ServiceLocator.Current.GetInstance<INavigationService> ();
+							var nav = ServiceLocator.Current.GetInstance<INavigator> ();
 						nav.GoBack ();
 					},
 					text => !string.IsNullOrEmpty (text) && !IsSaving));
@@ -112,7 +112,7 @@ namespace AshtangaTeacher
 							IsSaving = true;
 							await studentService.SaveAsync (Model);
 							IsSaving = false;
-							var nav = ServiceLocator.Current.GetInstance<INavigationService> ();
+							var nav = ServiceLocator.Current.GetInstance<INavigator> ();
 							nav.GoBack ();
 						}, 
 					() => Model.IsDirty));
@@ -128,7 +128,7 @@ namespace AshtangaTeacher
 							await studentService.DeleteAsync (Model);
 							App.Locator.Main.Students.Remove (this);
 							IsSaving = false;
-							var nav = ServiceLocator.Current.GetInstance<INavigationService> ();
+							var nav = ServiceLocator.Current.GetInstance<INavigator> ();
 							nav.GoBack ();
 						}));
 			}

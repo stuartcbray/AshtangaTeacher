@@ -8,26 +8,26 @@ using Xamarin.Forms;
 namespace AshtangaTeacher
 {
 	// Borrowed from MVVM Light Framework
-	public class NavigationService : INavigationService
+	public class NavigationService : INavigator
 	{
-		private readonly Dictionary<string, Type> _pagesByKey = new Dictionary<string, Type>();
-		private NavigationPage _navigation;
+		private readonly Dictionary<string, Type> pagesByKey = new Dictionary<string, Type>();
+		private NavigationPage navigation;
 
 		public string CurrentPageKey
 		{
 			get
 			{
-				lock (_pagesByKey)
+				lock (pagesByKey)
 				{
-					if (_navigation.CurrentPage == null)
+					if (navigation.CurrentPage == null)
 					{
 						return null;
 					}
 
-					var pageType = _navigation.CurrentPage.GetType();
+					var pageType = navigation.CurrentPage.GetType();
 
-					return _pagesByKey.ContainsValue(pageType)
-						? _pagesByKey.First(p => p.Value == pageType).Key
+					return pagesByKey.ContainsValue(pageType)
+						? pagesByKey.First(p => p.Value == pageType).Key
 							: null;
 				}
 			}
@@ -35,7 +35,12 @@ namespace AshtangaTeacher
 
 		public void GoBack()
 		{
-			_navigation.PopAsync();
+			navigation.PopAsync();
+		}
+
+		public void PopToRoot ()
+		{
+			navigation.PopToRootAsync ();
 		}
 
 		public void NavigateTo(string pageKey)
@@ -45,11 +50,11 @@ namespace AshtangaTeacher
 
 		public void NavigateTo(string pageKey, object parameter)
 		{
-			lock (_pagesByKey)
+			lock (pagesByKey)
 			{
-				if (_pagesByKey.ContainsKey(pageKey))
+				if (pagesByKey.ContainsKey(pageKey))
 				{
-					var type = _pagesByKey[pageKey];
+					var type = pagesByKey[pageKey];
 					ConstructorInfo constructor = null;
 					object[] parameters = null;
 
@@ -88,7 +93,7 @@ namespace AshtangaTeacher
 					}
 
 					var page = constructor.Invoke(parameters) as Page;
-					_navigation.PushAsync(page);
+					navigation.PushAsync(page);
 				}
 				else
 				{
@@ -103,22 +108,22 @@ namespace AshtangaTeacher
 
 		public void Configure(string pageKey, Type pageType)
 		{
-			lock (_pagesByKey)
+			lock (pagesByKey)
 			{
-				if (_pagesByKey.ContainsKey(pageKey))
+				if (pagesByKey.ContainsKey(pageKey))
 				{
-					_pagesByKey[pageKey] = pageType;
+					pagesByKey[pageKey] = pageType;
 				}
 				else
 				{
-					_pagesByKey.Add(pageKey, pageType);
+					pagesByKey.Add(pageKey, pageType);
 				}
 			}
 		}
 
 		public void Initialize(NavigationPage navigation)
 		{
-			_navigation = navigation;
+			this.navigation = navigation;
 		}
 	}
 }

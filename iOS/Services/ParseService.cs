@@ -1,5 +1,6 @@
 ﻿using Parse;
 using System.Threading.Tasks;
+using Xamarin.Forms;
 
 namespace AshtangaTeacher.iOS
 {
@@ -24,12 +25,14 @@ namespace AshtangaTeacher.iOS
 		public async Task SignUpAsync (Teacher teacher)
 		{
 			var user = new ParseUser () {
-				Username = teacher.Name,
+				// username is the same as Email
+				Username = teacher.UserName,
 				Password = teacher.Password,
 				Email = teacher.Email
 			};
 					
 			user ["shalaname"] = teacher.ShalaName;
+			user ["name"] = teacher.Name;
 
 			await user.SignUpAsync ();
 		}

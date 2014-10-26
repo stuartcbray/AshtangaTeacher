@@ -6,11 +6,24 @@ namespace AshtangaTeacher
 {	
 	public partial class LoginPage : ContentPage
 	{	
-		public LoginPage ()
+		LoginViewModel ViewModel
+		{
+			get {
+				return (LoginViewModel)BindingContext;
+			}
+		}
+
+		public LoginPage (LoginViewModel vm)
 		{
 			InitializeComponent ();
 			NavigationPage.SetHasNavigationBar (this, false);
-			BindingContext = App.Locator.Login;
+			BindingContext = vm;
+		}
+
+		protected override void OnAppearing () 
+		{
+			base.OnAppearing ();
+			ViewModel.ClearFields ();
 		}
 	}
 }

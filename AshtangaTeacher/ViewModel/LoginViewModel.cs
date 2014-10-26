@@ -8,29 +8,21 @@ namespace AshtangaTeacher
 	public class LoginViewModel : ViewModelBase
 	{
 		bool isLoading;
-		string userName;
+		string email;
 		string passWord;
 		string errorMessage;
 
 		RelayCommand signUpCommand;
-		RelayCommand logOutCommand;
+		RelayCommand facebookLoginSuccessCommand;
 		RelayCommand signInCommand;
+		RelayCommand facebookSignInCommand;
 
 		readonly IParseService parseService;
-		readonly INavigationService navigationService;
+		readonly INavigator navigationService;
 
 		public IParseService ParseService { get { return parseService; } }
 
 		public string ApplicationName { get { return "Ashtanga Teacher"; } }
-
-		public void NotifyChanged ()
-		{
-			RaisePropertyChanged (() => SignInVisible);
-			RaisePropertyChanged (() => SwitchUserVisible);
-			RaisePropertyChanged (() => SignInButtonText);
-			ErrorMessage = null;
-			UserName = Password = "";
-		}
 
 		public bool IsLoading {
 			get {
@@ -47,24 +39,12 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public bool SwitchUserVisible {
+		public string Email {
 			get {
-				return !SignInVisible;
-			}
-		}
-
-		public string SignInButtonText {
-			get {
-				return SignInVisible ? "Sign In" : "Continue as " + parseService.CurrentUser;
-			}
-		}
-
-		public string UserName {
-			get {
-				return userName;
+				return email;
 			}
 			set {
-				Set (() => UserName, ref userName, value);
+				Set (() => Email, ref email, value);
 			}
 		}
 			
@@ -86,19 +66,27 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand LogOutCommand {
+		public RelayCommand FacebookSignInCommand {
 			get {
-				return logOutCommand
-				?? (logOutCommand = new RelayCommand (
-					async () => {
-						try {
-							await parseService.LogOutAsync ();
-							NotifyChanged ();
-						} catch (Exception e) {
-							ErrorMessage = e.Message;
+				return facebookSignInCommand
+					?? (facebookSignInCommand = new RelayCommand (
+						() => {
+							navigationService.NavigateTo (ViewModelLocator.FacebookSignInKey, null);
 						}
+					));
 
-					}));
+			}
+		}
+
+		public RelayCommand FacebookLoginSuccessCommand {
+			get {
+				return facebookLoginSuccessCommand
+					?? (facebookLoginSuccessCommand = new RelayCommand (
+						 () => {
+								navigationService.PopToRoot ();
+							}
+						));
+
 			}
 		}
 
@@ -111,14 +99,14 @@ namespace AshtangaTeacher
 								IsLoading = true;
 								try {
 									if (parseService.CurrentUser == null) {
-										await parseService.SignInAsync (UserName, Password);
+										await parseService.SignInAsync (Email, Password);
 									}	
 									App.Locator.Main.GetStudentsCommand.Execute (null);
 								} catch (Exception e) {
 									ErrorMessage = e.Message;
 								}
 								IsLoading = false;
-								navigationService.NavigateTo (ViewModelLocator.MainPageKey, App.Locator.Main);
+								navigationService.GoBack (); 
 							}
 					}));
 
@@ -132,8 +120,15 @@ namespace AshtangaTeacher
 						() => navigationService.NavigateTo (ViewModelLocator.SignUpPageKey, App.Locator.SignUp)));
 			}
 		}
+			
+		public void ClearFields ()
+		{
+			ErrorMessage = "";
+			Email = "";
+			Password = "";
+		}
 
-		public LoginViewModel (INavigationService navigationService, IParseService parseService)
+		public LoginViewModel (INavigator navigationService, IParseService parseService)
 		{
 			this.parseService = parseService;
 			this.navigationService = navigationService;

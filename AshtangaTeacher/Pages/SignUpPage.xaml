@@ -20,7 +20,7 @@
 	    </Grid.ColumnDefinitions>
 	        
 	    <Label Text="New Account" Font="22" VerticalOptions="End" HorizontalOptions="Center"  />
-		<Entry Text="{Binding UserName}" Placeholder="User Name" Grid.Row="1" HorizontalOptions="Fill" />
+		<Entry Text="{Binding Name}" Placeholder="Name" Grid.Row="1" HorizontalOptions="Fill" />
 		<Entry Text="{Binding Email}" Placeholder="Email Address" Grid.Row="2" HorizontalOptions="Fill" />
 		<Entry Text="{Binding Password}" Placeholder="Password" IsPassword="true" Grid.Row="3" HorizontalOptions="Fill" />
 		<Entry Text="{Binding PasswordDupe}" Placeholder="Re-enter Password" IsPassword="true" Grid.Row="4" HorizontalOptions="Fill" />
