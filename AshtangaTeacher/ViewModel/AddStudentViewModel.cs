@@ -6,6 +6,8 @@ namespace AshtangaTeacher
 {
 	public class AddStudentViewModel : ViewModelBase
 	{
+		bool isLoading, addStudentEnabled;
+
 		readonly IStudentsService studentService;
 		readonly INavigator navigationService;
 		readonly Student student;
@@ -26,6 +28,26 @@ namespace AshtangaTeacher
 			}
 		}
 
+		public bool AddStudentEnabled {
+			get {
+				return addStudentEnabled;
+			}
+			set {
+				Set (() => AddStudentEnabled, ref addStudentEnabled, value);
+			}
+		}
+
+		public bool IsLoading {
+			get {
+				return isLoading;
+			}
+			set {
+				if (Set (() => IsLoading, ref isLoading, value)) {
+					AddStudentEnabled = !IsLoading;
+				}
+			}
+		}
+
 		public RelayCommand CancelCommand {
 			get {
 				return cancelCommand
@@ -38,7 +60,7 @@ namespace AshtangaTeacher
 				return addStudentCommand
 				?? (addStudentCommand = new RelayCommand (
 						async () => {
-
+						
 							// Perform some simple validation...
 							if (string.IsNullOrEmpty (Model.Name)) {
 								ErrorMessage = "User Name is empty";
@@ -50,9 +72,14 @@ namespace AshtangaTeacher
 								return;
 							}
 								
+							IsLoading = true;
 							await studentService.AddAsync (student);
+							IsLoading = false;
+
 							App.Locator.Main.Students.Add (new StudentViewModel (studentService, student));
+
 							navigationService.GoBack ();
+							
 						}));
 			}
 		}
@@ -61,6 +88,7 @@ namespace AshtangaTeacher
 		{
 			studentService = service;
 			navigationService = nav;
+			addStudentEnabled = true;
 			this.student = student;
 		}
 	}
