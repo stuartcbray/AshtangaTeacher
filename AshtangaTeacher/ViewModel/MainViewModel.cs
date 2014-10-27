@@ -71,12 +71,7 @@ namespace AshtangaTeacher
 						Students.Clear ();
 						IsLoading = true;
 						try {
-							var list = await studentsService.GetAllAsync (parseService.CurrentShalaName);
-
-							foreach (var student in list) {
-								Students.Add (new StudentViewModel (studentsService, student));
-							}
-
+							Students = await studentsService.GetAllAsync (parseService.CurrentShalaName);
 							IsLoading = false;
 						} catch (Exception ex) {
 							var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
@@ -108,8 +103,9 @@ namespace AshtangaTeacher
 		{
 			if (parseService.ShowLogin ()) {
 				navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
-			} 
-			// Check here if the user has a valid Shala - new user from Facebook?
+			} else if (string.IsNullOrEmpty(parseService.CurrentShalaName)) {
+				navigationService.NavigateTo (ViewModelLocator.TeacherInfoPageKey, App.Locator.SignUp);
+			}
 		}
 
 		public MainViewModel (

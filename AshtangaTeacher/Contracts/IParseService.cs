@@ -12,6 +12,8 @@ namespace AshtangaTeacher
 
 		Task LogOutAsync ();
 
+		Task UpdateUserPropertyAsync (string name, string value);
+
 		Task SignInAsync (string username, string password);
 
 		bool ShowLogin ();

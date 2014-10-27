@@ -17,6 +17,7 @@ namespace AshtangaTeacher
 
 		RelayCommand signUpCommand;
 		RelayCommand cancelCommand;
+		RelayCommand saveShalaCommand;
 
 		readonly IParseService parseService;
 		readonly INavigator navigationService;
@@ -85,6 +86,21 @@ namespace AshtangaTeacher
 			}
 			set {
 				Set (() => ErrorMessage, ref errorMessage, value);
+			}
+		}
+
+		public RelayCommand SaveShalaCommand {
+			get {
+				return saveShalaCommand
+					?? (saveShalaCommand = new RelayCommand (
+						async () => {
+							if (string.IsNullOrEmpty(ShalaName)) {
+								ErrorMessage = "Shala Name cannot be empty";
+								return;
+							}
+							await parseService.UpdateUserPropertyAsync("shalaname", ShalaName);
+							navigationService.GoBack ();
+						}));
 			}
 		}
 

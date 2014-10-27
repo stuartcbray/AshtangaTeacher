@@ -13,6 +13,7 @@ namespace AshtangaTeacher
 		public const string LoginPageKey = "LoginPage";
 		public const string SignUpPageKey = "SignUpPage";
 		public const string FacebookSignInKey = "FacebookLoginPage";
+		public const string TeacherInfoPageKey = "TeacherInfoPage";
 
 		public MainViewModel Main {
 			get {

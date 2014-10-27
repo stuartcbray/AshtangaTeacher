@@ -11,13 +11,20 @@ namespace AshtangaTeacher.iOS
 				if (ParseUser.CurrentUser != null)
 					return ParseUser.CurrentUser.Username;
 				return null;
-			}
+			} 
+		}
+
+		public async Task UpdateUserPropertyAsync(string name, string value)
+		{
+			ParseUser.CurrentUser [name] = value;
+			await ParseUser.CurrentUser.SaveAsync ();
 		}
 
 		public string CurrentShalaName {
 			get {
-				if (ParseUser.CurrentUser != null)
+				if (ParseUser.CurrentUser != null && ParseUser.CurrentUser.ContainsKey("shalaname")) {
 					return ParseUser.CurrentUser.Get<string> ("shalaname");
+				}
 				return null;
 			}
 		}

@@ -6,6 +6,7 @@
 	<Grid>
 	    <Grid.RowDefinitions>
 	        <RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 	        <RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
@@ -15,17 +16,18 @@
 	        <ColumnDefinition Width="*" />
 	    </Grid.ColumnDefinitions>
 	        
-		<Entry Text="{Binding Model.Name}" Placeholder="Name" HorizontalOptions="Fill" />
-		<Entry Text="{Binding Model.Email}" Placeholder="Email" HorizontalOptions="Fill" Grid.Row="1" />	
+	    <Label Text="New Student"/>
+		<Entry Text="{Binding Model.Name}" Placeholder="Name" HorizontalOptions="Fill" Grid.Row="1" />
+		<Entry Text="{Binding Model.Email}" Placeholder="Email" HorizontalOptions="Fill" Grid.Row="2" />	
 
-		<StackLayout Grid.Row="2" HorizontalOptions="Fill">
+		<StackLayout Grid.Row="3" HorizontalOptions="Fill">
 			<Label Text="Expiry Date"/>
 			<DatePicker Date="{Binding Model.ExpiryDate}" />
 		</StackLayout>
 
-		<Label Text="{Binding ErrorMessage}" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="3" />
+		<Label Text="{Binding ErrorMessage}" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="4" />
 
-		<StackLayout Orientation="Horizontal" Grid.Row="4">
+		<StackLayout Orientation="Horizontal" Grid.Row="5" VerticalOptions="End">
 			<Button Text="Add Student" Command="{Binding AddStudentCommand}"/>
 			<Button Text="Cancel" Command="{Binding CancelCommand}" />
 		</StackLayout>

@@ -2,32 +2,36 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Parse;
+using Facebook;
+using System.Collections.ObjectModel;
+using System.Collections;
 
 namespace AshtangaTeacher.iOS
 {
 	public class StudentsService : IStudentsService
 	{
-		public async Task<IList<Student>> GetAllAsync(string shalaName)
+		public async Task<ObservableCollection<StudentViewModel>> GetAllAsync(string shalaName)
 		{
 			var query = ParseObject.GetQuery ("Student").Where (student => student.Get<string> ("shala") == shalaName);
 			IEnumerable<ParseObject> results = await query.FindAsync();
 
 			// Consider returning ObservableCollection instead
-			var list = new List<Student> ();
+			var list = new ObservableCollection<StudentViewModel> ();
 			foreach (var s in results) {
-				var student = new Student { 
+				var student = new StudentViewModel (this,  new Student { 
 					ShalaName = shalaName,
 					Name = s.Get<string> ("name"),
 					Email = s.Get<string> ("email"),
 					ObjectId = s.ObjectId,
 					ExpiryDate = new DateTime (s.Get<long> ("expirydate"))
-				};
-				student.IsDirty = false;
+				});
+
+				student.Model.IsDirty = false;
 				list.Add (student);
 			}
 			return list;
 		}
-
+			
 		public async Task<IList<ProgressNote>> GetStudentProgressNotesAsync(Student student)
 		{
 			ParseQuery<ParseObject> query = ParseObject.GetQuery("Student");
