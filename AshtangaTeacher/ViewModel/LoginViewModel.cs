@@ -102,11 +102,11 @@ namespace AshtangaTeacher
 										await parseService.SignInAsync (Email, Password);
 									}	
 									App.Locator.Main.GetStudentsCommand.Execute (null);
+									navigationService.GoBack (); 
 								} catch (Exception e) {
 									ErrorMessage = e.Message;
 								}
 								IsLoading = false;
-								navigationService.GoBack (); 
 							}
 					}));
 

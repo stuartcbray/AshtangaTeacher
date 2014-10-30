@@ -8,11 +8,12 @@ using MonoTouch.UIKit;
 using Xamarin.Forms;
 using GalaSoft.MvvmLight.Ioc;
 using Parse;
+using Xamarin.Forms.Labs.iOS;
 
 namespace AshtangaTeacher.iOS
 {
 	[Register ("AppDelegate")]
-	public partial class AppDelegate : UIApplicationDelegate
+	public partial class AppDelegate : XFormsApplicationDelegate
 	{
 		UIWindow window;
 
@@ -23,6 +24,7 @@ namespace AshtangaTeacher.iOS
 			SimpleIoc.Default.Register<IParseService, ParseService>();
 			SimpleIoc.Default.Register<IStudentsService, StudentsService>();
 			SimpleIoc.Default.Register<IEmailValidator, EmailValidator>();
+			SimpleIoc.Default.Register<ICameraService, CameraService>();
 
 			window = new UIWindow (UIScreen.MainScreen.Bounds);
 			

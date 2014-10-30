@@ -1,19 +1,27 @@
 ﻿using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using GalaSoft.MvvmLight;
+using Xamarin.Forms.Labs.Services.Media;
+using Xamarin.Forms;
+using Microsoft.Practices.ServiceLocation;
 
 namespace AshtangaTeacher
 {
 	public class AddStudentViewModel : ViewModelBase
 	{
-		bool isLoading, addStudentEnabled;
+		bool isLoading, addStudentEnabled, isPhotoVisible;
 
 		readonly IStudentsService studentService;
 		readonly INavigator navigationService;
+		readonly ICameraService cameraService;
 		readonly Student student;
+
+		ImageSource imageSource;
+		IMediaPicker mediaPicker;
 
 		RelayCommand addStudentCommand;
 		RelayCommand cancelCommand;
+		RelayCommand addStudentPhotoCommand;
 
 		string errorMessage;
 
@@ -37,6 +45,15 @@ namespace AshtangaTeacher
 			}
 		}
 
+		public bool IsPhotoVisible {
+			get {
+				return isPhotoVisible;
+			}
+			set {
+				Set (() => IsPhotoVisible, ref isPhotoVisible, value);
+			}
+		}
+
 		public bool IsLoading {
 			get {
 				return isLoading;
@@ -52,6 +69,41 @@ namespace AshtangaTeacher
 			get {
 				return cancelCommand
 				?? (cancelCommand = new RelayCommand (() => navigationService.GoBack ()));
+			}
+		}
+
+		public RelayCommand AddStudentPhotoCommand {
+			get {
+				return addStudentPhotoCommand
+					?? (addStudentPhotoCommand = new RelayCommand (
+						async () => 
+						{
+							mediaPicker = DependencyService.Get<IMediaPicker>();
+
+							imageSource = null;
+
+							try
+							{
+								var mediaFile = await mediaPicker.SelectPhotoAsync(new CameraMediaStorageOptions
+									{
+										DefaultCamera = CameraDevice.Front,
+										MaxPixelDimension = 400
+									});
+								imageSource = ImageSource.FromStream(() => mediaFile.Source);
+								student.Image = imageSource;
+								IsPhotoVisible = true;
+
+								var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+								await cameraService.SaveImageAsync(imageSource, student.StudentId);
+
+								// now resize the image, and upload to Parse, then delete our local copy. 
+
+							}
+							catch (System.Exception ex)
+							{
+								ErrorMessage = ex.Message;
+							}
+						}));
 			}
 		}
 

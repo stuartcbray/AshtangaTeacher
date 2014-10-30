@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="AshtangaTeacher.AddStudentPage">
-	<ContentPage.Padding>
-	    <OnPlatform x:TypeArguments="Thickness" iOS="0, 20, 0, 0"/>
-  	</ContentPage.Padding>
+<ContentPage Padding="10,0,10,0" xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="AshtangaTeacher.AddStudentPage">
 	<Grid>
 	    <Grid.RowDefinitions>
 	        <RowDefinition Height="Auto" />
@@ -16,7 +13,45 @@
 	        <ColumnDefinition Width="*" />
 	    </Grid.ColumnDefinitions>
 	        
-	    <Label Text="New Student"/>
+	    <Grid Padding="5">
+		    <Grid.RowDefinitions>
+		        <RowDefinition Height="80" />
+		    </Grid.RowDefinitions>
+		    <Grid.ColumnDefinitions>
+		        <ColumnDefinition Width="*" />
+				<ColumnDefinition Width="Auto" />
+		    </Grid.ColumnDefinitions>
+	    	<Label Text="New Student" Font="22" HorizontalOptions="Start" VerticalOptions="Center" />
+
+	    	<Grid Grid.Column="1" BackgroundColor="Blue" WidthRequest="80" HeightRequest="80" >
+	    		<Grid.RowDefinitions>
+			        <RowDefinition Height="80" />
+			    </Grid.RowDefinitions>
+			    <Grid.ColumnDefinitions>
+			        <ColumnDefinition Width="*" />
+			    </Grid.ColumnDefinitions>
+		    	<Button WidthRequest="80" HeightRequest="80" BackgroundColor="Transparent" Command="{Binding AddStudentPhotoCommand}" Text="Photo" TextColor="White" VerticalOptions="Center" HorizontalOptions="Center" />
+	            <Image Source="{Binding Model.Image}" BackgroundColor="White" IsVisible="{Binding IsPhotoVisible}"
+	                   VerticalOptions="Start"
+	                   HorizontalOptions="StartAndExpand">
+	                <Image.GestureRecognizers>
+				        <TapGestureRecognizer Command="{Binding AddStudentPhotoCommand}"/>
+				    </Image.GestureRecognizers>
+	                <Image.WidthRequest>
+	                    <OnPlatform x:TypeArguments="x:Double"
+	                                iOS="80"
+	                                Android="80" />
+	                </Image.WidthRequest>
+	                
+	                <Image.HeightRequest>
+	                    <OnPlatform x:TypeArguments="x:Double"
+	                                iOS="80"
+	                                Android="80" />
+	                </Image.HeightRequest>
+	            </Image>
+	    	</Grid>
+	    </Grid>
+
 		<Entry Text="{Binding Model.Name}" Placeholder="Name" HorizontalOptions="Fill" Grid.Row="1" />
 		<Entry Text="{Binding Model.Email}" Placeholder="Email" HorizontalOptions="Fill" Grid.Row="2" />	
 

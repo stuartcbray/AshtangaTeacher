@@ -9,12 +9,13 @@ using Android.Widget;
 using Android.OS;
 
 using Xamarin.Forms.Platform.Android;
+using Xamarin.Forms.Labs.Droid;
 
 
 namespace AshtangaTeacher.Android
 {
 	[Activity (Label = "AshtangaTeacher.Android.Android", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-	public class MainActivity : AndroidActivity
+	public class MainActivity : XFormsApplicationDroid
 	{
 		protected override void OnCreate (Bundle bundle)
 		{

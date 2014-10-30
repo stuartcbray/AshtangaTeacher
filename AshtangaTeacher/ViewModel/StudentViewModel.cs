@@ -30,18 +30,6 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public string ImageFileName {
-			get {
-				return ImageUri.LocalPath;
-			}
-		}
-
-		public Uri ImageUri {
-			get {
-				return new Uri (Model.Image);
-			}
-		}
-
 		public Student Model {
 			get;
 			private set;

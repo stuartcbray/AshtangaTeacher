@@ -124,6 +124,15 @@
     <Reference Include="Facebook">
       <HintPath>..\Components\facebook-sdk-6.2.1\lib\ios\Facebook.dll</HintPath>
     </Reference>
+    <Reference Include="ExifLib">
+      <HintPath>..\packages\ExifLib.PCL.1.0.0\lib\portable-net45+sl50+win+WindowsPhoneApp81+wp80+MonoAndroid10+MonoTouch10\ExifLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Labs.iOS">
+      <HintPath>..\packages\Xamarin.Forms.Labs.1.2.0\lib\MonoTouch\Xamarin.Forms.Labs.iOS.dll</HintPath>
+    </Reference>
+    <Reference Include="Xamarin.Forms.Labs">
+      <HintPath>..\packages\Xamarin.Forms.Labs.1.2.0\lib\MonoTouch\Xamarin.Forms.Labs.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AshtangaTeacher\AshtangaTeacher.csproj">
@@ -146,6 +155,7 @@
     <Compile Include="Services\StudentsService.cs" />
     <Compile Include="Services\EmailValidator.cs" />
     <Compile Include="Renderers\FacebookLoginRenderer.cs" />
+    <Compile Include="Services\CameraService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.1.2.3.6257\build\portable-win+net45+wp80+MonoAndroid10+MonoTouch10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.1.2.3.6257\build\portable-win+net45+wp80+MonoAndroid10+MonoTouch10\Xamarin.Forms.targets')" />

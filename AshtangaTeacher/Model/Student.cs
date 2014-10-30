@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight;
+using Xamarin.Forms;
 
 namespace AshtangaTeacher
 {
@@ -11,6 +12,10 @@ namespace AshtangaTeacher
 		string name;
 		string email;
 		DateTime expiryDate;
+		ImageSource imageSource;
+
+		readonly string studentId;
+		public string StudentId { get { return studentId; } }
 
 		public ObservableCollection<ProgressNote> ProgressNotes { get; set; }
 
@@ -35,9 +40,13 @@ namespace AshtangaTeacher
 			set;
 		}
 
-		public string Image {
-			get;
-			set;
+		public ImageSource Image {
+			get {
+				return imageSource;
+			}
+			set {
+				Set (() => Image, ref imageSource, value);
+			}
 		}
 
 		public string Name {
@@ -76,6 +85,7 @@ namespace AshtangaTeacher
 		public Student ()
 		{
 			ProgressNotes = new ObservableCollection<ProgressNote> ();
+			studentId = Guid.NewGuid ().ToString ();
 		}
 	}
 }
