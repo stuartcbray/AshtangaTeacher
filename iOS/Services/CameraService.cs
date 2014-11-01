@@ -5,6 +5,7 @@ using MonoTouch.Foundation;
 using System.Threading.Tasks;
 using MonoTouch.UIKit;
 using System.Drawing;
+using Microsoft.Practices.ServiceLocation;
 
 namespace AshtangaTeacher.iOS
 {
@@ -17,14 +18,14 @@ namespace AshtangaTeacher.iOS
 			}
 		}
 
-		public async Task<ImageSource> SaveThumbAsync (ImageSource img, string fileName)
+		public async Task<string> SaveThumbAsync (ImageSource img, string fileName)
 		{
 			var renderer = new StreamImagesourceHandler ();
 			var image = await renderer.LoadImageAsync (img);
 
 			var thumb = CreateThumb (image, 80, 80);
 
-			/* Save to Parse instead of locally
+			// Save a local copy
 			var docFolder = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
 			string pngFile = System.IO.Path.Combine (docFolder, fileName + ".PNG");
 
@@ -34,15 +35,15 @@ namespace AshtangaTeacher.iOS
 				Console.WriteLine ("Saved file " + pngFile);
 			} else {
 				Console.WriteLine ("NOT saved as " + pngFile + " because" + err.LocalizedDescription);
-			}*/
+			}
 
-			return ImageSource.FromStream(() => thumb.AsPNG().AsStream());
+			return pngFile;
 		}
 
-		public string GetImagePath (string fileName)
+		public string GetImagePath (string id)
 		{
 			var docFolder = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
-			return System.IO.Path.Combine (docFolder, fileName);
+			return System.IO.Path.Combine (docFolder, id + ".PNG"); 
 		}
 
 		UIImage CreateThumb(UIImage img, float maxWidth, float maxHeight)

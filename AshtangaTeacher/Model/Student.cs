@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight;
 using Xamarin.Forms;
+using System.Collections.Generic;
+using Microsoft.Practices.ServiceLocation;
 
 namespace AshtangaTeacher
 {
@@ -11,8 +13,9 @@ namespace AshtangaTeacher
 
 		string name;
 		string email;
+		string imageUrl;
 		DateTime expiryDate;
-		ImageSource imageSource;
+		ICameraService cameraService;
 
 		readonly string studentId;
 		public string StudentId { get { return studentId; } }
@@ -40,12 +43,13 @@ namespace AshtangaTeacher
 			set;
 		}
 
-		public ImageSource Image {
+		public string ImageUrl {
 			get {
-				return imageSource;
+				return imageUrl;
 			}
 			set {
-				Set (() => Image, ref imageSource, value);
+				imageUrl = value;
+				RaisePropertyChanged ("ImageUrl");
 			}
 		}
 
@@ -82,10 +86,23 @@ namespace AshtangaTeacher
 			}
 		}
 
+		void Init()
+		{
+			cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+			ProgressNotes = new ObservableCollection<ProgressNote> ();
+			imageUrl = cameraService.GetImagePath (studentId);
+		}
+
 		public Student ()
 		{
-			ProgressNotes = new ObservableCollection<ProgressNote> ();
 			studentId = Guid.NewGuid ().ToString ();
+			Init ();
+		}
+
+		public Student (string studentId)
+		{
+			this.studentId = studentId;
+			Init ();
 		}
 	}
 }

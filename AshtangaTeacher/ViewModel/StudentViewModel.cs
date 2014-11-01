@@ -4,12 +4,15 @@ using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
 using System.Collections.ObjectModel;
+using Xamarin.Forms;
+using Xamarin.Forms.Labs.Services.Media;
 
 namespace AshtangaTeacher
 {
 	public class StudentViewModel : ViewModelBase
 	{
 		bool isSaving;
+		string errorMessage;
 
 		readonly IStudentsService studentService;
 
@@ -17,7 +20,20 @@ namespace AshtangaTeacher
 		RelayCommand showProgressNotesCommand;
 		RelayCommand saveStudentCommand;
 		RelayCommand deleteStudentCommand;
+		RelayCommand updatePhotoCommand;
 		RelayCommand<string> saveProgressNoteCommand;
+
+		ImageSource imageSource;
+		IMediaPicker mediaPicker;
+
+		public string ErrorMessage {
+			get {
+				return errorMessage;
+			}
+			set {
+				Set (() => ErrorMessage, ref errorMessage, value);
+			}
+		}
 
 		public bool IsSaving {
 			get {
@@ -33,6 +49,36 @@ namespace AshtangaTeacher
 		public Student Model {
 			get;
 			private set;
+		}
+
+		public RelayCommand UpdatePhotoCommand {
+			get {
+				return updatePhotoCommand
+					?? (updatePhotoCommand = new RelayCommand (
+						async () => 
+						{
+							mediaPicker = DependencyService.Get<IMediaPicker>();
+							imageSource = null;
+
+							try
+							{
+								var mediaFile = await mediaPicker.SelectPhotoAsync(new CameraMediaStorageOptions
+									{
+										DefaultCamera = CameraDevice.Front,
+										MaxPixelDimension = 400
+									});
+								imageSource = ImageSource.FromStream(() => mediaFile.Source);
+
+								var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+								var imageUrl = await cameraService.SaveThumbAsync(imageSource, Model.StudentId);
+								Model.ImageUrl = imageUrl;
+							}
+							catch (Exception ex)
+							{
+								ErrorMessage = ex.Message;
+							}
+						}));
+			}
 		}
 
 		public RelayCommand ShowProgressNotesCommand {

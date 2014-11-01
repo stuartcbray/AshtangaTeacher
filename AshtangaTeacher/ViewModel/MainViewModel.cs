@@ -13,7 +13,7 @@ namespace AshtangaTeacher
 		readonly IParseService parseService;
 		readonly INavigator navigationService;
 
-		bool isLoading;
+		bool isLoading, initialFetch;
 		RelayCommand getStudentsCommand;
 		RelayCommand logOutCommand;
 		RelayCommand addStudentCommand;
@@ -30,10 +30,15 @@ namespace AshtangaTeacher
 				Set (() => IsLoading, ref isLoading, value);
 			}
 		}
-
-		public ObservableCollection<StudentViewModel> Students {
-			get;
-			private set;
+			
+		ObservableCollection<StudentViewModel> students = new ObservableCollection<StudentViewModel> ();
+		public ObservableCollection<StudentViewModel>  Students {
+			get {
+				return students;
+			}
+			set {
+				Set (() => Students, ref students, value);
+			}
 		}
 
 		public RelayCommand AddStudentCommand {
@@ -57,6 +62,7 @@ namespace AshtangaTeacher
 				?? (logOutCommand = new RelayCommand (
 					async () => {
 						Students.Clear ();
+						initialFetch = false;
 						await parseService.LogOutAsync ();
 						navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
 					}));
@@ -99,12 +105,15 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public void EnsureAuthenticated ()
+		public void Init ()
 		{
 			if (parseService.ShowLogin ()) {
 				navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
-			} else if (string.IsNullOrEmpty(parseService.CurrentShalaName)) {
+			} else if (string.IsNullOrEmpty (parseService.CurrentShalaName)) {
 				navigationService.NavigateTo (ViewModelLocator.TeacherInfoPageKey, App.Locator.SignUp);
+			} else if (!initialFetch) {
+				initialFetch = true;
+				GetStudentsCommand.Execute (null);
 			}
 		}
 
@@ -117,7 +126,6 @@ namespace AshtangaTeacher
 			this.parseService = parseService;
 			this.studentsService = studentsService;
 			this.navigationService = navigationService;
-			Students = new ObservableCollection<StudentViewModel> ();
 		}
 	}
 }

@@ -92,7 +92,8 @@ namespace AshtangaTeacher
 								IsPhotoVisible = true;
 
 								var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
-								student.Image = await cameraService.SaveThumbAsync(imageSource, student.StudentId);
+								var imageUrl = await cameraService.SaveThumbAsync(imageSource, student.StudentId);
+								student.ImageUrl = imageUrl;
 							}
 							catch (System.Exception ex)
 							{

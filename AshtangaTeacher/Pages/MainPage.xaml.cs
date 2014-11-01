@@ -27,7 +27,7 @@ namespace AshtangaTeacher
 		protected override void OnAppearing()
 		{
 			base.OnAppearing ();
-			ViewModel.EnsureAuthenticated ();
+			ViewModel.Init ();
 		}
 	}
 }

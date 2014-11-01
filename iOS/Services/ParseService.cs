@@ -22,8 +22,8 @@ namespace AshtangaTeacher.iOS
 
 		public string CurrentShalaName {
 			get {
-				if (ParseUser.CurrentUser != null && ParseUser.CurrentUser.ContainsKey("shalaname")) {
-					return ParseUser.CurrentUser.Get<string> ("shalaname");
+				if (ParseUser.CurrentUser != null && ParseUser.CurrentUser.ContainsKey("shalaName")) {
+					return ParseUser.CurrentUser.Get<string> ("shalaName");
 				}
 				return null;
 			}
@@ -38,7 +38,7 @@ namespace AshtangaTeacher.iOS
 				Email = teacher.Email
 			};
 					
-			user ["shalaname"] = teacher.ShalaName;
+			user ["shalaName"] = teacher.ShalaName;
 			user ["name"] = teacher.Name;
 
 			await user.SignUpAsync ();

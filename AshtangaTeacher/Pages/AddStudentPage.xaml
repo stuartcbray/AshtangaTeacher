@@ -31,7 +31,7 @@
 			        <ColumnDefinition Width="*" />
 			    </Grid.ColumnDefinitions>
 		    	<Button WidthRequest="80" HeightRequest="80" BackgroundColor="Transparent" Command="{Binding AddStudentPhotoCommand}" Text="Photo" TextColor="White" VerticalOptions="Center" HorizontalOptions="Center" />
-	            <Image Source="{Binding Model.Image}" BackgroundColor="White" IsVisible="{Binding IsPhotoVisible}"
+	            <Image Source="{Binding Model.ImageUrl}" BackgroundColor="White" IsVisible="{Binding IsPhotoVisible}"
 	                   VerticalOptions="Start"
 	                   HorizontalOptions="StartAndExpand">
 	                <Image.GestureRecognizers>

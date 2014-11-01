@@ -18,12 +18,14 @@ namespace AshtangaTeacher.iOS
 			// Consider returning ObservableCollection instead
 			var list = new ObservableCollection<StudentViewModel> ();
 			foreach (var s in results) {
-				var student = new StudentViewModel (this,  new Student { 
+
+				var sid = s.Get<string> ("studentId");
+				var student = new StudentViewModel (this,  new Student(sid) { 
 					ShalaName = shalaName,
 					Name = s.Get<string> ("name"),
 					Email = s.Get<string> ("email"),
 					ObjectId = s.ObjectId,
-					ExpiryDate = new DateTime (s.Get<long> ("expirydate"))
+					ExpiryDate = new DateTime (s.Get<long> ("expiryDate"))
 				});
 
 				student.Model.IsDirty = false;
@@ -63,7 +65,8 @@ namespace AshtangaTeacher.iOS
 				studentObj ["name"] = student.Name;
 				studentObj ["email"] = student.Email;
 				studentObj ["shala"] = student.ShalaName;
-				studentObj ["expirydate"] = student.ExpiryDate.Ticks;
+				studentObj ["studentId"] = student.StudentId;
+				studentObj ["expiryDate"] = student.ExpiryDate.Ticks;
 				await studentObj.SaveAsync();
 				student.IsDirty = false;
 				return true;
@@ -97,7 +100,8 @@ namespace AshtangaTeacher.iOS
 			studentObj ["name"] = student.Name;
 			studentObj ["email"] = student.Email;
 			studentObj ["shala"] = student.ShalaName;
-			studentObj ["expirydate"] = student.ExpiryDate.Ticks;
+			studentObj ["studentId"] = student.StudentId;
+			studentObj ["expiryDate"] = student.ExpiryDate.Ticks;
 
 			await studentObj.SaveAsync();
 
