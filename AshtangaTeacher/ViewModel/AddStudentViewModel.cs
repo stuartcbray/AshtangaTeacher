@@ -13,7 +13,6 @@ namespace AshtangaTeacher
 
 		readonly IStudentsService studentService;
 		readonly INavigator navigationService;
-		readonly ICameraService cameraService;
 		readonly Student student;
 
 		ImageSource imageSource;
@@ -90,14 +89,10 @@ namespace AshtangaTeacher
 										MaxPixelDimension = 400
 									});
 								imageSource = ImageSource.FromStream(() => mediaFile.Source);
-								student.Image = imageSource;
 								IsPhotoVisible = true;
 
 								var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
-								await cameraService.SaveImageAsync(imageSource, student.StudentId);
-
-								// now resize the image, and upload to Parse, then delete our local copy. 
-
+								student.Image = await cameraService.SaveThumbAsync(imageSource, student.StudentId);
 							}
 							catch (System.Exception ex)
 							{
