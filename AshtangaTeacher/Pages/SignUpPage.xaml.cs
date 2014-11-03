@@ -8,6 +8,7 @@ namespace AshtangaTeacher
 		{
 			InitializeComponent ();
 			NavigationPage.SetHasNavigationBar (this, false);
+			vm.Reset ();
 			BindingContext = vm;
 		}
 	}

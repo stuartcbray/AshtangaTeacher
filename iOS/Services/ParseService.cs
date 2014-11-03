@@ -1,6 +1,8 @@
 ﻿using Parse;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AshtangaTeacher.iOS
 {
@@ -27,6 +29,13 @@ namespace AshtangaTeacher.iOS
 				}
 				return null;
 			}
+		}
+
+		public async Task<bool> ShalaNameExists (string name)
+		{
+			var query = ParseUser.Query.WhereEqualTo("shalaName", name);
+			IEnumerable<ParseObject> results = await query.FindAsync ();
+			return results.Any ();
 		}
 
 		public async Task SignUpAsync (Teacher teacher)

@@ -98,6 +98,13 @@ namespace AshtangaTeacher
 								ErrorMessage = "Shala Name cannot be empty";
 								return;
 							}
+
+							var exists = await parseService.ShalaNameExists(ShalaName);
+							if (exists) {
+								ErrorMessage = "Shala name " + ShalaName + " is taken.";
+								return;
+							}
+
 							await parseService.UpdateUserPropertyAsync("shalaName", ShalaName);
 							navigationService.GoBack ();
 						}));
@@ -120,53 +127,64 @@ namespace AshtangaTeacher
 				return signUpCommand
 				?? (signUpCommand = new RelayCommand (
 					async () => {
-						// Perform some simple validation...
-						if (string.IsNullOrEmpty (Name)) {
-							ErrorMessage = "Name is empty";
-							return;
-						}
+							// Perform some simple validation...
+							if (string.IsNullOrEmpty (Name)) {
+								ErrorMessage = "Name is empty";
+								return;
+							}
 
-						if (string.IsNullOrEmpty (Password) || string.IsNullOrEmpty (PasswordDupe)) {
-							ErrorMessage = "Password is empty";
-							return;
-						}
+							if (string.IsNullOrEmpty (Password) || string.IsNullOrEmpty (PasswordDupe)) {
+								ErrorMessage = "Password is empty";
+								return;
+							}
 
-						if (Password != PasswordDupe) {
-							ErrorMessage = "Passwords don't match";
-							Password = PasswordDupe = "";
-							return;
-						}
+							if (Password != PasswordDupe) {
+								ErrorMessage = "Passwords don't match";
+								Password = PasswordDupe = "";
+								return;
+							}
 
-						if (!regExUtils.IsValidEmail (Email)) {
-							ErrorMessage = "Invalid Email";
-							return;
-						}
+							if (!regExUtils.IsValidEmail (Email)) {
+								ErrorMessage = "Invalid Email";
+								return;
+							}
 
-						if (string.IsNullOrEmpty (ShalaName)) {
-							ErrorMessage = "Shala Name is empty";
-							return;
-						}
+							if (string.IsNullOrEmpty (ShalaName)) {
+								ErrorMessage = "Shala Name is empty";
+								return;
+							}
 
-						var teacher = new Teacher 
-							{ 
-								Name = name,
-								UserName = userName,
-								Email = email,
-								ShalaName = shalaName,
-								Password = passWord
-							};
+							var exists = await parseService.ShalaNameExists(ShalaName);
+							if (exists) {
+								ErrorMessage = "Shala name " + ShalaName + " is taken.";
+								return;
+							}
 
-						try {
-							await parseService.SignUpAsync (teacher);
+							var teacher = new Teacher 
+								{ 
+									Name = name,
+									UserName = userName,
+									Email = email,
+									ShalaName = shalaName,
+									Password = passWord
+								};
 
-							navigationService.PopToRoot ();
-						} catch (Exception e) {
-							ErrorMessage = e.Message;
-						}
+							try {
+								await parseService.SignUpAsync (teacher);
+				
+								navigationService.PopToRoot ();
+							} catch (Exception e) {
+								ErrorMessage = e.Message;
+							}
 
 					}));
 
 			}
+		}
+
+		public void Reset ()
+		{
+			ErrorMessage = UserName = Name = Password =  PasswordDupe = Email = ShalaName = "";
 		}
 
 		public SignUpViewModel (INavigator navigationService, IParseService parseService, IEmailValidator regExUtils)

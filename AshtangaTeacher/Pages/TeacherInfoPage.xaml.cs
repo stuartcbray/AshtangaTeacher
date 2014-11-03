@@ -9,6 +9,7 @@ namespace AshtangaTeacher
 		public TeacherInfoPage (SignUpViewModel vm)
 		{
 			InitializeComponent ();
+			vm.Reset ();
 			BindingContext = vm;
 		}
 	}

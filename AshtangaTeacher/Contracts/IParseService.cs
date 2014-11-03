@@ -8,7 +8,9 @@ namespace AshtangaTeacher
 	{
 		void Initialize(string appId, string key, string facebookAppId);
 
-		Task SignUpAsync(Teacher teacher);
+		Task SignUpAsync (Teacher teacher);
+
+		Task<bool> ShalaNameExists (string name);
 
 		Task LogOutAsync ();
 
