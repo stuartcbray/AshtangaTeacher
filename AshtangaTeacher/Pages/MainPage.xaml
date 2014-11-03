@@ -39,7 +39,7 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
-                                <Image Source="{Binding Model.ImageUrl}"
+                                <Image Source="{Binding Model.Image}"
 					                   VerticalOptions="Start"
 					                   HorizontalOptions="StartAndExpand">
 					                <Image.WidthRequest>

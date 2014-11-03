@@ -98,7 +98,7 @@ namespace AshtangaTeacher
 								ErrorMessage = "Shala Name cannot be empty";
 								return;
 							}
-							await parseService.UpdateUserPropertyAsync("shalaname", ShalaName);
+							await parseService.UpdateUserPropertyAsync("shalaName", ShalaName);
 							navigationService.GoBack ();
 						}));
 			}

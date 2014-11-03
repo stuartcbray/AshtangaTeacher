@@ -70,8 +70,8 @@ namespace AshtangaTeacher
 								imageSource = ImageSource.FromStream(() => mediaFile.Source);
 
 								var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
-								var imageUrl = await cameraService.SaveThumbAsync(imageSource, Model.StudentId);
-								Model.ImageUrl = imageUrl;
+								var imageUrl = await cameraService.GetThumbAsync(imageSource, Model.StudentId);
+								Model.Image = imageUrl;
 							}
 							catch (Exception ex)
 							{

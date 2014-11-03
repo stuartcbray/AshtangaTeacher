@@ -6,7 +6,7 @@ namespace AshtangaTeacher
 {
 	public interface ICameraService
 	{
-		Task<string> SaveThumbAsync (ImageSource imgSrc, string fileName);
+		Task<ImageSource> GetThumbAsync (ImageSource imgSrc, string fileName);
 
 		string GetImagePath (string id);
 	}

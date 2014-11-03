@@ -9,15 +9,16 @@ namespace AshtangaTeacher
 {
 	public class Student : ObservableObject
 	{
-		bool isDirty;
+		bool isDirty, thumbIsDirty;
 
 		string name;
 		string email;
-		string imageUrl;
+		ImageSource image;
 		DateTime expiryDate;
 		ICameraService cameraService;
 
 		readonly string studentId;
+
 		public string StudentId { get { return studentId; } }
 
 		public ObservableCollection<ProgressNote> ProgressNotes { get; set; }
@@ -33,6 +34,15 @@ namespace AshtangaTeacher
 			}
 		}
 
+		public bool ThumbIsDirty {
+			get {
+				return thumbIsDirty;
+			}
+			set {
+				Set (() => ThumbIsDirty, ref thumbIsDirty, value);
+			}
+		}
+
 		public string ShalaName { 
 			get; 
 			set; 
@@ -43,13 +53,15 @@ namespace AshtangaTeacher
 			set;
 		}
 
-		public string ImageUrl {
+		public ImageSource Image {
 			get {
-				return imageUrl;
+				return image;
 			}
 			set {
-				imageUrl = value;
-				RaisePropertyChanged ("ImageUrl");
+				image = value;
+				ThumbIsDirty = true;
+				IsDirty = true;
+				RaisePropertyChanged ("Image");
 			}
 		}
 
@@ -90,7 +102,7 @@ namespace AshtangaTeacher
 		{
 			cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
 			ProgressNotes = new ObservableCollection<ProgressNote> ();
-			imageUrl = cameraService.GetImagePath (studentId);
+			image = cameraService.GetImagePath (studentId);
 		}
 
 		public Student ()

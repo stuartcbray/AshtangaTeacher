@@ -20,7 +20,7 @@
                 <ColumnDefinition Width="0.5*" />
             </Grid.ColumnDefinitions>
 
-            <Image Source="{Binding Model.ImageUrl}"
+            <Image Source="{Binding Model.Image}"
                 VerticalOptions="Center"
                 HorizontalOptions="Center" >
 				<Image.GestureRecognizers>
@@ -28,14 +28,14 @@
 			    </Image.GestureRecognizers>
                 <Image.WidthRequest>
                     <OnPlatform x:TypeArguments="x:Double"
-                                iOS="80"
-                                Android="80" />
+                                iOS="100"
+                                Android="100" />
                 </Image.WidthRequest>
                 
                 <Image.HeightRequest>
                     <OnPlatform x:TypeArguments="x:Double"
-                                iOS="80"
-                                Android="80" />
+                                iOS="100"
+                                Android="100" />
                 </Image.HeightRequest>
 			</Image>
 

@@ -18,26 +18,12 @@ namespace AshtangaTeacher.iOS
 			}
 		}
 
-		public async Task<string> SaveThumbAsync (ImageSource img, string fileName)
+		public async Task<ImageSource> GetThumbAsync (ImageSource img, string fileName)
 		{
 			var renderer = new StreamImagesourceHandler ();
 			var image = await renderer.LoadImageAsync (img);
-
-			var thumb = CreateThumb (image, 80, 80);
-
-			// Save a local copy
-			var docFolder = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
-			string pngFile = System.IO.Path.Combine (docFolder, fileName + ".PNG");
-
-			NSData thumbData = thumb.AsPNG ();
-			NSError err;
-			if (thumbData.Save (pngFile, false, out err)) {
-				Console.WriteLine ("Saved file " + pngFile);
-			} else {
-				Console.WriteLine ("NOT saved as " + pngFile + " because" + err.LocalizedDescription);
-			}
-
-			return pngFile;
+			var thumb = CreateThumb (image, 100, 100);
+			return ImageSource.FromStream(() => thumb.AsPNG().AsStream());
 		}
 
 		public string GetImagePath (string id)
