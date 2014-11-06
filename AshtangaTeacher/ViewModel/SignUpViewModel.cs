@@ -7,6 +7,8 @@ namespace AshtangaTeacher
 {
 	public class SignUpViewModel : ViewModelBase
 	{
+		bool isLoading;
+
 		string userName;
 		string name;
 		string email;
@@ -89,6 +91,23 @@ namespace AshtangaTeacher
 			}
 		}
 
+		public bool IsLoading {
+			get {
+				return isLoading;
+			}
+			set {
+				if (Set (() => IsLoading, ref isLoading, value)) {
+					RaisePropertyChanged ("IsReady");
+				}
+			}
+		}
+
+		public bool IsReady {
+			get {
+				return !isLoading;
+			}
+		}
+
 		public RelayCommand SaveShalaCommand {
 			get {
 				return saveShalaCommand
@@ -154,13 +173,15 @@ namespace AshtangaTeacher
 								return;
 							}
 
-							var exists = await parseService.ShalaNameExists(ShalaName);
-							if (exists) {
-								ErrorMessage = "Shala name " + ShalaName + " is taken.";
-								return;
-							}
+							IsLoading = true;
+							try {
+								var exists = await parseService.ShalaNameExists(ShalaName);
+								if (exists) {
+									ErrorMessage = "Shala name " + ShalaName + " is taken.";
+									return;
+								}
 
-							var teacher = new Teacher 
+								var teacher = new Teacher 
 								{ 
 									Name = name,
 									UserName = userName,
@@ -169,14 +190,15 @@ namespace AshtangaTeacher
 									Password = passWord
 								};
 
-							try {
 								await parseService.SignUpAsync (teacher);
-				
 								navigationService.PopToRoot ();
-							} catch (Exception e) {
+							}
+							catch (Exception e) {
 								ErrorMessage = e.Message;
 							}
-
+							finally {
+								IsLoading = false;
+							}
 					}));
 
 			}

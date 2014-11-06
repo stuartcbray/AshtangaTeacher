@@ -29,7 +29,7 @@ namespace AshtangaTeacher
 
 		private void CheckSaveCommentEnabled()
 		{
-			SaveNoteButton.IsEnabled = ViewModel.SaveProgressNoteCommand.CanExecute(NoteText.Text);
+			SaveNoteButton.IsEnabled = ViewModel.SaveProgressNoteCommand.CanExecute (NoteText.Text);
 		}
 	}
 }

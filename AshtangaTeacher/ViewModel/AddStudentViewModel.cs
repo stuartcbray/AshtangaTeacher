@@ -9,7 +9,7 @@ namespace AshtangaTeacher
 {
 	public class AddStudentViewModel : ViewModelBase
 	{
-		bool isLoading, addStudentEnabled, isPhotoVisible;
+		bool isLoading, isPhotoVisible;
 
 		readonly IStudentsService studentService;
 		readonly INavigator navigationService;
@@ -35,15 +35,6 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public bool AddStudentEnabled {
-			get {
-				return addStudentEnabled;
-			}
-			set {
-				Set (() => AddStudentEnabled, ref addStudentEnabled, value);
-			}
-		}
-
 		public bool IsPhotoVisible {
 			get {
 				return isPhotoVisible;
@@ -59,11 +50,17 @@ namespace AshtangaTeacher
 			}
 			set {
 				if (Set (() => IsLoading, ref isLoading, value)) {
-					AddStudentEnabled = !IsLoading;
+					RaisePropertyChanged ("IsReady");
 				}
 			}
 		}
 
+		public bool IsReady {
+			get {
+				return !isLoading;
+			}
+		}
+			
 		public RelayCommand CancelCommand {
 			get {
 				return cancelCommand
@@ -92,7 +89,11 @@ namespace AshtangaTeacher
 								IsPhotoVisible = true;
 
 								var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+
+								IsLoading = true;
 								var thumb = await cameraService.GetThumbAsync(imageSource, student.StudentId);
+								IsLoading = false;
+
 								student.Image = thumb;
 							}
 							catch (System.Exception ex)
@@ -136,7 +137,6 @@ namespace AshtangaTeacher
 		{
 			studentService = service;
 			navigationService = nav;
-			addStudentEnabled = true;
 			this.student = student;
 		}
 	}

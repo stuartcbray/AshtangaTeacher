@@ -25,13 +25,18 @@
 		<Entry Text="{Binding Password}" Placeholder="Password" IsPassword="true" Grid.Row="3" HorizontalOptions="Fill" />
 		<Entry Text="{Binding PasswordDupe}" Placeholder="Re-enter Password" IsPassword="true" Grid.Row="4" HorizontalOptions="Fill" />
 		<Entry Text="{Binding ShalaName}" Placeholder="Shala Name" Grid.Row="5" HorizontalOptions="Fill" />
+		<Label Text="{Binding ErrorMessage}" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="6" />
 
-	 	<StackLayout Orientation="Horizontal" Grid.Row="6">
-	 		<Button Text="Sign Up" Command="{Binding SignUpCommand}" />
+		<ActivityIndicator Grid.Row="7" IsVisible="{Binding IsLoading}"
+	       IsRunning="true"
+	       Color="Black"
+	       VerticalOptions="Start"
+	       HorizontalOptions="CenterAndExpand" />
+
+	 	<StackLayout Orientation="Horizontal" Grid.Row="7" VerticalOptions="End">
+	 		<Button Text="Sign Up" Command="{Binding SignUpCommand}"  IsEnabled="{Binding IsReady}"/>
 			<Button Text="Cancel" Command="{Binding CancelCommand}" />
 		</StackLayout>
-
-	 	<Label Text="{Binding ErrorMessage}" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="7" />
 
 	</Grid>
 </ContentPage>

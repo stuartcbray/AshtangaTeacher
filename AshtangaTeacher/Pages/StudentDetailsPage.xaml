@@ -42,6 +42,7 @@
             <Button Text="Progress Notes"
                     Grid.Column="1"
                     Command="{Binding ShowProgressNotesCommand}"
+                    IsEnabled="{Binding IsReady}"
                     HorizontalOptions="End"
                     VerticalOptions="Center" />
         </Grid>
@@ -59,10 +60,16 @@
 
         <Label Text="{Binding ErrorMessage}" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="4" />
 
-        <StackLayout Grid.Row="5">
-        	<Button Text="Save"
+        <ActivityIndicator Grid.Row="5" IsVisible="{Binding IsSaving}"
+	       IsRunning="true"
+	       Color="Black"
+	       VerticalOptions="Start"
+	       HorizontalOptions="CenterAndExpand" />
+
+        <StackLayout Grid.Row="5" Orientation="Horizontal" VerticalOptions="End">
+        	<Button Text="Save" IsEnabled="{Binding IsReady}"
 			Command="{Binding SaveStudentCommand}"/>
-			<Button Text="Delete Student" 
+			<Button Text="Delete Student" IsEnabled="{Binding IsReady}"
 			Command="{Binding DeleteStudentCommand}"/>
         </StackLayout>
 

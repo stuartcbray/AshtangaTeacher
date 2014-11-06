@@ -42,7 +42,14 @@ namespace AshtangaTeacher
 			set {
 				if (Set (() => IsSaving, ref isSaving, value)) {
 					SaveProgressNoteCommand.RaiseCanExecuteChanged ();
+					RaisePropertyChanged ("IsReady");
 				}
+			}
+		}
+
+		public bool IsReady {
+			get {
+				return !isSaving;
 			}
 		}
 
@@ -70,7 +77,11 @@ namespace AshtangaTeacher
 								imageSource = ImageSource.FromStream(() => mediaFile.Source);
 
 								var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+
+								IsSaving = true;
 								var imageUrl = await cameraService.GetThumbAsync(imageSource, Model.StudentId);
+								IsSaving = false;
+
 								Model.Image = imageUrl;
 							}
 							catch (Exception ex)
@@ -87,10 +98,12 @@ namespace AshtangaTeacher
 				?? (showProgressNotesCommand = new RelayCommand (
 					async () => {
 							var nav = ServiceLocator.Current.GetInstance<INavigator> ();
-						var notes = await studentService.GetStudentProgressNotesAsync (Model); 
-						Model.ProgressNotes = new ObservableCollection<ProgressNote> (notes);
-						nav.NavigateTo (ViewModelLocator.ProgressNotesPageKey, this);
-					}));
+							IsSaving = true;
+							var notes = await studentService.GetStudentProgressNotesAsync (Model); 
+							Model.ProgressNotes = new ObservableCollection<ProgressNote> (notes);
+							IsSaving = false;
+							nav.NavigateTo (ViewModelLocator.ProgressNotesPageKey, this);
+						}));
 			}
 		}
 
@@ -99,7 +112,7 @@ namespace AshtangaTeacher
 				return addProgressNoteCommand
 				?? (addProgressNoteCommand = new RelayCommand (
 					() => {
-							var nav = ServiceLocator.Current.GetInstance<INavigator> ();
+						var nav = ServiceLocator.Current.GetInstance<INavigator> ();
 						nav.NavigateTo (ViewModelLocator.AddProgressNotePageKey, this);
 					}));
 			}
@@ -110,16 +123,16 @@ namespace AshtangaTeacher
 				return saveProgressNoteCommand
 				?? (saveProgressNoteCommand = new RelayCommand<string> (
 					async text => {
-						IsSaving = true;
-
 						var note = new ProgressNote { 
 							InputDate = DateTime.Now, // this will get updated when added to Parse
 							Text = text
 						};
 
 						Model.ProgressNotes.Add (note);
-
+						
+						IsSaving = true;
 						var result = await studentService.AddProgressNoteAsync (Model, note);
+						IsSaving = false;
 
 						if (!result) {
 							var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
@@ -130,8 +143,7 @@ namespace AshtangaTeacher
 								null);
 						}
 
-						IsSaving = false;
-							var nav = ServiceLocator.Current.GetInstance<INavigator> ();
+						var nav = ServiceLocator.Current.GetInstance<INavigator> ();
 						nav.GoBack ();
 					},
 					text => !string.IsNullOrEmpty (text) && !IsSaving));

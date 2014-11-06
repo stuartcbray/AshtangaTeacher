@@ -19,8 +19,14 @@
                HorizontalOptions="Center"
                Font="Large" />
 
+		<ActivityIndicator Grid.Row="1" IsVisible="{Binding IsLoading}"
+                       IsRunning="true"
+                       Color="Black"
+                       VerticalOptions="CenterAndExpand"
+                       HorizontalOptions="CenterAndExpand" />
+
         <ListView Grid.Row="1"
-                  ItemsSource="{Binding Students}"
+                  ItemsSource="{Binding Students}" IsVisible="{Binding IsReady}"
                   x:Name="StudentsList">
             <ListView.RowHeight>
                 <OnPlatform x:TypeArguments="x:Int32"

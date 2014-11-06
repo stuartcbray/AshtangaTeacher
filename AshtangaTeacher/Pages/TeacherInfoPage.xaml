@@ -17,7 +17,7 @@
 	        
 	    <Label Text="Add Teacher Information" Font="22" HorizontalOptions="Start" />
 	    <Entry Text="{Binding ShalaName}" Placeholder="Shala Name" Grid.Row="1" HorizontalOptions="Fill" />
-	    <Button Text="Save" Grid.Row="2" Command="{Binding SaveShalaCommand}" />
+	    <Button Text="Save" Grid.Row="2" Command="{Binding SaveShalaCommand}" IsEnabled="{Binding IsReady}" />
 		<Label Text="{Binding ErrorMessage}" Grid.Row="3" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" />
 
 	</Grid>

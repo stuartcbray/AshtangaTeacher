@@ -21,14 +21,21 @@ namespace AshtangaTeacher
 
 		public IParseService ParseService { get { return parseService; } }
 
-
 		public bool IsLoading {
 			get {
 				return isLoading;
 			}
 			set {
-				Set (() => IsLoading, ref isLoading, value);
+				if (Set (() => IsLoading, ref isLoading, value)) {
+					RaisePropertyChanged ("IsReady");
+				}
 			}
+		}
+
+		public bool IsReady { 
+			get { 
+				return !isLoading; 
+			} 
 		}
 			
 		ObservableCollection<StudentViewModel> students = new ObservableCollection<StudentViewModel> ();

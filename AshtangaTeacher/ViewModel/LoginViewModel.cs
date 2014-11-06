@@ -29,7 +29,15 @@ namespace AshtangaTeacher
 				return isLoading;
 			}
 			set {
-				Set (() => IsLoading, ref isLoading, value);
+				if (Set (() => IsLoading, ref isLoading, value)) {
+					RaisePropertyChanged ("IsReady");
+				}
+			}
+		}
+
+		public bool IsReady {
+			get {
+				return !isLoading;
 			}
 		}
 
