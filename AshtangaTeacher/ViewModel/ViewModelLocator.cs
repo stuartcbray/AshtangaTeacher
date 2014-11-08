@@ -14,10 +14,24 @@ namespace AshtangaTeacher
 		public const string SignUpPageKey = "SignUpPage";
 		public const string FacebookSignInKey = "FacebookLoginPage";
 		public const string TeacherInfoPageKey = "TeacherInfoPage";
+		public const string MainTabsPageKey = "MainTabsPage";
+		public const string ProfilePageKey = "ProfilePage";
 
 		public MainViewModel Main {
 			get {
 				return ServiceLocator.Current.GetInstance<MainViewModel> ();
+			}
+		}
+
+		public ProfileViewModel Profile {
+			get {
+				return ServiceLocator.Current.GetInstance<ProfileViewModel> ();
+			}
+		}
+
+		public MainTabsViewModel MainTabs {
+			get {
+				return ServiceLocator.Current.GetInstance<MainTabsViewModel> ();
 			}
 		}
 
@@ -39,6 +53,8 @@ namespace AshtangaTeacher
 
 			// Need to register these as they take dependencies as parameters
 			SimpleIoc.Default.Register<MainViewModel> ();
+			SimpleIoc.Default.Register<MainTabsViewModel> ();
+			SimpleIoc.Default.Register<ProfileViewModel> ();
 			SimpleIoc.Default.Register<LoginViewModel> ();
 			SimpleIoc.Default.Register<SignUpViewModel> ();
 		}

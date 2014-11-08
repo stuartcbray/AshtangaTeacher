@@ -143,6 +143,13 @@
   </ItemGroup>
   <ItemGroup>
     <BundleResource Include="Resources\Default-568h%402x.png" />
+    <BundleResource Include="Resources\addstudent%402x.png" />
+    <BundleResource Include="Resources\notifications%402x.png" />
+    <BundleResource Include="Resources\options%402x.png" />
+    <BundleResource Include="Resources\profile%402x.png" />
+    <BundleResource Include="Resources\students%402x.png" />
+    <BundleResource Include="Resources\teachers%402x.png" />
+    <BundleResource Include="Resources\trash%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />

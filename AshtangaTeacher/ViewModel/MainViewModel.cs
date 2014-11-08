@@ -19,8 +19,6 @@ namespace AshtangaTeacher
 		RelayCommand addStudentCommand;
 		RelayCommand<StudentViewModel> showDetailsCommand;
 
-		public IParseService ParseService { get { return parseService; } }
-
 		public bool IsLoading {
 			get {
 				return isLoading;
@@ -71,6 +69,7 @@ namespace AshtangaTeacher
 						Students.Clear ();
 						initialFetch = false;
 						await parseService.LogOutAsync ();
+						navigationService.SetRootNavigation(App.RootNavPage);
 						navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
 					}));
 			}
@@ -114,11 +113,7 @@ namespace AshtangaTeacher
 
 		public void Init ()
 		{
-			if (parseService.ShowLogin ()) {
-				navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
-			} else if (string.IsNullOrEmpty (parseService.CurrentShalaName)) {
-				navigationService.NavigateTo (ViewModelLocator.TeacherInfoPageKey, App.Locator.SignUp);
-			} else if (!initialFetch) {
+			if (!initialFetch) {
 				initialFetch = true;
 				GetStudentsCommand.Execute (null);
 			}

@@ -121,7 +121,7 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public void Initialize(NavigationPage navigation)
+		public void SetRootNavigation(NavigationPage navigation)
 		{
 			this.navigation = navigation;
 		}
