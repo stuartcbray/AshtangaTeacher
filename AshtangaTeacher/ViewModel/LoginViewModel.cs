@@ -106,7 +106,8 @@ namespace AshtangaTeacher
 							if (!IsLoading) {
 								IsLoading = true;
 								try {
-									if (parseService.CurrentUser == null) {
+									var teacher = await parseService.GetTeacherAsync ();
+									if (teacher == null) {
 										await parseService.SignInAsync (Email, Password);
 									}	
 									navigationService.GoBack (); 

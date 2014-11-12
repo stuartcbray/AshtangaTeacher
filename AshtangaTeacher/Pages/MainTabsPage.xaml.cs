@@ -18,10 +18,10 @@ namespace AshtangaTeacher
 			this.Children.Add(new NavigationPage(new ProfilePage(App.Locator.Profile)) { Title="My Profile", Icon="profile.png" });
 		}
 
-		protected override void OnAppearing()
+		protected override async void OnAppearing()
 		{
 			base.OnAppearing ();
-			if (ViewModel.Init ()) {
+			if (await ViewModel.Init ()) {
 				ViewModel.UpdateRootNavigation (CurrentPage as NavigationPage);
 			}
 		}

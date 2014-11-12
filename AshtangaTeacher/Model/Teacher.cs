@@ -1,4 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
+using Xamarin.Forms;
+using System;
+using Microsoft.Practices.ServiceLocation;
 
 namespace AshtangaTeacher
 {
@@ -9,19 +12,43 @@ namespace AshtangaTeacher
 		string userName;
 		string email;
 		string password;
-		string imageUrl;
 
-		public string ObjectId {
-			get;
-			set;
-		}
+		bool thumbIsDirty, isDirty;
 
-		public string ImageUrl {
+		ICameraService cameraService;
+		ImageSource image;
+
+		public string TeacherId { get; set; }
+
+		public string ObjectId { get; set; }
+
+		public bool IsDirty {
 			get {
-				return imageUrl;
+				return isDirty;
 			}
 			set {
-				Set (() => ImageUrl, ref imageUrl, value);
+				Set (() => IsDirty, ref isDirty, value);
+			}
+		}
+
+		public bool ThumbIsDirty {
+			get {
+				return thumbIsDirty;
+			}
+			set {
+				Set (() => ThumbIsDirty, ref thumbIsDirty, value);
+			}
+		}
+
+		public ImageSource Image {
+			get {
+				return image;
+			}
+			set {
+				image = value;
+				ThumbIsDirty = true;
+				IsDirty = true;
+				RaisePropertyChanged ("Image");
 			}
 		}
 
@@ -30,7 +57,9 @@ namespace AshtangaTeacher
 				return name;
 			}
 			set {
-				Set (() => Name, ref name, value);
+				if (Set (() => Name, ref name, value)) {
+					IsDirty = true;
+				}
 			}
 		}
 
@@ -39,7 +68,9 @@ namespace AshtangaTeacher
 				return userName;
 			}
 			set {
-				Set (() => UserName, ref userName, value);
+				if (Set (() => UserName, ref userName, value)) {
+					IsDirty = true;
+				}
 			}
 		}
 
@@ -66,7 +97,9 @@ namespace AshtangaTeacher
 				return shalaName;
 			}
 			set {
-				Set (() => ShalaName, ref shalaName, value);
+				if (Set (() => ShalaName, ref shalaName, value)) {
+					IsDirty = true;
+				}
 			}
 		}
 	}

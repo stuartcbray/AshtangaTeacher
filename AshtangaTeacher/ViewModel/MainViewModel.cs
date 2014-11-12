@@ -13,7 +13,7 @@ namespace AshtangaTeacher
 		readonly IParseService parseService;
 		readonly INavigator navigationService;
 
-		bool isLoading, initialFetch;
+		bool isLoading;
 		RelayCommand getStudentsCommand;
 		RelayCommand logOutCommand;
 		RelayCommand addStudentCommand;
@@ -50,9 +50,10 @@ namespace AshtangaTeacher
 			get {
 				return addStudentCommand
 				?? (addStudentCommand = new RelayCommand (
-					() => {
+					async () => {
+							var teacher = await parseService.GetTeacherAsync();
 							var student = new Student { 
-								ShalaName = parseService.CurrentShalaName,
+								ShalaName = teacher.ShalaName,
 								ExpiryDate = DateTime.Now
 							};
 							var vm = new AddStudentViewModel (studentsService, navigationService, student);
@@ -66,12 +67,13 @@ namespace AshtangaTeacher
 				return logOutCommand
 				?? (logOutCommand = new RelayCommand (
 					async () => {
-						Students.Clear ();
-						initialFetch = false;
-						await parseService.LogOutAsync ();
-						navigationService.SetRootNavigation(App.RootNavPage);
-						navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
-					}));
+							Students.Clear ();
+
+							await parseService.LogOutAsync ();
+							navigationService.SetRootNavigation(App.RootNavPage);
+							App.Locator.Login.ClearFields();
+							navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
+						}));
 			}
 		}
 
@@ -83,7 +85,8 @@ namespace AshtangaTeacher
 						Students.Clear ();
 						IsLoading = true;
 						try {
-							Students = await studentsService.GetAllAsync (parseService.CurrentShalaName);
+							var teacher = await parseService.GetTeacherAsync();
+							Students = await studentsService.GetAllAsync (teacher.ShalaName);
 							IsLoading = false;
 						} catch (Exception ex) {
 							var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
@@ -108,14 +111,6 @@ namespace AshtangaTeacher
 					},
 					student => student != null));
 
-			}
-		}
-
-		public void Init ()
-		{
-			if (!initialFetch) {
-				initialFetch = true;
-				GetStudentsCommand.Execute (null);
 			}
 		}
 

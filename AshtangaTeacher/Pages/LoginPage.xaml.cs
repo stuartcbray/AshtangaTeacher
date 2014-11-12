@@ -19,12 +19,6 @@ namespace AshtangaTeacher
 			NavigationPage.SetHasNavigationBar (this, false);
 			BindingContext = vm;
 		}
-
-		protected override void OnAppearing () 
-		{
-			base.OnAppearing ();
-			ViewModel.ClearFields ();
-		}
 	}
 }
 

@@ -66,7 +66,6 @@
     <Compile Include="Pages\ProgressNotesPage.xaml.cs">
       <DependentUpon>ProgressNotesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Contracts\IEmailValidator.cs" />
     <Compile Include="Pages\FacebookLoginPage.cs" />
     <Compile Include="Contracts\INavigator.cs" />
     <Compile Include="Pages\TeacherInfoPage.xaml.cs">
@@ -81,6 +80,11 @@
       <DependentUpon>ProfilePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\ProfileViewModel.cs" />
+    <Compile Include="Pages\ShalaTeachersPage.xaml.cs">
+      <DependentUpon>ShalaTeachersPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModel\ShalaTeachersViewModel.cs" />
+    <Compile Include="Contracts\IDeviceService.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.1.2.3.6257\build\portable-win+net45+wp80+MonoAndroid10+MonoTouch10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.1.2.3.6257\build\portable-win+net45+wp80+MonoAndroid10+MonoTouch10\Xamarin.Forms.targets')" />
@@ -121,6 +125,9 @@
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
     <EmbeddedResource Include="Pages\ProfilePage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Pages\ShalaTeachersPage.xaml">
       <Generator>MSBuild:Compile</Generator>
     </EmbeddedResource>
   </ItemGroup>

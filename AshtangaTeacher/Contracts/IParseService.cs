@@ -18,12 +18,13 @@ namespace AshtangaTeacher
 
 		Task SignInAsync (string username, string password);
 
+		Task SaveTeacherAsync (Teacher teacher);
+
 		bool ShowLogin ();
 
-		string CurrentUser { get; }
+		Task<Teacher> GetTeacherAsync ();
 
-		string CurrentShalaName { get; }
-
+		string ShalaName { get; }
 	}
 }
 

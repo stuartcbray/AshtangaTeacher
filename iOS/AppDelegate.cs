@@ -23,7 +23,7 @@ namespace AshtangaTeacher.iOS
 
 			SimpleIoc.Default.Register<IParseService, ParseService>();
 			SimpleIoc.Default.Register<IStudentsService, StudentsService>();
-			SimpleIoc.Default.Register<IEmailValidator, EmailValidator>();
+			SimpleIoc.Default.Register<IDeviceService, DeviceService>();
 			SimpleIoc.Default.Register<ICameraService, CameraService>();
 
 			window = new UIWindow (UIScreen.MainScreen.Bounds);

@@ -16,6 +16,7 @@ namespace AshtangaTeacher
 		public const string TeacherInfoPageKey = "TeacherInfoPage";
 		public const string MainTabsPageKey = "MainTabsPage";
 		public const string ProfilePageKey = "ProfilePage";
+		public const string ShalaTeachersPageKey = "ShalaTeachersPage";
 
 		public MainViewModel Main {
 			get {
@@ -47,6 +48,12 @@ namespace AshtangaTeacher
 			}
 		}
 
+		public ShalaTeachersViewModel ShalaTeachers {
+			get {
+				return ServiceLocator.Current.GetInstance<ShalaTeachersViewModel> ();
+			}
+		}
+
 		static ViewModelLocator ()
 		{
 			ServiceLocator.SetLocatorProvider (() => SimpleIoc.Default);
@@ -55,6 +62,7 @@ namespace AshtangaTeacher
 			SimpleIoc.Default.Register<MainViewModel> ();
 			SimpleIoc.Default.Register<MainTabsViewModel> ();
 			SimpleIoc.Default.Register<ProfileViewModel> ();
+			SimpleIoc.Default.Register<ShalaTeachersViewModel> ();
 			SimpleIoc.Default.Register<LoginViewModel> ();
 			SimpleIoc.Default.Register<SignUpViewModel> ();
 		}

@@ -1,23 +1,38 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Globalization;
+using Xamarin.Forms;
+using MonoTouch.Foundation;
 
 namespace AshtangaTeacher.iOS
 {
 	// Borrowed from http://msdn.microsoft.com/en-us/library/01escwtf(v=vs.110).aspx
-	public class EmailValidator : IEmailValidator
+	public class DeviceService : IDeviceService
 	{
-		bool invalid;
 
 		public bool IsValidEmail(string strIn)
 		{
-			invalid = false;
+			bool invalid = false;
 			if (String.IsNullOrEmpty(strIn))
 				return false;
 
 			// Use IdnMapping class to convert Unicode domain names. 
 			try {
-				strIn = Regex.Replace(strIn, @"(@)(.+)$", this.DomainMapper,
+				strIn = Regex.Replace(strIn, @"(@)(.+)$", 
+					(match) => 
+					{
+						// IdnMapping class with default property values.
+						IdnMapping idn = new IdnMapping();
+
+						string domainName = match.Groups[2].Value;
+						try {
+							domainName = idn.GetAscii(domainName);
+						}
+						catch (ArgumentException) {
+							invalid = true;
+						}
+						return match.Groups[1].Value + domainName;
+					},
 					RegexOptions.None, TimeSpan.FromMilliseconds(200));
 			}
 			catch (RegexMatchTimeoutException) {
@@ -39,20 +54,19 @@ namespace AshtangaTeacher.iOS
 			}
 		}
 
-		string DomainMapper(Match match)
+		public bool SaveToFile (byte[] data, string filePath)
 		{
-			// IdnMapping class with default property values.
-			IdnMapping idn = new IdnMapping();
+			var nsData = NSData.FromArray (data);
+			NSError err;
+			if (nsData.Save (filePath, false, out err)) {
+				Console.WriteLine ("Saved file " + filePath);
+				return true;
+			}
 
-			string domainName = match.Groups[2].Value;
-			try {
-				domainName = idn.GetAscii(domainName);
-			}
-			catch (ArgumentException) {
-				invalid = true;
-			}
-			return match.Groups[1].Value + domainName;
+			Console.WriteLine ("NOT saved as " + filePath + " because" + err.LocalizedDescription);
+			return false;
 		}
+
 	}
 }
 

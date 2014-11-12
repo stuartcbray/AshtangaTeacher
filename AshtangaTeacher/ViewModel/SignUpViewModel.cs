@@ -23,7 +23,7 @@ namespace AshtangaTeacher
 
 		readonly IParseService parseService;
 		readonly INavigator navigationService;
-		readonly IEmailValidator regExUtils;
+		readonly IDeviceService deviceService;
 
 		public IParseService ParseService { get { return parseService; } }
 
@@ -163,7 +163,7 @@ namespace AshtangaTeacher
 								return;
 							}
 
-							if (!regExUtils.IsValidEmail (Email)) {
+							if (!deviceService.IsValidEmail (Email)) {
 								ErrorMessage = "Invalid Email";
 								return;
 							}
@@ -187,7 +187,8 @@ namespace AshtangaTeacher
 									UserName = userName,
 									Email = email,
 									ShalaName = shalaName,
-									Password = passWord
+									Password = passWord,
+									TeacherId = Guid.NewGuid().ToString()
 								};
 
 								await parseService.SignUpAsync (teacher);
@@ -209,11 +210,11 @@ namespace AshtangaTeacher
 			ErrorMessage = UserName = Name = Password =  PasswordDupe = Email = ShalaName = "";
 		}
 
-		public SignUpViewModel (INavigator navigationService, IParseService parseService, IEmailValidator regExUtils)
+		public SignUpViewModel (INavigator navigationService, IParseService parseService, IDeviceService deviceService)
 		{
 			this.parseService = parseService;
 			this.navigationService = navigationService;
-			this.regExUtils = regExUtils;
+			this.deviceService = deviceService;
 		}
 	}
 }

@@ -56,9 +56,17 @@ namespace AshtangaTeacher.iOS
 						var name = firstName + " " + lastName;
 						user["name"] = name.Trim ();
 						user.Email = email;
-						user["imgUrl"] = string.Format("https://graph.facebook.com/{0}/picture", id);
+						user["facebookImageUrl"] = string.Format("https://graph.facebook.com/{0}/picture", id);
+						user["teacherId"] = Guid.NewGuid().ToString();
 
-						await user.SaveAsync ();
+						try {
+							await user.SaveAsync ();
+						}
+						catch (Exception ex) {
+							await user.DeleteAsync ();
+							ParseUser.LogOut ();
+							App.Locator.Login.ErrorMessage = ex.Message;
+						}
 					} 
 
 					App.Locator.Login.FacebookLoginSuccessCommand.Execute (null); 

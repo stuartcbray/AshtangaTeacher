@@ -3,12 +3,19 @@ using System.Threading.Tasks;
 using Xamarin.Forms;
 using System.Collections.Generic;
 using System.Linq;
+using Xamarin.Forms.Platform.iOS;
+using MonoTouch.Foundation;
+using System;
+using System.Runtime.InteropServices;
+using System.Net.Http;
+using System.IO;
+using Microsoft.Practices.ServiceLocation;
 
 namespace AshtangaTeacher.iOS
 {
 	public class ParseService : IParseService
 	{
-		public string CurrentUser { 
+		public string CurrentUserName { 
 			get {
 				if (ParseUser.CurrentUser != null)
 					return ParseUser.CurrentUser.Username;
@@ -22,13 +29,64 @@ namespace AshtangaTeacher.iOS
 			await ParseUser.CurrentUser.SaveAsync ();
 		}
 
-		public string CurrentShalaName {
+		public string ShalaName {
 			get {
 				if (ParseUser.CurrentUser != null && ParseUser.CurrentUser.ContainsKey("shalaName")) {
 					return ParseUser.CurrentUser.Get<string> ("shalaName");
 				}
 				return null;
 			}
+		}
+
+		Teacher currentTeacher;
+		public async Task<Teacher> GetTeacherAsync() 
+		{
+
+			if (ParseUser.CurrentUser != null) {
+				if (currentTeacher == null) {
+					currentTeacher = new Teacher {
+						ShalaName = ParseUser.CurrentUser.Get<string> ("shalaName"),
+						Name = ParseUser.CurrentUser.Get<string> ("name"),
+						TeacherId = ParseUser.CurrentUser.Get<string> ("teacherId"),
+						Email = ParseUser.CurrentUser.Email,
+						UserName = ParseUser.CurrentUser.Username,
+						ObjectId = ParseUser.CurrentUser.ObjectId
+					};
+
+					// Try the local cache first
+					var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+					var imgPath = cameraService.GetImagePath (currentTeacher.TeacherId);
+
+					bool fetchImage = true;
+					if (File.Exists (imgPath)) {
+						var dt = File.GetLastWriteTimeUtc (imgPath);
+						if (ParseUser.CurrentUser.UpdatedAt != null && ParseUser.CurrentUser.UpdatedAt < dt) {
+							currentTeacher.Image = ImageSource.FromFile (imgPath);
+							fetchImage = false;
+						} 
+					}
+
+					if (fetchImage) {
+
+						byte[] imageData = null;
+						if (ParseUser.CurrentUser.ContainsKey ("image")) {
+							var parseImg = ParseUser.CurrentUser.Get<ParseFile> ("image");
+							imageData = await new HttpClient ().GetByteArrayAsync (parseImg.Url);
+						} else if (ParseUser.CurrentUser.ContainsKey ("facebookImageUrl")) {
+							var url = ParseUser.CurrentUser.Get<string> ("facebookImageUrl");
+							imageData = await new HttpClient ().GetByteArrayAsync (url);
+						}
+
+						if (imageData != null) {
+							currentTeacher.Image = ImageSource.FromStream (() => new MemoryStream (imageData));
+
+							var deviceService = ServiceLocator.Current.GetInstance<IDeviceService> ();
+							deviceService.SaveToFile (imageData, imgPath);
+						}
+					}
+				}
+			}
+			return currentTeacher;
 		}
 
 		public async Task<bool> ShalaNameExists (string name)
@@ -49,6 +107,7 @@ namespace AshtangaTeacher.iOS
 					
 			user ["shalaName"] = teacher.ShalaName;
 			user ["name"] = teacher.Name;
+			user ["teacherId"] = teacher.TeacherId;
 
 			await user.SignUpAsync ();
 		}
@@ -64,8 +123,46 @@ namespace AshtangaTeacher.iOS
 			return ParseUser.CurrentUser == null;
 		}
 
+		public async Task SaveTeacherAsync (Teacher teacher)
+		{
+			ParseUser.CurrentUser ["shalaName"] = teacher.ShalaName;
+			ParseUser.CurrentUser ["name"] = teacher.Name;
+			ParseUser.CurrentUser ["teacherId"] = teacher.TeacherId;
+			ParseUser.CurrentUser.Email = teacher.Email;
+			ParseUser.CurrentUser.Username = teacher.UserName;
+
+			if (teacher.ThumbIsDirty) {
+				await SaveTeacherThumb (teacher);
+			}
+			await ParseUser.CurrentUser.SaveAsync ();
+			teacher.IsDirty = false;
+		}
+
+		async Task SaveTeacherThumb(Teacher teacher)
+		{
+			var renderer = new StreamImagesourceHandler ();
+			var image = await renderer.LoadImageAsync (teacher.Image);
+			using (NSData pngData = image.AsPNG()) {
+
+				Byte[] data = new Byte[pngData.Length];
+				Marshal.Copy(pngData.Bytes, data, 0, Convert.ToInt32(pngData.Length));
+
+				ParseFile parseImg = new ParseFile(teacher.TeacherId + ".PNG", data);
+				await parseImg.SaveAsync ();
+
+				ParseUser.CurrentUser ["image"] = parseImg;
+				await ParseUser.CurrentUser.SaveAsync ();
+
+				var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+				var deviceService = ServiceLocator.Current.GetInstance<IDeviceService> ();
+				deviceService.SaveToFile (data, cameraService.GetImagePath(teacher.TeacherId));
+			}
+			teacher.ThumbIsDirty = false;
+		}
+
 		public async Task LogOutAsync ()
 		{
+			currentTeacher = null;
 			await Task.Run (() => ParseUser.LogOut ());
 		}
 

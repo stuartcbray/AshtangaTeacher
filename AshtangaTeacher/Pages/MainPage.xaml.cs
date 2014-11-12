@@ -23,12 +23,6 @@ namespace AshtangaTeacher
 
 			StudentsList.ItemTapped += (s, e) => ViewModel.ShowDetailsCommand.Execute (e.Item);
 		}
-
-		protected override void OnAppearing()
-		{
-			base.OnAppearing ();
-			ViewModel.Init ();
-		}
 	}
 }
 
