@@ -1,65 +1,50 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="AshtangaTeacher.ProfilePage">
 	<ContentPage.Padding>
-	<OnPlatform x:TypeArguments="Thickness" iOS="0, 20, 0, 0"/>
+		<OnPlatform x:TypeArguments="Thickness" iOS="0, 20, 0, 0" />
 	</ContentPage.Padding>
-
 	<Grid Padding="20,0,20,0">
 		<Grid.RowDefinitions>
-		    <RowDefinition Height="Auto" />
-		    <RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
-		    <RowDefinition Height="Auto" />
 			<RowDefinition Height="Auto" />
-		    <RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
 		</Grid.RowDefinitions>
-
 		<Grid.ColumnDefinitions>
-		    <ColumnDefinition Width="*" />
+			<ColumnDefinition Width="*" />
 		</Grid.ColumnDefinitions>
-		    
-		<Grid BackgroundColor="Blue" HorizontalOptions="Start" WidthRequest="100" HeightRequest="100" >
+
+		<Grid>
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="100" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
-		        <RowDefinition Height="100" />
-		    </Grid.RowDefinitions>
-		    <Grid.ColumnDefinitions>
-		        <ColumnDefinition Width="100" />
-		    </Grid.ColumnDefinitions>
-			<Button WidthRequest="100" HeightRequest="100" BackgroundColor="Transparent" Command="{Binding AddTeacherPhotoCommand}" Text="Photo" TextColor="White" VerticalOptions="Center" HorizontalOptions="Center" />
-		    <Image Source="{Binding Model.Image}" BackgroundColor="White" IsVisible="{Binding IsPhotoVisible}"
-		           VerticalOptions="Start"
-		           HorizontalOptions="StartAndExpand">
-		        <Image.GestureRecognizers>
-			        <TapGestureRecognizer Command="{Binding AddTeacherPhotoCommand}"/>
-			    </Image.GestureRecognizers>
-		        <Image.WidthRequest>
-		            <OnPlatform x:TypeArguments="x:Double"
-		                        iOS="100"
-		                        Android="100" />
-		        </Image.WidthRequest>
-		        
-		        <Image.HeightRequest>
-		            <OnPlatform x:TypeArguments="x:Double"
-		                        iOS="100"
-		                        Android="100" />
-		        </Image.HeightRequest>
-		    </Image>
+				<RowDefinition Height="100" />
+			</Grid.RowDefinitions>
+			<Button WidthRequest="100" HeightRequest="100" BackgroundColor="Blue" Command="{Binding AddTeacherPhotoCommand}" Text="Photo" TextColor="White" VerticalOptions="Center" HorizontalOptions="Center" />
+			<Image Source="{Binding Model.Image}" BackgroundColor="White" IsVisible="{Binding IsPhotoVisible}" VerticalOptions="Start" HorizontalOptions="StartAndExpand">
+				<Image.GestureRecognizers>
+					<TapGestureRecognizer Command="{Binding AddTeacherPhotoCommand}" />
+				</Image.GestureRecognizers>
+				<Image.WidthRequest>
+					<OnPlatform x:TypeArguments="x:Double" iOS="100" Android="100" />
+				</Image.WidthRequest>
+				<Image.HeightRequest>
+					<OnPlatform x:TypeArguments="x:Double" iOS="100" Android="100" />
+				</Image.HeightRequest>
+			</Image>
+			<Button Text="Shala Teachers" Grid.Column="1" Command="{Binding ShalaTeachersCommand}" IsEnabled="{Binding IsReady}" HorizontalOptions="Center" VerticalOptions="Center" />
 		</Grid>
 
 		<Entry Text="{Binding Model.Name}" Grid.Row="1" />
-		<Entry Text="{Binding Model.ShalaName}" Grid.Row="2"/>
-
+		<Entry Text="{Binding Model.ShalaName}" Grid.Row="2" />
 		<Label Text="{Binding ErrorMessage}" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="3" />
-
-		<ActivityIndicator Grid.Row="4" IsVisible="{Binding IsLoading}"
-		   IsRunning="true"
-		   Color="Black"
-		   VerticalOptions="Start"
-		   HorizontalOptions="CenterAndExpand" />
-
+		<ActivityIndicator Grid.Row="4" IsVisible="{Binding IsLoading}" IsRunning="true" Color="Black" VerticalOptions="Start" HorizontalOptions="CenterAndExpand" />
 		<StackLayout Grid.Row="5" Orientation="Horizontal" VerticalOptions="End">
-			<Button Text="Save" Command="{Binding SaveTeacherCommand}"/>
+			<Button Text="Save" Command="{Binding SaveTeacherCommand}" />
 		</StackLayout>
-
 	</Grid>
 </ContentPage>

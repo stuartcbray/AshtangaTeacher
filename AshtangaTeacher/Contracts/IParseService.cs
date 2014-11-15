@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace AshtangaTeacher
 {
@@ -19,6 +20,10 @@ namespace AshtangaTeacher
 		Task SignInAsync (string username, string password);
 
 		Task SaveTeacherAsync (Teacher teacher);
+
+		Task<ObservableCollection<Teacher>> GetTeachers ();
+
+		Task<ObservableCollection<Teacher>> GetPendingTeachers ();
 
 		bool ShowLogin ();
 

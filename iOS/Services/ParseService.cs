@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Net.Http;
 using System.IO;
 using Microsoft.Practices.ServiceLocation;
+using System.Collections.ObjectModel;
 
 namespace AshtangaTeacher.iOS
 {
@@ -60,7 +61,7 @@ namespace AshtangaTeacher.iOS
 					bool fetchImage = true;
 					if (File.Exists (imgPath)) {
 						var dt = File.GetLastWriteTimeUtc (imgPath);
-						if (ParseUser.CurrentUser.UpdatedAt != null && ParseUser.CurrentUser.UpdatedAt < dt) {
+						if (ParseUser.CurrentUser.UpdatedAt != null && ParseUser.CurrentUser.UpdatedAt <= dt) {
 							currentTeacher.Image = ImageSource.FromFile (imgPath);
 							fetchImage = false;
 						} 
@@ -148,10 +149,14 @@ namespace AshtangaTeacher.iOS
 				Marshal.Copy(pngData.Bytes, data, 0, Convert.ToInt32(pngData.Length));
 
 				ParseFile parseImg = new ParseFile(teacher.TeacherId + ".PNG", data);
-				await parseImg.SaveAsync ();
 
-				ParseUser.CurrentUser ["image"] = parseImg;
-				await ParseUser.CurrentUser.SaveAsync ();
+				try {
+					await parseImg.SaveAsync ();
+					ParseUser.CurrentUser ["image"] = parseImg;
+					await ParseUser.CurrentUser.SaveAsync ();
+				} catch {
+					// https://developers.facebook.com/bugs/789062014466095/
+				}
 
 				var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
 				var deviceService = ServiceLocator.Current.GetInstance<IDeviceService> ();
@@ -169,6 +174,67 @@ namespace AshtangaTeacher.iOS
 		public async Task SignInAsync (string username, string password)
 		{
 			await ParseUser.LogInAsync (username, password);
+		}
+
+		public async Task<ObservableCollection<Teacher>> GetTeachers ()
+		{
+			var query = ParseUser.Query.Where (teacher => teacher.Get<string> ("shalaName") == currentTeacher.ShalaName);
+			IEnumerable<ParseUser> results = await query.FindAsync();
+
+			var teachers = new ObservableCollection<Teacher> ();
+
+			foreach (var t in results) {
+
+				var teacher = new Teacher {
+					ShalaName = t.Get<string> ("shalaName"),
+					Name = t.Get<string> ("name"),
+					TeacherId = t.Get<string> ("teacherId"),
+					Email = t.Email,
+					UserName = t.Username,
+					ObjectId = t.ObjectId
+				};
+
+				// Try the local cache first
+				var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+				var imgPath = cameraService.GetImagePath (teacher.TeacherId);
+
+				bool fetchImage = true;
+				if (File.Exists (imgPath)) {
+					var dt = File.GetLastWriteTimeUtc (imgPath);
+					if (t.UpdatedAt != null && t.UpdatedAt <= dt) {
+						teacher.Image = ImageSource.FromFile (imgPath);
+						fetchImage = false;
+					} 
+				}
+
+				if (fetchImage) {
+
+					byte[] imageData = null;
+					if (t.ContainsKey ("image")) {
+						var parseImg = t.Get<ParseFile> ("image");
+						imageData = await new HttpClient ().GetByteArrayAsync (parseImg.Url);
+					} else if (t.ContainsKey ("facebookImageUrl")) {
+						var url = t.Get<string> ("facebookImageUrl");
+						imageData = await new HttpClient ().GetByteArrayAsync (url);
+					}
+
+					if (imageData != null) {
+						teacher.Image = ImageSource.FromStream (() => new MemoryStream (imageData));
+
+						var deviceService = ServiceLocator.Current.GetInstance<IDeviceService> ();
+						deviceService.SaveToFile (imageData, imgPath);
+					}
+				}
+
+				teachers.Add (teacher);
+			}
+
+			return teachers;
+		}
+
+		public async Task<ObservableCollection<Teacher>> GetPendingTeachers ()
+		{
+			return null;
 		}
 	}
 }

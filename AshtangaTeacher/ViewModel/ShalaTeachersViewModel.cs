@@ -1,5 +1,7 @@
 ﻿using System;
 using GalaSoft.MvvmLight;
+using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace AshtangaTeacher
 {
@@ -25,6 +27,34 @@ namespace AshtangaTeacher
 			get {
 				return !isLoading;
 			}
+		}
+
+		ObservableCollection<Teacher> shalaTeachers = new ObservableCollection<Teacher> ();
+		public ObservableCollection<Teacher>  ShalaTeachers {
+			get {
+				return shalaTeachers;
+			}
+			set {
+				Set (() => ShalaTeachers, ref shalaTeachers, value);
+			}
+		}
+
+		ObservableCollection<Teacher> pendingTeachers = new ObservableCollection<Teacher> ();
+		public ObservableCollection<Teacher>  PendingTeachers {
+			get {
+				return pendingTeachers;
+			}
+			set {
+				Set (() => PendingTeachers, ref pendingTeachers, value);
+			}
+		}
+
+		public async Task Init()
+		{
+			IsLoading = true;
+			ShalaTeachers = await parseService.GetTeachers ();
+			PendingTeachers = await parseService.GetPendingTeachers ();
+			IsLoading = false;
 		}
 
 		public ShalaTeachersViewModel (

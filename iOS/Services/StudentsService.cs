@@ -43,7 +43,7 @@ namespace AshtangaTeacher.iOS
 				bool fetchImage = true;
 				if (File.Exists (imgPath)) {
 					var dt = File.GetLastWriteTimeUtc (imgPath);
-					if (s.UpdatedAt != null && s.UpdatedAt < dt) {
+					if (s.UpdatedAt != null && s.UpdatedAt <= dt) {
 						student.Model.Image = ImageSource.FromFile (imgPath);
 						fetchImage = false;
 					} 
