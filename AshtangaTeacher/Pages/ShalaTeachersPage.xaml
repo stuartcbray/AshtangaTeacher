@@ -25,7 +25,7 @@
 
 		    <Label Text="Shala Teachers" Font="18" VerticalOptions="Center" HorizontalOptions="Center"  />
 
-	  		<ListView ItemsSource="{Binding ShalaTeachers}" Grid.Row="1">
+	  		<ListView ItemsSource="{Binding ShalaTeachers}" Grid.Row="1" x:Name="TeachersList">
 	            <ListView.RowHeight>
 	                <OnPlatform x:TypeArguments="x:Int32" iOS="60" Android="60" />
 	            </ListView.RowHeight>
@@ -87,7 +87,7 @@
 
 		    <Label Text="Pending Teachers" Font="18" VerticalOptions="Center" HorizontalOptions="Center"  />
 		   
-	  		<ListView ItemsSource="{Binding PendingTeachers}" Grid.Row="1">
+	  		<ListView ItemsSource="{Binding PendingTeachers}" Grid.Row="1" x:Name="PendingTeachersList">
 	            <ListView.RowHeight>
 	                <OnPlatform x:TypeArguments="x:Int32" iOS="60" Android="60" />
 	            </ListView.RowHeight>

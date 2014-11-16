@@ -20,7 +20,7 @@ namespace AshtangaTeacher.iOS
 	{
 		public async Task<ObservableCollection<StudentViewModel>> GetAllAsync(string shalaName)
 		{
-			var query = ParseObject.GetQuery ("Student").Where (student => student.Get<string> ("shalaName") == shalaName);
+			var query = ParseObject.GetQuery ("Student").Where (student => student.Get<string> ("shalaNameLC") == shalaName.ToLower ());
 			IEnumerable<ParseObject> results = await query.FindAsync();
 
 			// Consider returning ObservableCollection instead
@@ -98,6 +98,7 @@ namespace AshtangaTeacher.iOS
 				studentObj ["name"] = student.Name;
 				studentObj ["email"] = student.Email;
 				studentObj ["shalaName"] = student.ShalaName;
+				studentObj ["shalaNameLC"] = student.ShalaName.ToLower ();
 				studentObj ["studentId"] = student.StudentId;
 				studentObj ["expiryDate"] = student.ExpiryDate.Ticks;
 				await studentObj.SaveAsync();
@@ -139,6 +140,7 @@ namespace AshtangaTeacher.iOS
 			studentObj ["name"] = student.Name;
 			studentObj ["email"] = student.Email;
 			studentObj ["shalaName"] = student.ShalaName;
+			studentObj ["shalaNameLC"] = student.ShalaName.ToLower ();
 			studentObj ["studentId"] = student.StudentId;
 			studentObj ["expiryDate"] = student.ExpiryDate.Ticks;
 

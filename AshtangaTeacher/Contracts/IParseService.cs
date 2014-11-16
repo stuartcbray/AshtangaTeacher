@@ -13,6 +13,10 @@ namespace AshtangaTeacher
 
 		Task<bool> ShalaNameExists (string name);
 
+		Task AcceptTeacher (Teacher teacher);
+
+		Task IgnoreTeacher (Teacher teacher);
+
 		Task LogOutAsync ();
 
 		Task UpdateUserPropertyAsync (string name, string value);

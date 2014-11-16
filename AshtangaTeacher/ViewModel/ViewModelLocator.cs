@@ -17,6 +17,7 @@ namespace AshtangaTeacher
 		public const string MainTabsPageKey = "MainTabsPage";
 		public const string ProfilePageKey = "ProfilePage";
 		public const string ShalaTeachersPageKey = "ShalaTeachersPage";
+		public const string TeacherProfilePageKey = "TeacherProfilePage";
 
 		public MainViewModel Main {
 			get {

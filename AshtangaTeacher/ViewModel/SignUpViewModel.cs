@@ -132,6 +132,7 @@ namespace AshtangaTeacher
 							}
 
 							await parseService.UpdateUserPropertyAsync("shalaName", ShalaName);
+							await parseService.UpdateUserPropertyAsync("shalaNameLC", ShalaName.ToLower());
 
 							navigationService.GoBack ();
 						}));

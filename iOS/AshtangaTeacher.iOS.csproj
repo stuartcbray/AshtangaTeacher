@@ -45,12 +45,12 @@
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchDebug>true</MtouchDebug>
     <CodesignKey>iPhone Developer: Stuart Bray (45RQ67DJ2G)</CodesignKey>
-    <CodesignProvision>B54EDE43-AB74-415C-A4D2-9CEE1B6BC3F9</CodesignProvision>
     <IpaPackageName>
     </IpaPackageName>
     <MtouchI18n>
     </MtouchI18n>
     <MtouchArch>ARMv7</MtouchArch>
+    <BuildIpa>true</BuildIpa>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
     <DebugType>full</DebugType>
@@ -150,6 +150,11 @@
     <BundleResource Include="Resources\students%402x.png" />
     <BundleResource Include="Resources\teachers%402x.png" />
     <BundleResource Include="Resources\trash%402x.png" />
+    <BundleResource Include="Resources\Default.png" />
+    <BundleResource Include="Resources\Default%402x.png" />
+    <BundleResource Include="Resources\Icon57.png" />
+    <BundleResource Include="Resources\Icon114.png" />
+    <BundleResource Include="Resources\Icon120.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />
