@@ -2,6 +2,7 @@
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
+using Microsoft.Practices.ServiceLocation;
 
 namespace AshtangaTeacher
 {
@@ -120,11 +121,18 @@ namespace AshtangaTeacher
 
 							var exists = await parseService.ShalaNameExists(ShalaName);
 							if (exists) {
-								ErrorMessage = "Shala name " + ShalaName + " is taken.";
-								return;
+								var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
+								bool joinShala = await dialog.ShowMessage ("Shala already exists. Would you like to request to join as a Teacher?", 
+									"Shala Exists", "Yes", "No", null);
+								if (!joinShala) 
+								{
+									ErrorMessage = "Please enter a different Shala Name.";
+									return;
+								}
 							}
 
 							await parseService.UpdateUserPropertyAsync("shalaName", ShalaName);
+
 							navigationService.GoBack ();
 						}));
 			}
@@ -175,10 +183,17 @@ namespace AshtangaTeacher
 
 							IsLoading = true;
 							try {
-								var exists = await parseService.ShalaNameExists(ShalaName);
-								if (exists) {
-									ErrorMessage = "Shala name " + ShalaName + " is taken.";
-									return;
+
+								var shalaExists = await parseService.ShalaNameExists(ShalaName);
+								if (shalaExists) {
+									var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
+									bool joinShala = await dialog.ShowMessage ("Shala already exists. Would you like to request to join as a Teacher?", 
+										"Shala Exists", "Yes", "No", null);
+									if (!joinShala) {
+										ShalaName = "";
+										ErrorMessage = "Please enter a new Shala Name";
+										return;
+									}
 								}
 
 								var teacher = new Teacher 
@@ -191,7 +206,7 @@ namespace AshtangaTeacher
 									TeacherId = Guid.NewGuid().ToString()
 								};
 
-								await parseService.SignUpAsync (teacher);
+								await parseService.SignUpAsync (teacher, shalaExists);
 								navigationService.PopToRoot ();
 							}
 							catch (Exception e) {

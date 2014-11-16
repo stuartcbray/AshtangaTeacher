@@ -97,7 +97,7 @@ namespace AshtangaTeacher.iOS
 			return results.Any ();
 		}
 
-		public async Task SignUpAsync (Teacher teacher)
+		public async Task SignUpAsync (Teacher teacher, bool shalaExists)
 		{
 			var user = new ParseUser () {
 				// username is the same as Email
@@ -109,8 +109,32 @@ namespace AshtangaTeacher.iOS
 			user ["shalaName"] = teacher.ShalaName;
 			user ["name"] = teacher.Name;
 			user ["teacherId"] = teacher.TeacherId;
+			user ["role"] = (long) teacher.Role;
 
 			await user.SignUpAsync ();
+
+			if (!shalaExists) {
+				// Initialize User Roles 
+				var adminRole = await ParseRole.Query.Where (x => x.Name == "Administrator").FirstOrDefaultAsync ();
+				if (adminRole == null) {
+					adminRole = new ParseRole ("Administrator", new ParseACL { PublicReadAccess = true, PublicWriteAccess = true });
+				}
+				adminRole.Users.Add (user);
+
+				await adminRole.SaveAsync ();
+
+				var modsRole = await ParseRole.Query.Where (x => x.Name == "Moderator").FirstOrDefaultAsync ();
+				if (modsRole == null) {
+					modsRole = new ParseRole ("Moderator", new ParseACL { PublicReadAccess = true, PublicWriteAccess = true });
+
+					// Establish parent-child relation so Admins get everything Moderators get
+					modsRole.Roles.Add (adminRole);
+					await modsRole.SaveAsync ();
+				}
+			} else {
+			//	var modsRole = await ParseRole.Query.Where (x => x.Name == "Moderators").FirstAsync ();
+			//	modsRole.Users.Add (user);
+			}
 		}
 
 		public void Initialize (string appId, string key, string facebookAppId)
@@ -129,6 +153,7 @@ namespace AshtangaTeacher.iOS
 			ParseUser.CurrentUser ["shalaName"] = teacher.ShalaName;
 			ParseUser.CurrentUser ["name"] = teacher.Name;
 			ParseUser.CurrentUser ["teacherId"] = teacher.TeacherId;
+			ParseUser.CurrentUser ["role"] = (long) teacher.Role;
 			ParseUser.CurrentUser.Email = teacher.Email;
 			ParseUser.CurrentUser.Username = teacher.UserName;
 
@@ -176,12 +201,15 @@ namespace AshtangaTeacher.iOS
 			await ParseUser.LogInAsync (username, password);
 		}
 
-		public async Task<ObservableCollection<Teacher>> GetTeachers ()
+		public async Task<List<Teacher>> GetTeachers ()
 		{
 			var query = ParseUser.Query.Where (teacher => teacher.Get<string> ("shalaName") == currentTeacher.ShalaName);
 			IEnumerable<ParseUser> results = await query.FindAsync();
 
-			var teachers = new ObservableCollection<Teacher> ();
+			var adminRole = await ParseRole.Query.Where (x => x.Name == "Administrator").FirstOrDefaultAsync ();
+			var modsRole = await ParseRole.Query.Where (x => x.Name == "Moderator").FirstOrDefaultAsync ();
+
+			var teachers = new List<Teacher> ();
 
 			foreach (var t in results) {
 
@@ -193,6 +221,15 @@ namespace AshtangaTeacher.iOS
 					UserName = t.Username,
 					ObjectId = t.ObjectId
 				};
+						
+				var users = await adminRole.Users.Query.FindAsync ();
+				if (users != null && users.Any(x => x.ObjectId == t.ObjectId)) {
+					teacher.Role = TeacherRole.Administrator;
+				} else {
+					users = await modsRole.Users.Query.FindAsync ();
+					if (users != null && users.Any(x => x.ObjectId == t.ObjectId))
+						teacher.Role = TeacherRole.Moderator;
+				}
 
 				// Try the local cache first
 				var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
@@ -230,11 +267,6 @@ namespace AshtangaTeacher.iOS
 			}
 
 			return teachers;
-		}
-
-		public async Task<ObservableCollection<Teacher>> GetPendingTeachers ()
-		{
-			return null;
 		}
 	}
 }

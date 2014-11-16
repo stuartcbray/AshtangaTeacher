@@ -72,6 +72,7 @@ namespace AshtangaTeacher
 							await parseService.LogOutAsync ();
 							navigationService.SetRootNavigation(App.RootNavPage);
 							App.Locator.Login.ClearFields();
+							App.Locator.MainTabs.IsLoading = true;
 							navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
 						}));
 			}

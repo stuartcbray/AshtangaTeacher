@@ -125,6 +125,7 @@ namespace AshtangaTeacher.iOS
 
 			// Add a relation between the Student and ProgressNote
 			noteObj["parent"] = studentObj;
+			noteObj.ACL = studentObj.ACL;
 
 			// This will save both noteObj and studentObj
 			await noteObj.SaveAsync();
@@ -140,6 +141,12 @@ namespace AshtangaTeacher.iOS
 			studentObj ["shalaName"] = student.ShalaName;
 			studentObj ["studentId"] = student.StudentId;
 			studentObj ["expiryDate"] = student.ExpiryDate.Ticks;
+
+			var studentACL = new ParseACL();
+			studentACL.SetRoleWriteAccess("Moderator", true);
+			studentACL.SetRoleReadAccess("Moderator", true);
+			studentObj.ACL = studentACL;
+
 			await studentObj.SaveAsync();
 			await SaveThumb (student, studentObj);
 			
@@ -185,10 +192,15 @@ namespace AshtangaTeacher.iOS
 				Marshal.Copy(pngData.Bytes, data, 0, Convert.ToInt32(pngData.Length));
 
 				ParseFile parseImg = new ParseFile(student.StudentId + ".PNG", data);
-				await parseImg.SaveAsync ();
 
-				studentObj["image"] = parseImg;
-				await studentObj.SaveAsync ();
+				try {
+					await parseImg.SaveAsync ();
+
+					studentObj["image"] = parseImg;
+					await studentObj.SaveAsync ();
+				} catch {
+					// https://developers.facebook.com/bugs/789062014466095/
+				}
 
 				SaveThumbToDisk (pngData, student.StudentId + ".PNG");
 			}

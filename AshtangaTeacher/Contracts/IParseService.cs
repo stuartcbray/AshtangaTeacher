@@ -9,7 +9,7 @@ namespace AshtangaTeacher
 	{
 		void Initialize(string appId, string key, string facebookAppId);
 
-		Task SignUpAsync (Teacher teacher);
+		Task SignUpAsync (Teacher teacher, bool shalaExists);
 
 		Task<bool> ShalaNameExists (string name);
 
@@ -21,9 +21,7 @@ namespace AshtangaTeacher
 
 		Task SaveTeacherAsync (Teacher teacher);
 
-		Task<ObservableCollection<Teacher>> GetTeachers ();
-
-		Task<ObservableCollection<Teacher>> GetPendingTeachers ();
+		Task<List<Teacher>> GetTeachers ();
 
 		bool ShowLogin ();
 

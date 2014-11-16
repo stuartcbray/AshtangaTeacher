@@ -21,7 +21,9 @@ namespace AshtangaTeacher
 		protected override async void OnAppearing()
 		{
 			base.OnAppearing ();
-			if (await ViewModel.Init ()) {
+			await ViewModel.Init ();
+
+			if (ViewModel.IsReady) {
 				ViewModel.UpdateRootNavigation (CurrentPage as NavigationPage);
 			}
 		}

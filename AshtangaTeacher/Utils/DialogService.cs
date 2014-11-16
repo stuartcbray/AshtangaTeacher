@@ -92,7 +92,7 @@ namespace AshtangaTeacher
 			{
 				afterHideCallback(result);
 			}
-			return true;
+			return result;
 		}
 
 		public async Task ShowMessageBox(

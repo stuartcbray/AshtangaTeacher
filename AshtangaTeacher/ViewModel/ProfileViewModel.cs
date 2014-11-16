@@ -39,8 +39,11 @@ namespace AshtangaTeacher
 			get {
 				return shalaTeachersCommand
 					?? (shalaTeachersCommand = new RelayCommand (
-						() => {
-							navigationService.NavigateTo (ViewModelLocator.ShalaTeachersPageKey, App.Locator.ShalaTeachers);
+						async () => {
+							IsLoading = true;
+							var teachers = await parseService.GetTeachers ();
+							IsLoading = false;
+							navigationService.NavigateTo (ViewModelLocator.ShalaTeachersPageKey, new ShalaTeachersViewModel(teachers));
 						}));
 			}
 		}

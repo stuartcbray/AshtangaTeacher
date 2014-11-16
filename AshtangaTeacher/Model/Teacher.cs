@@ -5,6 +5,12 @@ using Microsoft.Practices.ServiceLocation;
 
 namespace AshtangaTeacher
 {
+	public enum TeacherRole {
+		Administrator,
+		Moderator,
+		None
+	};
+
 	public class Teacher : ObservableObject
 	{
 		string shalaName;
@@ -14,13 +20,22 @@ namespace AshtangaTeacher
 		string password;
 
 		bool thumbIsDirty, isDirty;
+		TeacherRole role;
 
-		ICameraService cameraService;
 		ImageSource image;
 
 		public string TeacherId { get; set; }
 
 		public string ObjectId { get; set; }
+
+		public TeacherRole Role {
+			get {
+				return role;
+			}
+			set {
+				Set (() => Role, ref role, value);
+			}
+		}
 
 		public bool IsDirty {
 			get {
@@ -101,6 +116,11 @@ namespace AshtangaTeacher
 					IsDirty = true;
 				}
 			}
+		}
+
+		public Teacher() 
+		{
+			role = TeacherRole.None;
 		}
 	}
 }
