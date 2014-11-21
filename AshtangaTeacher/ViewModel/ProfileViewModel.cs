@@ -110,7 +110,7 @@ namespace AshtangaTeacher
 
 							try
 							{
-								var mediaFile = await mediaPicker.SelectPhotoAsync(new CameraMediaStorageOptions
+								var mediaFile = await mediaPicker.TakePhotoAsync(new CameraMediaStorageOptions
 									{
 										DefaultCamera = CameraDevice.Front,
 										MaxPixelDimension = 400
