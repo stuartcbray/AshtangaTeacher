@@ -78,16 +78,13 @@
             </ListView.ItemTemplate>
         </ListView>
             
-        <StackLayout Orientation="Horizontal" Grid.Row="2">
+        <StackLayout Orientation="Horizontal" Grid.Row="2" HorizontalOptions="CenterAndExpand">
 	        <Button Text="Refresh"
 	                Command="{Binding GetStudentsCommand}"
-	                HorizontalOptions="Fill" />
+	                HorizontalOptions="Start" />
 			<Button Text="Add Student"
 	                Command="{Binding AddStudentCommand}"
-	                HorizontalOptions="Fill" />
-	        <Button Text="LogOut"
-	                Command="{Binding LogOutCommand}"
-	                HorizontalOptions="Fill" />
+	                HorizontalOptions="End" />
         </StackLayout>
 
     </Grid>

@@ -25,6 +25,7 @@ namespace AshtangaTeacher
 		RelayCommand shalaTeachersCommand;
 		RelayCommand addTeacherPhotoCommand;
 		RelayCommand saveTeacherCommand;
+		RelayCommand logOutCommand;
 
 		public Teacher Model {
 			get {
@@ -96,6 +97,23 @@ namespace AshtangaTeacher
 							IsLoading = false;
 						}, 
 						() => Model.IsDirty && IsReady));
+			}
+		}
+
+		public RelayCommand LogOutCommand {
+			get {
+				return logOutCommand
+					?? (logOutCommand = new RelayCommand (
+						async () => {
+							await parseService.LogOutAsync ();
+							navigationService.SetRootNavigation(App.RootNavPage);
+
+							// Reset view models and ensure we re-load the new Teacher 
+							App.Locator.MainTabs.IsLoading = true;
+							ViewModelLocator.Reset ();
+
+							navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
+						}));
 			}
 		}
 

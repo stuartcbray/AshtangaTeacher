@@ -19,7 +19,7 @@
 	      <ColumnDefinition Width="*" />
 	    </Grid.ColumnDefinitions>
 	        
-	    <Label Text="New Account" Font="22" VerticalOptions="End" HorizontalOptions="Center"  />
+	    <Label Text="Sign Up" TextColor="White" Font="26" VerticalOptions="End" HorizontalOptions="Center"  />
 		<Entry Text="{Binding Name}" Placeholder="Name" Grid.Row="1" HorizontalOptions="Fill" />
 		<Entry Text="{Binding Email}" Placeholder="Email Address" Grid.Row="2" HorizontalOptions="Fill" />
 		<Entry Text="{Binding Password}" Placeholder="Password" IsPassword="true" Grid.Row="3" HorizontalOptions="Fill" />

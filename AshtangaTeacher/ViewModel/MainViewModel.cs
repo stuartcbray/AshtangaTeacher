@@ -15,7 +15,6 @@ namespace AshtangaTeacher
 
 		bool isLoading;
 		RelayCommand getStudentsCommand;
-		RelayCommand logOutCommand;
 		RelayCommand addStudentCommand;
 		RelayCommand<StudentViewModel> showDetailsCommand;
 
@@ -59,25 +58,6 @@ namespace AshtangaTeacher
 							var vm = new AddStudentViewModel (studentsService, navigationService, student);
 						navigationService.NavigateTo (ViewModelLocator.AddStudentPageKey, vm);
 					}));
-			}
-		}
-
-		public RelayCommand LogOutCommand {
-			get {
-				return logOutCommand
-				?? (logOutCommand = new RelayCommand (
-					async () => {
-							Students.Clear ();
-
-							await parseService.LogOutAsync ();
-							navigationService.SetRootNavigation(App.RootNavPage);
-
-							// Reset view models and ensure we re-load the new Teacher 
-							App.Locator.MainTabs.IsLoading = true;
-							ViewModelLocator.Reset ();
-
-							navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
-						}));
 			}
 		}
 

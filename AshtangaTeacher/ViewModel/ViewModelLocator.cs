@@ -75,6 +75,7 @@ namespace AshtangaTeacher
 
 		public static void Reset ()
 		{
+			// These need to be re-instantiated with each login
 			SimpleIoc.Default.Unregister<ShalaTeachersViewModel> ();
 			SimpleIoc.Default.Unregister<LoginViewModel> ();
 			SimpleIoc.Default.Unregister<SignUpViewModel> ();
