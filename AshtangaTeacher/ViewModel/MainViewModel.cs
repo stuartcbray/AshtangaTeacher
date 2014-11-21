@@ -88,7 +88,6 @@ namespace AshtangaTeacher
 						try {
 							var teacher = await parseService.GetTeacherAsync();
 							Students = await studentsService.GetAllAsync (teacher.ShalaName);
-							IsLoading = false;
 						} catch (Exception ex) {
 							var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
 							await dialog.ShowError (ex, "Error when refreshing", "OK", null);

@@ -136,6 +136,7 @@ namespace AshtangaTeacher
 
 		public async Task InitializeTeacher ()
 		{
+			IsLoading = true;
 			Model = await parseService.GetTeacherAsync ();
 			Model.IsDirty = false;
 			IsPhotoVisible = Model.Image != null;
@@ -145,6 +146,8 @@ namespace AshtangaTeacher
 					SaveTeacherCommand.RaiseCanExecuteChanged();
 				}
 			};
+
+			IsLoading = false;
 		}
 
 		public ProfileViewModel (
@@ -155,7 +158,6 @@ namespace AshtangaTeacher
 			this.parseService = parseService;
 			this.navigationService = navigationService;
 			teacher = new Teacher ();
-			IsLoading = true;
 		}
 	}
 }
