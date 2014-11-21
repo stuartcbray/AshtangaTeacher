@@ -71,8 +71,11 @@ namespace AshtangaTeacher
 
 							await parseService.LogOutAsync ();
 							navigationService.SetRootNavigation(App.RootNavPage);
-							App.Locator.Login.ClearFields();
+
+							// Reset view models and ensure we re-load the new Teacher 
 							App.Locator.MainTabs.IsLoading = true;
+							ViewModelLocator.Reset ();
+
 							navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
 						}));
 			}

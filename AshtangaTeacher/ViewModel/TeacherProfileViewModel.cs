@@ -70,6 +70,8 @@ namespace AshtangaTeacher
 							await parseService.AddUserToRole(teacher.ObjectId, "Moderator");
 							IsLoading = false;
 
+							App.Locator.ShalaTeachers.AcceptTeacher (Model);
+
 							var navigationService = ServiceLocator.Current.GetInstance<INavigator> ();
 							navigationService.GoBack ();
 						}));

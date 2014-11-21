@@ -75,7 +75,7 @@
 	        </ListView>
 		</Grid>
 
-		<Grid Grid.Row="1">
+		<Grid Grid.Row="1" IsVisible="{Binding ShowPendingTeachers}">
 		    <Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />

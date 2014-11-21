@@ -21,49 +21,63 @@ namespace AshtangaTeacher
 
 		public MainViewModel Main {
 			get {
+				if (!SimpleIoc.Default.IsRegistered<MainViewModel> ()) {
+					SimpleIoc.Default.Register<MainViewModel> ();
+				}
 				return ServiceLocator.Current.GetInstance<MainViewModel> ();
 			}
 		}
 
 		public ProfileViewModel Profile {
 			get {
+				if (!SimpleIoc.Default.IsRegistered<ProfileViewModel> ()) {
+					SimpleIoc.Default.Register<ProfileViewModel> ();
+				}
 				return ServiceLocator.Current.GetInstance<ProfileViewModel> ();
 			}
 		}
 
 		public MainTabsViewModel MainTabs {
 			get {
+				if (!SimpleIoc.Default.IsRegistered<MainTabsViewModel> ()) {
+					SimpleIoc.Default.Register<MainTabsViewModel> ();
+				}
 				return ServiceLocator.Current.GetInstance<MainTabsViewModel> ();
 			}
 		}
 
 		public LoginViewModel Login {
 			get {
+				if (!SimpleIoc.Default.IsRegistered<LoginViewModel> ()) {
+					SimpleIoc.Default.Register<LoginViewModel> ();
+				}
 				return ServiceLocator.Current.GetInstance<LoginViewModel> ();
 			}
 		}
 
 		public SignUpViewModel SignUp {
 			get {
+				if (!SimpleIoc.Default.IsRegistered<SignUpViewModel> ()) {
+					SimpleIoc.Default.Register<SignUpViewModel> ();
+				}
 				return ServiceLocator.Current.GetInstance<SignUpViewModel> ();
 			}
 		}
 
 		public ShalaTeachersViewModel ShalaTeachers {
 			get {
+				if (!SimpleIoc.Default.IsRegistered<ShalaTeachersViewModel> ()) {
+					SimpleIoc.Default.Register<ShalaTeachersViewModel> ();
+				}
 				return ServiceLocator.Current.GetInstance<ShalaTeachersViewModel> ();
 			}
 		}
 
-		static ViewModelLocator ()
+		public static void Reset ()
 		{
-			// Need to register these as they take dependencies as parameters
-			SimpleIoc.Default.Register<MainViewModel> ();
-			SimpleIoc.Default.Register<MainTabsViewModel> ();
-			SimpleIoc.Default.Register<ProfileViewModel> ();
-			SimpleIoc.Default.Register<ShalaTeachersViewModel> ();
-			SimpleIoc.Default.Register<LoginViewModel> ();
-			SimpleIoc.Default.Register<SignUpViewModel> ();
+			SimpleIoc.Default.Unregister<ShalaTeachersViewModel> ();
+			SimpleIoc.Default.Unregister<LoginViewModel> ();
+			SimpleIoc.Default.Unregister<SignUpViewModel> ();
 		}
 	}
 }

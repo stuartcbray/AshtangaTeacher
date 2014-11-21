@@ -14,6 +14,15 @@ namespace AshtangaTeacher
 		RelayCommand<Teacher> showTeacherCommand;
 		INavigator navigationService;
 
+		bool showPendingTeachers;
+		public bool ShowPendingTeachers {
+			get {
+				return showPendingTeachers;
+			}
+			set {
+				Set (() => ShowPendingTeachers, ref showPendingTeachers, value);
+			}
+		}
 
 		readonly ObservableCollection<Teacher> shalaTeachers = new ObservableCollection<Teacher> ();
 		public ObservableCollection<Teacher> ShalaTeachers {
@@ -44,8 +53,18 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public ShalaTeachersViewModel (List<Teacher> teachers)
+		public void AcceptTeacher (Teacher teacher)
 		{
+			PendingTeachers.Remove (teacher);
+			ShalaTeachers.Add (teacher);
+			ShowPendingTeachers = PendingTeachers.Count > 0;
+		}
+
+		public void Init(List<Teacher> teachers) 
+		{
+			ShalaTeachers.Clear ();
+			PendingTeachers.Clear ();
+
 			foreach (var t in teachers) {
 				if (t.Role != TeacherRole.None)
 					ShalaTeachers.Add (t);
@@ -53,7 +72,13 @@ namespace AshtangaTeacher
 					PendingTeachers.Add (t);
 			}
 
-			navigationService = ServiceLocator.Current.GetInstance<INavigator> ();
+			ShowPendingTeachers = PendingTeachers.Count > 0;
+		}
+
+
+		public ShalaTeachersViewModel (INavigator navigationService)
+		{
+			this.navigationService = navigationService;
 		}
 	}
 }

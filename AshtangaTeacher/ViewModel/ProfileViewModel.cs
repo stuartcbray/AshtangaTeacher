@@ -43,7 +43,9 @@ namespace AshtangaTeacher
 							IsLoading = true;
 							var teachers = await parseService.GetTeachers ();
 							IsLoading = false;
-							navigationService.NavigateTo (ViewModelLocator.ShalaTeachersPageKey, new ShalaTeachersViewModel(teachers));
+							App.Locator.ShalaTeachers.Init (teachers);
+
+							navigationService.NavigateTo (ViewModelLocator.ShalaTeachersPageKey, App.Locator.ShalaTeachers);
 						}));
 			}
 		}

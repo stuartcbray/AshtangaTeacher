@@ -38,7 +38,7 @@ namespace AshtangaTeacher
 		{
 			this.parseService = parseService;
 			this.navigationService = navigationService;
-			IsLoading = true;
+			isLoading = true;
 		}
 
 		public async Task Init ()
