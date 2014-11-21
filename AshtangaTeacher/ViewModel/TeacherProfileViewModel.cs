@@ -67,7 +67,7 @@ namespace AshtangaTeacher
 					?? (acceptTeacherRequestCommand = new RelayCommand (
 						async () => {
 							IsLoading = true;
-							await parseService.AcceptTeacher (teacher);
+							await parseService.AddUserToRole(teacher.ObjectId, "Moderator");
 							IsLoading = false;
 
 							var navigationService = ServiceLocator.Current.GetInstance<INavigator> ();
@@ -81,9 +81,9 @@ namespace AshtangaTeacher
 			get {
 				return ignoreTeacherRequestCommand
 					?? (ignoreTeacherRequestCommand = new RelayCommand (
-						async () => {
+					 () => {
 							IsLoading = true;
-							await parseService.IgnoreTeacher (teacher);
+							//await parseService.IgnoreTeacher (teacher);
 							IsLoading = false;
 
 							var navigationService = ServiceLocator.Current.GetInstance<INavigator> ();

@@ -119,22 +119,31 @@ namespace AshtangaTeacher
 								return;
 							}
 
-							var exists = await parseService.ShalaNameExists(ShalaName);
-							if (exists) {
-								var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
-								bool joinShala = await dialog.ShowMessage ("Shala already exists. Would you like to request to join as a Teacher?", 
-									"Shala Exists", "Yes", "No", null);
-								if (!joinShala) 
-								{
-									ErrorMessage = "Please enter a different Shala Name.";
-									return;
+							IsLoading = true;
+							try {
+								var exists = await parseService.ShalaNameExists(ShalaName);
+								if (exists) {
+									var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
+									bool joinShala = await dialog.ShowMessage ("Shala already exists. Would you like to request to join as a Teacher?", 
+										"Shala Exists", "Yes", "No", null);
+									if (!joinShala) 
+									{
+										ErrorMessage = "Please enter a different Shala Name.";
+										return;
+									}
 								}
+
+								await parseService.UpdateUserPropertyAsync("shalaName", ShalaName);
+								await parseService.UpdateUserPropertyAsync("shalaNameLC", ShalaName.ToLower());
+
+								if (!exists) {
+									await parseService.MakeUserAdminAsync ();
+								}
+
+								navigationService.GoBack ();
+							} finally {
+								IsLoading = false;
 							}
-
-							await parseService.UpdateUserPropertyAsync("shalaName", ShalaName);
-							await parseService.UpdateUserPropertyAsync("shalaNameLC", ShalaName.ToLower());
-
-							navigationService.GoBack ();
 						}));
 			}
 		}

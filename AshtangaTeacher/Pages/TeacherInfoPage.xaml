@@ -20,5 +20,15 @@
 	    <Button Text="Save" Grid.Row="2" Command="{Binding SaveShalaCommand}" IsEnabled="{Binding IsReady}" />
 		<Label Text="{Binding ErrorMessage}" Grid.Row="3" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" />
 
+		<StackLayout Grid.Row="4" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="{Binding IsLoading}">
+			<ActivityIndicator
+		       IsRunning="true"
+		       Color="Black"
+		       VerticalOptions="Start"
+		       HorizontalOptions="CenterAndExpand" />
+			<Label Text="Saving" Opacity="0.5"/>
+		</StackLayout>
+
+
 	</Grid>
 </ContentPage>

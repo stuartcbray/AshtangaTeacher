@@ -1,21 +1,27 @@
-﻿using Parse;
-using System.Threading.Tasks;
-using Xamarin.Forms;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Xamarin.Forms.Platform.iOS;
-using MonoTouch.Foundation;
-using System;
-using System.Runtime.InteropServices;
-using System.Net.Http;
-using System.IO;
-using Microsoft.Practices.ServiceLocation;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Runtime.InteropServices;
+using System.Threading.Tasks;
+using Microsoft.Practices.ServiceLocation;
+using MonoTouch.Foundation;
+using Parse;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.iOS;
 
 namespace AshtangaTeacher.iOS
 {
 	public class ParseService : IParseService
 	{
+
+		bool rolesInitialized;
+		const string AdminRole = "Administrator";
+		const string ModeratorRole = "Moderator";
+
+
 		public string CurrentUserName { 
 			get {
 				if (ParseUser.CurrentUser != null)
@@ -27,7 +33,18 @@ namespace AshtangaTeacher.iOS
 		public async Task UpdateUserPropertyAsync(string name, string value)
 		{
 			ParseUser.CurrentUser [name] = value;
-			await ParseUser.CurrentUser.SaveAsync ();
+			try {
+				await ParseUser.CurrentUser.SaveAsync ();
+			} catch {
+				// https://developers.facebook.com/bugs/789062014466095/
+			}
+		}
+
+		public async Task MakeUserAdminAsync ()
+		{
+			var adminRole = await GetRoleAsync (AdminRole);
+			adminRole.Users.Add (ParseUser.CurrentUser);
+			await adminRole.SaveAsync ();
 		}
 
 		public string ShalaName {
@@ -54,8 +71,8 @@ namespace AshtangaTeacher.iOS
 						ObjectId = ParseUser.CurrentUser.ObjectId
 					};
 
-					var adminRole = await ParseRole.Query.Where (x => x.Name == "Administrator").FirstOrDefaultAsync ();
-					var modsRole = await ParseRole.Query.Where (x => x.Name == "Moderator").FirstOrDefaultAsync ();
+					var adminRole = await GetRoleAsync (AdminRole);
+					var modsRole = await GetRoleAsync (ModeratorRole);
 
 					var users = await adminRole.Users.Query.FindAsync ();
 					if (users != null && users.Any(x => x.ObjectId == currentTeacher.ObjectId)) {
@@ -127,33 +144,16 @@ namespace AshtangaTeacher.iOS
 			await user.SignUpAsync ();
 
 			if (!shalaExists) {
-				// Initialize User Roles 
-				var adminRole = await ParseRole.Query.Where (x => x.Name == "Administrator").FirstOrDefaultAsync ();
-				if (adminRole == null) {
-					adminRole = new ParseRole ("Administrator", new ParseACL { PublicReadAccess = true, PublicWriteAccess = true });
-				}
+				var adminRole = await GetRoleAsync(AdminRole);
 				adminRole.Users.Add (user);
-
 				await adminRole.SaveAsync ();
-
-				var modsRole = await ParseRole.Query.Where (x => x.Name == "Moderator").FirstOrDefaultAsync ();
-				if (modsRole == null) {
-					modsRole = new ParseRole ("Moderator", new ParseACL { PublicReadAccess = true, PublicWriteAccess = true });
-
-					// Establish parent-child relation so Admins get everything Moderators get
-					modsRole.Roles.Add (adminRole);
-					await modsRole.SaveAsync ();
-				}
-			} else {
-			//	var modsRole = await ParseRole.Query.Where (x => x.Name == "Moderators").FirstAsync ();
-			//	modsRole.Users.Add (user);
-			}
+			} 
 		}
 
 		public void Initialize (string appId, string key, string facebookAppId)
 		{
 			ParseClient.Initialize (appId, key);
-			ParseFacebookUtils.Initialize(facebookAppId);
+			ParseFacebookUtils.Initialize (facebookAppId);
 		}
 
 		public bool ShowLogin ()
@@ -210,19 +210,14 @@ namespace AshtangaTeacher.iOS
 			await Task.Run (() => ParseUser.LogOut ());
 		}
 
-		public async Task AcceptTeacher (Teacher teacher)
+		public async Task AddUserToRole (string objectId, string roleName)
 		{
-			var user = await ParseUser.Query.GetAsync (teacher.ObjectId);
+			var user = await ParseUser.Query.GetAsync (objectId);
 			if (user != null) {
-				var modsRole = await ParseRole.Query.Where (x => x.Name == "Moderator").FirstOrDefaultAsync ();
-				modsRole.Users.Add (user);
-				await modsRole.SaveAsync ();
+				var role = await ParseRole.Query.Where (x => x.Name == roleName).FirstOrDefaultAsync ();
+				role.Users.Add (user);
+				await role.SaveAsync ();
 			}
-		}
-
-		public async Task IgnoreTeacher (Teacher teacher)
-		{
-
 		}
 
 		public async Task SignInAsync (string username, string password)
@@ -235,8 +230,8 @@ namespace AshtangaTeacher.iOS
 			var query = ParseUser.Query.Where (teacher => teacher.Get<string> ("shalaNameLC") == currentTeacher.ShalaName.ToLower ());
 			IEnumerable<ParseUser> results = await query.FindAsync();
 
-			var adminRole = await ParseRole.Query.Where (x => x.Name == "Administrator").FirstOrDefaultAsync ();
-			var modsRole = await ParseRole.Query.Where (x => x.Name == "Moderator").FirstOrDefaultAsync ();
+			var adminRole = await GetRoleAsync (AdminRole);
+			var modsRole = await GetRoleAsync (ModeratorRole);
 
 			var teachers = new List<Teacher> ();
 
@@ -297,6 +292,28 @@ namespace AshtangaTeacher.iOS
 
 			return teachers;
 		}
+
+		public async Task InitializeRoles ()
+		{
+			if (!rolesInitialized) {
+				// If there is no Admin role, then assume they both need to be created.
+				var adminRole = await ParseRole.Query.Where (x => x.Name == AdminRole).FirstOrDefaultAsync ();
+				if (adminRole == null) {
+					adminRole = new ParseRole (AdminRole, new ParseACL { PublicReadAccess = true, PublicWriteAccess = true });
+					await adminRole.SaveAsync ();
+					var moderatorRole = new ParseRole (ModeratorRole, new ParseACL { PublicReadAccess = true, PublicWriteAccess = true });
+					moderatorRole.Roles.Add (adminRole);
+					await moderatorRole.SaveAsync ();
+				}
+				rolesInitialized = true;
+			}
+		}
+
+		async Task<ParseRole> GetRoleAsync(string roleName)
+		{
+			return await ParseRole.Query.Where (x => x.Name == roleName).FirstOrDefaultAsync ();
+		}
+
 	}
 }
 

@@ -43,8 +43,10 @@ namespace AshtangaTeacher
 
 		public async Task Init ()
 		{
+			await parseService.InitializeRoles ();
+
 			if (parseService.ShowLogin ()) {
-				navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
+ 				navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
 			} else if (string.IsNullOrEmpty (parseService.ShalaName)) {
 				navigationService.NavigateTo (ViewModelLocator.TeacherInfoPageKey, App.Locator.SignUp);
 			} else if (!IsReady) {

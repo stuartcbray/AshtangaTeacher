@@ -57,8 +57,6 @@ namespace AshtangaTeacher
 
 		static ViewModelLocator ()
 		{
-			ServiceLocator.SetLocatorProvider (() => SimpleIoc.Default);
-
 			// Need to register these as they take dependencies as parameters
 			SimpleIoc.Default.Register<MainViewModel> ();
 			SimpleIoc.Default.Register<MainTabsViewModel> ();

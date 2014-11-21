@@ -9,13 +9,15 @@ namespace AshtangaTeacher
 	{
 		void Initialize(string appId, string key, string facebookAppId);
 
+		Task InitializeRoles ();
+
 		Task SignUpAsync (Teacher teacher, bool shalaExists);
 
 		Task<bool> ShalaNameExists (string name);
 
-		Task AcceptTeacher (Teacher teacher);
+		Task AddUserToRole (string objectId, string roleName);
 
-		Task IgnoreTeacher (Teacher teacher);
+		Task MakeUserAdminAsync ();
 
 		Task LogOutAsync ();
 
