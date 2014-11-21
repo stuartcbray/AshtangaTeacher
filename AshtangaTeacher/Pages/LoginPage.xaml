@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="AshtangaTeacher.LoginPage">
+<ContentPage BackgroundImage="DefaultNoLogo.png" xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="AshtangaTeacher.LoginPage">
 	<ContentPage.Padding>
 	    <OnPlatform x:TypeArguments="Thickness" iOS="0, 20, 0, 0"/>
   	</ContentPage.Padding>
@@ -17,7 +17,7 @@
 	      <ColumnDefinition Width="*" />
 	    </Grid.ColumnDefinitions>
 	        
-	    <Label Text="{Binding ApplicationName}" Font="22" VerticalOptions="End" HorizontalOptions="Center"  />
+	    <Label Text="{Binding ApplicationName}" Font="32" TextColor="White" VerticalOptions="End" HorizontalOptions="Center"  />
 		<Entry Text="{Binding Email}" Placeholder="Email" Grid.Row="1" HorizontalOptions="Fill" />
 		<Entry Text="{Binding Password}" Placeholder="Password" IsPassword="true" Grid.Row="2" HorizontalOptions="Fill" />
 		<Button Text="Sign In" Command="{Binding SignInCommand}" IsEnabled="{Binding IsReady}" Grid.Row="3" HorizontalOptions="Fill"></Button>

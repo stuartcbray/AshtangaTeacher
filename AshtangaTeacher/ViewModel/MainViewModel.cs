@@ -124,6 +124,7 @@ namespace AshtangaTeacher
 			this.parseService = parseService;
 			this.studentsService = studentsService;
 			this.navigationService = navigationService;
+			IsLoading = true;
 		}
 	}
 }

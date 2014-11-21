@@ -155,6 +155,7 @@ namespace AshtangaTeacher
 			this.parseService = parseService;
 			this.navigationService = navigationService;
 			teacher = new Teacher ();
+			IsLoading = true;
 		}
 	}
 }

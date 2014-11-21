@@ -155,6 +155,9 @@
     <BundleResource Include="Resources\Icon57.png" />
     <BundleResource Include="Resources\Icon114.png" />
     <BundleResource Include="Resources\Icon120.png" />
+    <BundleResource Include="Resources\DefaultNoLogo-568h%402x.png" />
+    <BundleResource Include="Resources\DefaultNoLogo.png" />
+    <BundleResource Include="Resources\DefaultNoLogo%402x.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Info.plist" />

@@ -53,6 +53,8 @@ namespace AshtangaTeacher
 				await App.Locator.Profile.InitializeTeacher ();
 				App.Locator.Main.GetStudentsCommand.Execute (null);
 				IsLoading = false;
+				App.Locator.Profile.IsLoading = false;
+				App.Locator.Main.IsLoading = false;
 			}
 		}
 
