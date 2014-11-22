@@ -67,7 +67,7 @@ namespace AshtangaTeacher.iOS
 			return list;
 		}
 			
-		public async Task<IList<ProgressNote>> GetStudentProgressNotesAsync(Student student)
+		public async Task<IList<IProgressNote>> GetStudentProgressNotesAsync(Student student)
 		{
 			ParseQuery<ParseObject> query = ParseObject.GetQuery("Student");
 			ParseObject studentObj = await query.GetAsync(student.ObjectId);
@@ -78,13 +78,15 @@ namespace AshtangaTeacher.iOS
 
 			var notes = await query.FindAsync();
 
-			var list = new List<ProgressNote> ();
-			foreach (var n in notes)
-				list.Add (new ProgressNote { 
-					ObjectId = n.ObjectId,
-					InputDate = n.CreatedAt ?? DateTime.Now,
-					Text = n.Get<string>("content")
-				});
+			var list = new List<IProgressNote> ();
+			foreach (var n in notes) {
+				var note = DependencyService.Get<IProgressNote> (DependencyFetchTarget.NewInstance);
+				note.ObjectId = n.ObjectId;
+				note.InputDate = n.CreatedAt ?? DateTime.Now;
+				note.Text = n.Get<string> ("content");
+
+				list.Add (note);
+			}
 
 			return list;
 		}
@@ -114,7 +116,7 @@ namespace AshtangaTeacher.iOS
 			return false;
 		}
 
-		public async Task<bool> AddProgressNoteAsync(Student student, ProgressNote note)
+		public async Task<bool> AddProgressNoteAsync(Student student, IProgressNote note)
 		{
 			ParseQuery<ParseObject> query = ParseObject.GetQuery("Student");
 			ParseObject studentObj = await query.GetAsync(student.ObjectId);

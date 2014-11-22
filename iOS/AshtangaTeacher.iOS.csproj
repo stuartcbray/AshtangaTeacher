@@ -172,6 +172,7 @@
     <Compile Include="Renderers\FacebookLoginRenderer.cs" />
     <Compile Include="Services\CameraService.cs" />
     <Compile Include="Services\DeviceService.cs" />
+    <Compile Include="ParseModel\ProgressNote.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.1.2.3.6257\build\portable-win+net45+wp80+MonoAndroid10+MonoTouch10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.1.2.3.6257\build\portable-win+net45+wp80+MonoAndroid10+MonoTouch10\Xamarin.Forms.targets')" />
@@ -192,5 +193,6 @@
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="Renderers\" />
+    <Folder Include="ParseModel\" />
   </ItemGroup>
 </Project>

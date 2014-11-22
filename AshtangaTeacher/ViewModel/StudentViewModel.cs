@@ -100,7 +100,7 @@ namespace AshtangaTeacher
 							var nav = ServiceLocator.Current.GetInstance<INavigator> ();
 							IsSaving = true;
 							var notes = await studentService.GetStudentProgressNotesAsync (Model); 
-							Model.ProgressNotes = new ObservableCollection<ProgressNote> (notes);
+							Model.ProgressNotes = new ObservableCollection<IProgressNote> (notes);
 							IsSaving = false;
 							nav.NavigateTo (ViewModelLocator.ProgressNotesPageKey, this);
 						}));
@@ -123,10 +123,10 @@ namespace AshtangaTeacher
 				return saveProgressNoteCommand
 				?? (saveProgressNoteCommand = new RelayCommand<string> (
 					async text => {
-						var note = new ProgressNote { 
-							InputDate = DateTime.Now, // this will get updated when added to Parse
-							Text = text
-						};
+						
+						var note = DependencyService.Get<IProgressNote>(DependencyFetchTarget.NewInstance);
+						note.InputDate = DateTime.Now; // this will get updated when added to Parse
+						note.Text = text;
 
 						Model.ProgressNotes.Add (note);
 						

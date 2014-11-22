@@ -21,7 +21,7 @@ namespace AshtangaTeacher
 
 		public string StudentId { get { return studentId; } }
 
-		public ObservableCollection<ProgressNote> ProgressNotes { get; set; }
+		public ObservableCollection<IProgressNote> ProgressNotes { get; set; }
 
 		public ObservableCollection<DateTime> AttendanceRecord { get; set; }
 
@@ -101,7 +101,7 @@ namespace AshtangaTeacher
 		void Init()
 		{
 			cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
-			ProgressNotes = new ObservableCollection<ProgressNote> ();
+			ProgressNotes = new ObservableCollection<IProgressNote> ();
 			image = cameraService.GetImagePath (studentId);
 		}
 

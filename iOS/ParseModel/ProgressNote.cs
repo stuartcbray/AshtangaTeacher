@@ -1,8 +1,11 @@
 ﻿using System;
+using AshtangaTeacher.iOS;
 
-namespace AshtangaTeacher
+[assembly: Xamarin.Forms.Dependency (typeof (ProgressNote))]
+
+namespace AshtangaTeacher.iOS
 {
-	public class ProgressNote
+	public class ProgressNote : IProgressNote
 	{
 		public string ObjectId {
 			get;
