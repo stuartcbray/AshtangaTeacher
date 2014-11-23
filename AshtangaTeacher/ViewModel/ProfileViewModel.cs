@@ -15,7 +15,7 @@ namespace AshtangaTeacher
 
 		string errorMessage;
 
-		Teacher teacher;
+		ITeacher teacher;
 		readonly IParseService parseService;
 		readonly INavigator navigationService;
 
@@ -27,7 +27,7 @@ namespace AshtangaTeacher
 		RelayCommand saveTeacherCommand;
 		RelayCommand logOutCommand;
 
-		public Teacher Model {
+		public ITeacher Model {
 			get {
 				return teacher;
 			}
@@ -177,7 +177,7 @@ namespace AshtangaTeacher
 		{
 			this.parseService = parseService;
 			this.navigationService = navigationService;
-			teacher = new Teacher ();
+			teacher = DependencyService.Get<ITeacher> (DependencyFetchTarget.NewInstance);
 		}
 	}
 }

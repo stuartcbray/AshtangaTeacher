@@ -1,17 +1,14 @@
-﻿using GalaSoft.MvvmLight;
-using Xamarin.Forms;
-using System;
+﻿using System;
+using GalaSoft.MvvmLight;
 using Microsoft.Practices.ServiceLocation;
+using Xamarin.Forms;
+using AshtangaTeacher.iOS;
 
-namespace AshtangaTeacher
+[assembly: Xamarin.Forms.Dependency (typeof (Teacher))]
+
+namespace AshtangaTeacher.iOS
 {
-	public enum TeacherRole {
-		Administrator,
-		Moderator,
-		None
-	};
-
-	public class Teacher : ObservableObject
+	public class Teacher : ObservableObject, ITeacher
 	{
 		string shalaName;
 		string name;

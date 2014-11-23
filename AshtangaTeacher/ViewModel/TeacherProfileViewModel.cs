@@ -12,14 +12,14 @@ namespace AshtangaTeacher
 	{
 		bool isLoading;
 		string errorMessage;
-		Teacher teacher;
+		ITeacher teacher;
 
 		IParseService parseService;
 
 		RelayCommand acceptTeacherRequestCommand;
 		RelayCommand ignoreTeacherRequestCommand;
 
-		public Teacher Model {
+		public ITeacher Model {
 			get {
 				return teacher;
 			}
@@ -94,7 +94,7 @@ namespace AshtangaTeacher
 			}
 		}
 			
-		public TeacherProfileViewModel (Teacher teacher)
+		public TeacherProfileViewModel (ITeacher teacher)
 		{
 			this.parseService = ServiceLocator.Current.GetInstance<IParseService> ();
 			this.teacher = teacher;

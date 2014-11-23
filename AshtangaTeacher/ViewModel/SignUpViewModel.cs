@@ -3,6 +3,7 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
+using Xamarin.Forms;
 
 namespace AshtangaTeacher
 {
@@ -206,17 +207,15 @@ namespace AshtangaTeacher
 									}
 								}
 
-								var teacher = new Teacher 
-								{ 
-									Name = name,
-									UserName = userName,
-									Email = email,
-									ShalaName = shalaName,
-									Password = passWord,
-									TeacherId = Guid.NewGuid().ToString()
-								};
+								var t = DependencyService.Get<ITeacher>(DependencyFetchTarget.NewInstance);
+								t.Name = name;
+								t.UserName = userName;
+								t.Email = email;
+								t.ShalaName = shalaName;
+								t.Password = passWord;
+								t.TeacherId = Guid.NewGuid().ToString();
 
-								await parseService.SignUpAsync (teacher, shalaExists);
+								await parseService.SignUpAsync (t, shalaExists);
 								navigationService.PopToRoot ();
 							}
 							catch (Exception e) {

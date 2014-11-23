@@ -57,7 +57,7 @@ namespace AshtangaTeacher.iOS
 		}
 
 		Teacher currentTeacher;
-		public async Task<Teacher> GetTeacherAsync() 
+		public async Task<ITeacher> GetTeacherAsync() 
 		{
 
 			if (ParseUser.CurrentUser != null) {
@@ -126,7 +126,7 @@ namespace AshtangaTeacher.iOS
 			return results.Any ();
 		}
 
-		public async Task SignUpAsync (Teacher teacher, bool shalaExists)
+		public async Task SignUpAsync (ITeacher teacher, bool shalaExists)
 		{
 			var user = new ParseUser () {
 				// username is the same as Email
@@ -161,7 +161,7 @@ namespace AshtangaTeacher.iOS
 			return ParseUser.CurrentUser == null;
 		}
 
-		public async Task SaveTeacherAsync (Teacher teacher)
+		public async Task SaveTeacherAsync (ITeacher teacher)
 		{
 			ParseUser.CurrentUser ["shalaName"] = teacher.ShalaName;
 			ParseUser.CurrentUser ["shalaNameLC"] = teacher.ShalaName.ToLower ();
@@ -178,7 +178,7 @@ namespace AshtangaTeacher.iOS
 			teacher.IsDirty = false;
 		}
 
-		async Task SaveTeacherThumb(Teacher teacher)
+		async Task SaveTeacherThumb(ITeacher teacher)
 		{
 			var renderer = new StreamImagesourceHandler ();
 			var image = await renderer.LoadImageAsync (teacher.Image);
@@ -225,7 +225,7 @@ namespace AshtangaTeacher.iOS
 			await ParseUser.LogInAsync (username, password);
 		}
 
-		public async Task<List<Teacher>> GetTeachers ()
+		public async Task<List<ITeacher>> GetTeachers ()
 		{
 			var query = ParseUser.Query.Where (teacher => teacher.Get<string> ("shalaNameLC") == currentTeacher.ShalaName.ToLower ());
 			IEnumerable<ParseUser> results = await query.FindAsync();
@@ -233,37 +233,37 @@ namespace AshtangaTeacher.iOS
 			var adminRole = await GetRoleAsync (AdminRole);
 			var modsRole = await GetRoleAsync (ModeratorRole);
 
-			var teachers = new List<Teacher> ();
+			var teachers = new List<ITeacher> ();
 
-			foreach (var t in results) {
+			foreach (var o in results) {
 
-				var teacher = new Teacher {
-					ShalaName = t.Get<string> ("shalaName"),
-					Name = t.Get<string> ("name"),
-					TeacherId = t.Get<string> ("teacherId"),
-					Email = t.Email,
-					UserName = t.Username,
-					ObjectId = t.ObjectId
-				};
+				var t = DependencyService.Get<ITeacher>(DependencyFetchTarget.NewInstance);
+
+				t.ShalaName = o.Get<string> ("shalaName");
+				t.Name = o.Get<string> ("name");
+				t.TeacherId = o.Get<string> ("teacherId");
+				t.Email = o.Email;
+				t.UserName = o.Username;
+				t.ObjectId = o.ObjectId;
 						
 				var users = await adminRole.Users.Query.FindAsync ();
-				if (users != null && users.Any(x => x.ObjectId == t.ObjectId)) {
-					teacher.Role = TeacherRole.Administrator;
+				if (users != null && users.Any(x => x.ObjectId == o.ObjectId)) {
+					t.Role = TeacherRole.Administrator;
 				} else {
 					users = await modsRole.Users.Query.FindAsync ();
-					if (users != null && users.Any(x => x.ObjectId == t.ObjectId))
-						teacher.Role = TeacherRole.Moderator;
+					if (users != null && users.Any(x => x.ObjectId == o.ObjectId))
+						t.Role = TeacherRole.Moderator;
 				}
 
 				// Try the local cache first
 				var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
-				var imgPath = cameraService.GetImagePath (teacher.TeacherId);
+				var imgPath = cameraService.GetImagePath (t.TeacherId);
 
 				bool fetchImage = true;
 				if (File.Exists (imgPath)) {
 					var dt = File.GetLastWriteTimeUtc (imgPath);
-					if (t.UpdatedAt != null && t.UpdatedAt <= dt) {
-						teacher.Image = ImageSource.FromFile (imgPath);
+					if (o.UpdatedAt != null && o.UpdatedAt <= dt) {
+						t.Image = ImageSource.FromFile (imgPath);
 						fetchImage = false;
 					} 
 				}
@@ -271,23 +271,23 @@ namespace AshtangaTeacher.iOS
 				if (fetchImage) {
 
 					byte[] imageData = null;
-					if (t.ContainsKey ("image")) {
-						var parseImg = t.Get<ParseFile> ("image");
+					if (o.ContainsKey ("image")) {
+						var parseImg = o.Get<ParseFile> ("image");
 						imageData = await new HttpClient ().GetByteArrayAsync (parseImg.Url);
-					} else if (t.ContainsKey ("facebookImageUrl")) {
-						var url = t.Get<string> ("facebookImageUrl");
+					} else if (o.ContainsKey ("facebookImageUrl")) {
+						var url = o.Get<string> ("facebookImageUrl");
 						imageData = await new HttpClient ().GetByteArrayAsync (url);
 					}
 
 					if (imageData != null) {
-						teacher.Image = ImageSource.FromStream (() => new MemoryStream (imageData));
+						t.Image = ImageSource.FromStream (() => new MemoryStream (imageData));
 
 						var deviceService = ServiceLocator.Current.GetInstance<IDeviceService> ();
 						deviceService.SaveToFile (imageData, imgPath);
 					}
 				}
 
-				teachers.Add (teacher);
+				teachers.Add (t);
 			}
 
 			return teachers;

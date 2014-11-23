@@ -11,7 +11,7 @@ namespace AshtangaTeacher
 {
 	public class ShalaTeachersViewModel : ViewModelBase
 	{
-		RelayCommand<Teacher> showTeacherCommand;
+		RelayCommand<ITeacher> showTeacherCommand;
 		INavigator navigationService;
 
 		bool showPendingTeachers;
@@ -24,24 +24,24 @@ namespace AshtangaTeacher
 			}
 		}
 
-		readonly ObservableCollection<Teacher> shalaTeachers = new ObservableCollection<Teacher> ();
-		public ObservableCollection<Teacher> ShalaTeachers {
+		readonly ObservableCollection<ITeacher> shalaTeachers = new ObservableCollection<ITeacher> ();
+		public ObservableCollection<ITeacher> ShalaTeachers {
 			get {
 				return shalaTeachers;
 			}
 		}
 
-		readonly ObservableCollection<Teacher> pendingTeachers = new ObservableCollection<Teacher> ();
-		public ObservableCollection<Teacher> PendingTeachers {
+		readonly ObservableCollection<ITeacher> pendingTeachers = new ObservableCollection<ITeacher> ();
+		public ObservableCollection<ITeacher> PendingTeachers {
 			get {
 				return pendingTeachers;
 			}
 		}
 
-		public RelayCommand<Teacher> ShowTeacherCommand {
+		public RelayCommand<ITeacher> ShowTeacherCommand {
 			get {
 				return showTeacherCommand
-					?? (showTeacherCommand = new RelayCommand<Teacher> (
+					?? (showTeacherCommand = new RelayCommand<ITeacher> (
 						teacher => {
 							if (!ShowTeacherCommand.CanExecute (teacher)) {
 								return;
@@ -53,14 +53,14 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public void AcceptTeacher (Teacher teacher)
+		public void AcceptTeacher (ITeacher teacher)
 		{
 			PendingTeachers.Remove (teacher);
 			ShalaTeachers.Add (teacher);
 			ShowPendingTeachers = PendingTeachers.Count > 0;
 		}
 
-		public void Init(List<Teacher> teachers) 
+		public void Init(List<ITeacher> teachers) 
 		{
 			ShalaTeachers.Clear ();
 			PendingTeachers.Clear ();
