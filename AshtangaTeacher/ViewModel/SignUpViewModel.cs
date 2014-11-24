@@ -206,16 +206,7 @@ namespace AshtangaTeacher
 										return;
 									}
 								}
-
-								var t = DependencyService.Get<ITeacher>(DependencyFetchTarget.NewInstance);
-								t.Name = name;
-								t.UserName = userName;
-								t.Email = email;
-								t.ShalaName = shalaName;
-								t.Password = passWord;
-								t.TeacherId = Guid.NewGuid().ToString();
-
-								await parseService.SignUpAsync (t, shalaExists);
+								await parseService.SignUpAsync (name, userName, email, shalaName, passWord, shalaExists);
 								navigationService.PopToRoot ();
 							}
 							catch (Exception e) {

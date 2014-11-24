@@ -11,7 +11,12 @@ namespace AshtangaTeacher
 
 		Task InitializeRoles ();
 
-		Task SignUpAsync (ITeacher teacher, bool shalaExists);
+		Task SignUpAsync (string name, 
+			string userName, 
+			string email, 
+			string shalaName, 
+			string password, 
+			bool shalaExists);
 
 		Task<bool> ShalaNameExists (string name);
 
@@ -24,8 +29,6 @@ namespace AshtangaTeacher
 		Task UpdateUserPropertyAsync (string name, string value);
 
 		Task SignInAsync (string username, string password);
-
-		Task SaveTeacherAsync (ITeacher teacher);
 
 		Task<List<ITeacher>> GetTeachers ();
 

@@ -93,7 +93,7 @@ namespace AshtangaTeacher
 					?? (saveTeacherCommand = new RelayCommand (
 						async () => {
 							IsLoading = true;
-							await parseService.SaveTeacherAsync (Model);
+							await Model.SaveAsync ();
 							IsLoading = false;
 						}, 
 						() => Model.IsDirty && IsReady));
@@ -159,6 +159,7 @@ namespace AshtangaTeacher
 			IsLoading = true;
 			Model = await parseService.GetTeacherAsync ();
 			Model.IsDirty = false;
+			Model.ThumbIsDirty = false;
 			IsPhotoVisible = Model.Image != null;
 
 			teacher.PropertyChanged += (sender, e) => { 

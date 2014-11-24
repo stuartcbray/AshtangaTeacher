@@ -56,20 +56,15 @@ namespace AshtangaTeacher.iOS
 			}
 		}
 
-		Teacher currentTeacher;
+		ITeacher currentTeacher;
 		public async Task<ITeacher> GetTeacherAsync() 
 		{
 
 			if (ParseUser.CurrentUser != null) {
 				if (currentTeacher == null) {
-					currentTeacher = new Teacher {
-						ShalaName = ParseUser.CurrentUser.Get<string> ("shalaName"),
-						Name = ParseUser.CurrentUser.Get<string> ("name"),
-						TeacherId = ParseUser.CurrentUser.Get<string> ("teacherId"),
-						Email = ParseUser.CurrentUser.Email,
-						UserName = ParseUser.CurrentUser.Username,
-						ObjectId = ParseUser.CurrentUser.ObjectId
-					};
+				
+					currentTeacher = DependencyService.Get<ITeacher> (DependencyFetchTarget.NewInstance);
+					currentTeacher.UserObj = ParseUser.CurrentUser;
 
 					var adminRole = await GetRoleAsync (AdminRole);
 					var modsRole = await GetRoleAsync (ModeratorRole);
@@ -126,20 +121,25 @@ namespace AshtangaTeacher.iOS
 			return results.Any ();
 		}
 
-		public async Task SignUpAsync (ITeacher teacher, bool shalaExists)
+		public async Task SignUpAsync (
+			string name, 
+			string userName, 
+			string email, 
+			string shalaName, 
+			string password, 
+			bool shalaExists) 
 		{
 			var user = new ParseUser () {
-				// username is the same as Email
-				Username = teacher.UserName,
-				Password = teacher.Password,
-				Email = teacher.Email
+				Username = userName,
+				Password = password,
+				Email = email
 			};
-					
-			user ["shalaName"] = teacher.ShalaName;
-			user ["shalaNameLC"] = teacher.ShalaName.ToLower ();
-			user ["name"] = teacher.Name;
-			user ["teacherId"] = teacher.TeacherId;
-			user ["role"] = (long) teacher.Role;
+
+			user ["shalaName"] = shalaName;
+			user ["shalaNameLC"] = shalaName.ToLower ();
+			user ["name"] = name;
+			user ["teacherId"] = Guid.NewGuid().ToString();
+			user ["role"] = shalaExists ? (long)TeacherRole.None : (long)TeacherRole.Administrator;
 
 			await user.SignUpAsync ();
 
@@ -159,49 +159,6 @@ namespace AshtangaTeacher.iOS
 		public bool ShowLogin ()
 		{
 			return ParseUser.CurrentUser == null;
-		}
-
-		public async Task SaveTeacherAsync (ITeacher teacher)
-		{
-			ParseUser.CurrentUser ["shalaName"] = teacher.ShalaName;
-			ParseUser.CurrentUser ["shalaNameLC"] = teacher.ShalaName.ToLower ();
-			ParseUser.CurrentUser ["name"] = teacher.Name;
-			ParseUser.CurrentUser ["teacherId"] = teacher.TeacherId;
-			ParseUser.CurrentUser ["role"] = (long) teacher.Role;
-			ParseUser.CurrentUser.Email = teacher.Email;
-			ParseUser.CurrentUser.Username = teacher.UserName;
-
-			if (teacher.ThumbIsDirty) {
-				await SaveTeacherThumb (teacher);
-			}
-			await ParseUser.CurrentUser.SaveAsync ();
-			teacher.IsDirty = false;
-		}
-
-		async Task SaveTeacherThumb(ITeacher teacher)
-		{
-			var renderer = new StreamImagesourceHandler ();
-			var image = await renderer.LoadImageAsync (teacher.Image);
-			using (NSData pngData = image.AsPNG()) {
-
-				Byte[] data = new Byte[pngData.Length];
-				Marshal.Copy(pngData.Bytes, data, 0, Convert.ToInt32(pngData.Length));
-
-				ParseFile parseImg = new ParseFile(teacher.TeacherId + ".PNG", data);
-
-				try {
-					await parseImg.SaveAsync ();
-					ParseUser.CurrentUser ["image"] = parseImg;
-					await ParseUser.CurrentUser.SaveAsync ();
-				} catch {
-					// https://developers.facebook.com/bugs/789062014466095/
-				}
-
-				var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
-				var deviceService = ServiceLocator.Current.GetInstance<IDeviceService> ();
-				deviceService.SaveToFile (data, cameraService.GetImagePath(teacher.TeacherId));
-			}
-			teacher.ThumbIsDirty = false;
 		}
 
 		public async Task LogOutAsync ()
@@ -238,14 +195,8 @@ namespace AshtangaTeacher.iOS
 			foreach (var o in results) {
 
 				var t = DependencyService.Get<ITeacher>(DependencyFetchTarget.NewInstance);
-
-				t.ShalaName = o.Get<string> ("shalaName");
-				t.Name = o.Get<string> ("name");
-				t.TeacherId = o.Get<string> ("teacherId");
-				t.Email = o.Email;
-				t.UserName = o.Username;
-				t.ObjectId = o.ObjectId;
-						
+				t.UserObj = o;
+									
 				var users = await adminRole.Users.Query.FindAsync ();
 				if (users != null && users.Any(x => x.ObjectId == o.ObjectId)) {
 					t.Role = TeacherRole.Administrator;

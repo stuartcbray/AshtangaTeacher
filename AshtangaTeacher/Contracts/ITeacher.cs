@@ -1,12 +1,14 @@
 ﻿using System;
 using Xamarin.Forms;
 using System.ComponentModel;
+using System.Threading.Tasks;
 
 namespace AshtangaTeacher
 {
 	public enum TeacherRole {
 		Administrator,
 		Moderator,
+		Pending,
 		None
 	};
 
@@ -14,7 +16,7 @@ namespace AshtangaTeacher
 	{
 		string TeacherId { get; set; }
 
-		string ObjectId { get; set; }
+		string ObjectId { get; }
 
 		TeacherRole Role { get; set; }
 
@@ -30,9 +32,11 @@ namespace AshtangaTeacher
 
 		string Email { get; set; }
 
-		string Password { get; set; }
-
 		string ShalaName { get; set; }
+
+		object UserObj { get; set; }
+
+		Task SaveAsync ();
 
 		event PropertyChangedEventHandler PropertyChanged;
 	}
