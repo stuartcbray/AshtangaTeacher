@@ -9,14 +9,14 @@ namespace AshtangaTeacher
 	{
 		Task<ObservableCollection<StudentViewModel>> GetAllAsync(string shalaName);
 
-		Task<bool> SaveAsync(Student student);
+		Task<bool> SaveAsync(IStudent student);
 
-		Task<Student> AddAsync(Student student);
+		Task<IStudent> AddAsync(IStudent student);
 
-		Task<bool> DeleteAsync(Student student);
+		Task<bool> DeleteAsync(IStudent student);
 
-		Task<bool> AddProgressNoteAsync(Student student, IProgressNote note);
+		Task<bool> AddProgressNoteAsync(IStudent student, IProgressNote note);
 
-		Task<IList<IProgressNote>> GetStudentProgressNotesAsync(Student student);
+		Task<IList<IProgressNote>> GetStudentProgressNotesAsync(IStudent student);
 	}
 }

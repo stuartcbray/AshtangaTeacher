@@ -5,21 +5,27 @@ using Xamarin.Forms;
 using System.Collections.Generic;
 using Microsoft.Practices.ServiceLocation;
 
-namespace AshtangaTeacher
+namespace AshtangaTeacher.iOS
 {
-	public class Student : ObservableObject
+	public class Student : ViewModelBasee, IStudent
 	{
 		bool isDirty, thumbIsDirty;
 
 		string name;
 		string email;
+		string studentId;
+
 		ImageSource image;
 		DateTime expiryDate;
-		ICameraService cameraService;
 
-		readonly string studentId;
-
-		public string StudentId { get { return studentId; } }
+		public string StudentId { 
+			get { 
+				return studentId; 
+			} 
+			set {
+				studentId = value;
+			}
+		}
 
 		public ObservableCollection<IProgressNote> ProgressNotes { get; set; }
 
@@ -30,7 +36,8 @@ namespace AshtangaTeacher
 				return isDirty;
 			}
 			set {
-				Set (() => IsDirty, ref isDirty, value);
+				isDirty = value;
+				OnPropertyChanged ();
 			}
 		}
 
@@ -39,7 +46,8 @@ namespace AshtangaTeacher
 				return thumbIsDirty;
 			}
 			set {
-				Set (() => ThumbIsDirty, ref thumbIsDirty, value);
+				thumbIsDirty = value;
+				OnPropertyChanged ();
 			}
 		}
 
@@ -61,7 +69,7 @@ namespace AshtangaTeacher
 				image = value;
 				ThumbIsDirty = true;
 				IsDirty = true;
-				RaisePropertyChanged ("Image");
+				OnPropertyChanged ("Image");
 			}
 		}
 
@@ -70,7 +78,7 @@ namespace AshtangaTeacher
 				return name;
 			}
 			set {
-				if (Set (() => Name, ref name, value)) {
+				if (Set ("Name", ref name, value)) {
 					IsDirty = true;
 				}
 			}
@@ -81,7 +89,7 @@ namespace AshtangaTeacher
 				return email;
 			}
 			set {
-				if (Set (() => Email, ref email, value)) {
+				if (Set ("Email", ref email, value)) {
 					IsDirty = true;
 				}
 			}
@@ -92,29 +100,18 @@ namespace AshtangaTeacher
 				return expiryDate;
 			}
 			set {
-				if (Set (() => ExpiryDate, ref expiryDate, value)) {
+				if (Set ("ExpiryDate", ref expiryDate, value)) {
 					IsDirty = true;
 				}
 			}
 		}
-
-		void Init()
+			
+		public Student ()
 		{
-			cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
 			ProgressNotes = new ObservableCollection<IProgressNote> ();
+			var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
 			image = cameraService.GetImagePath (studentId);
 		}
 
-		public Student ()
-		{
-			studentId = Guid.NewGuid ().ToString ();
-			Init ();
-		}
-
-		public Student (string studentId)
-		{
-			this.studentId = studentId;
-			Init ();
-		}
 	}
 }

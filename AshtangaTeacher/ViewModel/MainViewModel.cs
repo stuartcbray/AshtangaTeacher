@@ -4,6 +4,7 @@ using GalaSoft.MvvmLight.Command;
 using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
+using Xamarin.Forms;
 
 namespace AshtangaTeacher
 {
@@ -49,10 +50,11 @@ namespace AshtangaTeacher
 				return addStudentCommand
 				?? (addStudentCommand = new RelayCommand (
 						() => {
-							var student = new Student { 
-								ShalaName = App.Locator.Profile.Model.ShalaName,
-								ExpiryDate = DateTime.Now
-							};
+
+							var student = DependencyService.Get<IStudent>(DependencyFetchTarget.NewInstance);
+							student.ShalaName =  App.Locator.Profile.Model.ShalaName;
+							student.ExpiryDate = DateTime.Now;
+
 							var vm = new AddStudentViewModel (studentsService, navigationService, student);
 							navigationService.NavigateTo (ViewModelLocator.AddStudentPageKey, vm);
 					}));

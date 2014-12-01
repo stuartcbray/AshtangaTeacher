@@ -27,18 +27,18 @@ namespace AshtangaTeacher.iOS
 			var list = new ObservableCollection<StudentViewModel> ();
 			foreach (var s in results) {
 
-				var sid = s.Get<string> ("studentId");
-				var student = new StudentViewModel (this,  new Student(sid) { 
-					ShalaName = shalaName,
-					Name = s.Get<string> ("name"),
-					Email = s.Get<string> ("email"),
-					ObjectId = s.ObjectId,
-					ExpiryDate = new DateTime (s.Get<long> ("expiryDate"))
+				var student = new StudentViewModel (this,  new Student { 
+						ShalaName = shalaName,
+						Name = s.Get<string> ("name"),
+						StudentId = s.Get<string> ("studentId"),
+						Email = s.Get<string> ("email"),
+						ObjectId = s.ObjectId,
+						ExpiryDate = new DateTime (s.Get<long> ("expiryDate"))
 				});
 
 				// Try the local cache first
 				var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
-				var imgPath = cameraService.GetImagePath (sid);
+				var imgPath = cameraService.GetImagePath (student.Model.StudentId);
 
 				bool fetchImage = true;
 				if (File.Exists (imgPath)) {
@@ -67,7 +67,7 @@ namespace AshtangaTeacher.iOS
 			return list;
 		}
 			
-		public async Task<IList<IProgressNote>> GetStudentProgressNotesAsync(Student student)
+		public async Task<IList<IProgressNote>> GetStudentProgressNotesAsync(IStudent student)
 		{
 			ParseQuery<ParseObject> query = ParseObject.GetQuery("Student");
 			ParseObject studentObj = await query.GetAsync(student.ObjectId);
@@ -91,7 +91,7 @@ namespace AshtangaTeacher.iOS
 			return list;
 		}
 
-		public async Task<bool> SaveAsync(Student student)
+		public async Task<bool> SaveAsync(IStudent student)
 		{
 			ParseQuery<ParseObject> query = ParseObject.GetQuery("Student");
 			ParseObject studentObj = await query.GetAsync(student.ObjectId);
@@ -116,7 +116,7 @@ namespace AshtangaTeacher.iOS
 			return false;
 		}
 
-		public async Task<bool> AddProgressNoteAsync(Student student, IProgressNote note)
+		public async Task<bool> AddProgressNoteAsync(IStudent student, IProgressNote note)
 		{
 			ParseQuery<ParseObject> query = ParseObject.GetQuery("Student");
 			ParseObject studentObj = await query.GetAsync(student.ObjectId);
@@ -136,7 +136,7 @@ namespace AshtangaTeacher.iOS
 			return true; 
 		}
 
-		public async Task<Student> AddAsync(Student student)
+		public async Task<IStudent> AddAsync(IStudent student)
 		{
 			var studentObj = new ParseObject("Student");
 			studentObj ["name"] = student.Name;
@@ -160,7 +160,7 @@ namespace AshtangaTeacher.iOS
 			return student;
 		}
 
-		public async Task<bool> DeleteAsync(Student student)
+		public async Task<bool> DeleteAsync(IStudent student)
 		{
 			ParseQuery<ParseObject> query = ParseObject.GetQuery("Student");
 			ParseObject studentObj = await query.GetAsync(student.ObjectId);
@@ -186,7 +186,7 @@ namespace AshtangaTeacher.iOS
 			}
 		}
 
-		async Task SaveThumb(Student student, ParseObject studentObj)
+		async Task SaveThumb(IStudent student, ParseObject studentObj)
 		{
 			var renderer = new StreamImagesourceHandler ();
 			var image = await renderer.LoadImageAsync (student.Image);

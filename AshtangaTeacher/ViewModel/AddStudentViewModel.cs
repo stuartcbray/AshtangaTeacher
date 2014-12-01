@@ -13,7 +13,7 @@ namespace AshtangaTeacher
 
 		readonly IStudentsService studentService;
 		readonly INavigator navigationService;
-		readonly Student student;
+		readonly IStudent student;
 
 		ImageSource imageSource;
 		IMediaPicker mediaPicker;
@@ -24,7 +24,7 @@ namespace AshtangaTeacher
 
 		string errorMessage;
 
-		public Student Model { get { return student; } }
+		public IStudent Model { get { return student; } }
 
 		public string ErrorMessage {
 			get {
@@ -133,7 +133,7 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public AddStudentViewModel (IStudentsService service, INavigator nav, Student student)
+		public AddStudentViewModel (IStudentsService service, INavigator nav, IStudent student)
 		{
 			studentService = service;
 			navigationService = nav;

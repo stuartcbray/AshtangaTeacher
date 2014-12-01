@@ -53,7 +53,7 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public Student Model {
+		public IStudent Model {
 			get;
 			private set;
 		}
@@ -180,7 +180,7 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public StudentViewModel (IStudentsService studentService, Student model)
+		public StudentViewModel (IStudentsService studentService, IStudent model)
 		{
 			this.studentService = studentService;
 			Model = model;
