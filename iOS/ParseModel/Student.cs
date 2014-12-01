@@ -4,6 +4,9 @@ using GalaSoft.MvvmLight;
 using Xamarin.Forms;
 using System.Collections.Generic;
 using Microsoft.Practices.ServiceLocation;
+using AshtangaTeacher.iOS;
+
+[assembly: Xamarin.Forms.Dependency (typeof (Student))]
 
 namespace AshtangaTeacher.iOS
 {
