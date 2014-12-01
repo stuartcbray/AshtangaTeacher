@@ -9,6 +9,10 @@ using System.Threading.Tasks;
 using Xamarin.Forms.Platform.iOS;
 using MonoTouch.Foundation;
 using System.Runtime.InteropServices;
+using System.IO;
+using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 [assembly: Xamarin.Forms.Dependency (typeof (Teacher))]
 
@@ -154,14 +158,73 @@ namespace AshtangaTeacher.iOS
 			}
 		}
 
+		public async Task<bool> ShalaExistsAsync (string name)
+		{
+			var query = ParseUser.Query.WhereEqualTo("shalaNameLC", name.ToLower());
+			IEnumerable<ParseObject> results = await query.FindAsync ();
+			return results.Any ();
+		}
+
 		public async Task SaveAsync ()
 		{
 			if (ThumbIsDirty) {
 				await SaveThumb (Image, TeacherId);
 				ThumbIsDirty = false;
 			}
-			await parseUser.SaveAsync ();
+
+			try {
+				await parseUser.SaveAsync ();
+			} catch {
+				// https://developers.facebook.com/bugs/789062014466095/
+			}
+	
 			IsDirty = false;
+		}
+
+		public async Task InitializeAsync (object userObj)
+		{
+			this.UserObj = userObj;
+			await GetImageAsync ();
+
+			// Raise a PropertyChanged for the visible properties so they show up in the UI
+			OnPropertyChanged ("ShalaName");
+			OnPropertyChanged ("Email");
+			OnPropertyChanged ("Name");
+			OnPropertyChanged ("UserName");
+			OnPropertyChanged ("Role");
+
+			IsDirty = false;
+			ThumbIsDirty = false;
+		}
+
+		async Task GetImageAsync()
+		{
+			var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+			var imgPath = cameraService.GetImagePath (TeacherId);
+
+			if (File.Exists (imgPath)) {
+				var dt = File.GetLastWriteTimeUtc (imgPath);
+				if (parseUser.UpdatedAt != null && parseUser.UpdatedAt <= dt) {
+					Image = ImageSource.FromFile (imgPath);
+					return;
+				} 
+			}
+
+			// If it's not on disk, download and save the image to the local cache
+			byte[] imageData = null;
+			if (parseUser.ContainsKey ("image")) {
+				var parseImg = parseUser.Get<ParseFile> ("image");
+				imageData = await new HttpClient ().GetByteArrayAsync (parseImg.Url);
+			} else if (parseUser.ContainsKey ("facebookImageUrl")) {
+				var url = parseUser.Get<string> ("facebookImageUrl");
+				imageData = await new HttpClient ().GetByteArrayAsync (url);
+			}
+
+			if (imageData != null) {
+				var deviceService = ServiceLocator.Current.GetInstance<IDeviceService> ();
+				deviceService.SaveToFile (imageData, imgPath);
+				Image = ImageSource.FromStream (() => new MemoryStream (imageData));
+			}
 		}
 			
 		async Task SaveThumb(ImageSource imageSource, string id)
@@ -178,15 +241,31 @@ namespace AshtangaTeacher.iOS
 				try {
 					await parseImg.SaveAsync ();
 					parseUser ["image"] = parseImg;
-					await SaveAsync ();
+					await parseUser.SaveAsync ();
 				} catch {
 					// https://developers.facebook.com/bugs/789062014466095/
 				}
-
+					
 				var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
 				var deviceService = ServiceLocator.Current.GetInstance<IDeviceService> ();
 				deviceService.SaveToFile (data, cameraService.GetImagePath(id));
 			}
+		}
+
+		public async Task UpdateRoleAsync(TeacherRole role)
+		{
+			parseUser ["role"] = (long)role;
+			await SaveAsync ();
+				
+			var parseRole = await ParseRole.Query.Where (x => x.Name == role.ToString()).FirstOrDefaultAsync ();
+			parseRole.Users.Add (parseUser);
+			await parseRole.SaveAsync ();
+		}
+
+		public async Task UpdatePropertyAsync<T> (string name, T value)
+		{
+			parseUser [name] = value;
+			await SaveAsync ();
 		}
 
 		public Teacher() 

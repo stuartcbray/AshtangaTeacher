@@ -2,12 +2,15 @@
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Xamarin.Forms;
 
 namespace AshtangaTeacher
 {
 	public interface IParseService
 	{
 		void Initialize(string appId, string key, string facebookAppId);
+
+		object CurrentUser { get; }
 
 		Task InitializeRoles ();
 
@@ -18,25 +21,13 @@ namespace AshtangaTeacher
 			string password, 
 			bool shalaExists);
 
-		Task<bool> ShalaNameExists (string name);
-
-		Task AddUserToRole (string objectId, string roleName);
-
-		Task MakeUserAdminAsync ();
-
 		Task LogOutAsync ();
-
-		Task UpdateUserPropertyAsync (string name, string value);
 
 		Task SignInAsync (string username, string password);
 
-		Task<List<ITeacher>> GetTeachers ();
+		Task<List<ITeacher>> GetTeachers (string shalaName);
 
 		bool ShowLogin ();
-
-		Task<ITeacher> GetTeacherAsync ();
-
-		string ShalaName { get; }
 	}
 }
 

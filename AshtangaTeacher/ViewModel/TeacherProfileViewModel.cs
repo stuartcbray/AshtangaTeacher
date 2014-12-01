@@ -14,8 +14,6 @@ namespace AshtangaTeacher
 		string errorMessage;
 		ITeacher teacher;
 
-		IParseService parseService;
-
 		RelayCommand acceptTeacherRequestCommand;
 		RelayCommand ignoreTeacherRequestCommand;
 
@@ -67,7 +65,7 @@ namespace AshtangaTeacher
 					?? (acceptTeacherRequestCommand = new RelayCommand (
 						async () => {
 							IsLoading = true;
-							await parseService.AddUserToRole(teacher.ObjectId, "Moderator");
+							await teacher.UpdateRoleAsync (TeacherRole.Moderator);
 							IsLoading = false;
 
 							App.Locator.ShalaTeachers.AcceptTeacher (Model);
@@ -96,7 +94,6 @@ namespace AshtangaTeacher
 			
 		public TeacherProfileViewModel (ITeacher teacher)
 		{
-			this.parseService = ServiceLocator.Current.GetInstance<IParseService> ();
 			this.teacher = teacher;
 		}
 	}

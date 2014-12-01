@@ -10,7 +10,6 @@ namespace AshtangaTeacher
 	public class MainViewModel : ViewModelBase
 	{
 		readonly IStudentsService studentsService;
-		readonly IParseService parseService;
 		readonly INavigator navigationService;
 
 		bool isLoading;
@@ -49,14 +48,13 @@ namespace AshtangaTeacher
 			get {
 				return addStudentCommand
 				?? (addStudentCommand = new RelayCommand (
-					async () => {
-							var teacher = await parseService.GetTeacherAsync();
+						() => {
 							var student = new Student { 
-								ShalaName = teacher.ShalaName,
+								ShalaName = App.Locator.Profile.Model.ShalaName,
 								ExpiryDate = DateTime.Now
 							};
 							var vm = new AddStudentViewModel (studentsService, navigationService, student);
-						navigationService.NavigateTo (ViewModelLocator.AddStudentPageKey, vm);
+							navigationService.NavigateTo (ViewModelLocator.AddStudentPageKey, vm);
 					}));
 			}
 		}
@@ -66,16 +64,15 @@ namespace AshtangaTeacher
 				return getStudentsCommand
 				?? (getStudentsCommand = new RelayCommand (
 					async () => {
-						Students.Clear ();
-						IsLoading = true;
-						try {
-							var teacher = await parseService.GetTeacherAsync();
-							Students = await studentsService.GetAllAsync (teacher.ShalaName);
-						} catch (Exception ex) {
-							var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
-							await dialog.ShowError (ex, "Error when refreshing", "OK", null);
-						}
-						IsLoading = false;
+							Students.Clear ();
+							IsLoading = true;
+							try {
+								Students = await studentsService.GetAllAsync (App.Locator.Profile.Model.ShalaName);
+							} catch (Exception ex) {
+								var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
+								await dialog.ShowError (ex, "Error when refreshing", "OK", null);
+							}
+							IsLoading = false;
 					}));
 						
 			}
@@ -99,11 +96,9 @@ namespace AshtangaTeacher
 
 		public MainViewModel (
 			INavigator navigationService,
-			IParseService parseService,
 			IStudentsService studentsService
 		)
 		{
-			this.parseService = parseService;
 			this.studentsService = studentsService;
 			this.navigationService = navigationService;
 			IsLoading = true;

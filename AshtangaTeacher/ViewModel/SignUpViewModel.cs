@@ -122,7 +122,11 @@ namespace AshtangaTeacher
 
 							IsLoading = true;
 							try {
-								var exists = await parseService.ShalaNameExists(ShalaName);
+
+								var teacher = DependencyService.Get<ITeacher> (DependencyFetchTarget.NewInstance);
+								teacher.UserObj = parseService.CurrentUser;
+
+								var exists = await teacher.ShalaExistsAsync(ShalaName);
 								if (exists) {
 									var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
 									bool joinShala = await dialog.ShowMessage ("Shala already exists. Would you like to request to join as a Teacher?", 
@@ -133,12 +137,12 @@ namespace AshtangaTeacher
 										return;
 									}
 								}
-
-								await parseService.UpdateUserPropertyAsync("shalaName", ShalaName);
-								await parseService.UpdateUserPropertyAsync("shalaNameLC", ShalaName.ToLower());
+									
+								teacher.ShalaName = ShalaName;
+								await teacher.SaveAsync ();
 
 								if (!exists) {
-									await parseService.MakeUserAdminAsync ();
+									await teacher.UpdateRoleAsync (TeacherRole.Administrator);
 								}
 
 								navigationService.GoBack ();
@@ -195,7 +199,9 @@ namespace AshtangaTeacher
 							IsLoading = true;
 							try {
 
-								var shalaExists = await parseService.ShalaNameExists(ShalaName);
+								var teacher = DependencyService.Get<ITeacher> (DependencyFetchTarget.NewInstance);
+								teacher.UserObj = parseService.CurrentUser;
+								var shalaExists = await teacher.ShalaExistsAsync(ShalaName);
 								if (shalaExists) {
 									var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
 									bool joinShala = await dialog.ShowMessage ("Shala already exists. Would you like to request to join as a Teacher?", 

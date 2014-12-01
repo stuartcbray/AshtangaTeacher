@@ -42,7 +42,7 @@ namespace AshtangaTeacher
 					?? (shalaTeachersCommand = new RelayCommand (
 						async () => {
 							IsLoading = true;
-							var teachers = await parseService.GetTeachers ();
+							var teachers = await parseService.GetTeachers (Model.ShalaName);
 							IsLoading = false;
 							App.Locator.ShalaTeachers.Init (teachers);
 
@@ -157,17 +157,8 @@ namespace AshtangaTeacher
 		public async Task InitializeTeacher ()
 		{
 			IsLoading = true;
-			Model = await parseService.GetTeacherAsync ();
-			Model.IsDirty = false;
-			Model.ThumbIsDirty = false;
+			await teacher.InitializeAsync (parseService.CurrentUser);
 			IsPhotoVisible = Model.Image != null;
-
-			teacher.PropertyChanged += (sender, e) => { 
-				if (e.PropertyName == "IsDirty") {
-					SaveTeacherCommand.RaiseCanExecuteChanged();
-				}
-			};
-
 			IsLoading = false;
 		}
 
@@ -179,6 +170,12 @@ namespace AshtangaTeacher
 			this.parseService = parseService;
 			this.navigationService = navigationService;
 			teacher = DependencyService.Get<ITeacher> (DependencyFetchTarget.NewInstance);
+
+			teacher.PropertyChanged += (sender, e) => { 
+				if (e.PropertyName == "IsDirty") {
+					SaveTeacherCommand.RaiseCanExecuteChanged();
+				}
+			};
 		}
 	}
 }

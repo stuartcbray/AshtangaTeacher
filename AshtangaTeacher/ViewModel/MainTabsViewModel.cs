@@ -47,12 +47,15 @@ namespace AshtangaTeacher
 
 			if (parseService.ShowLogin ()) {
  				navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
-			} else if (string.IsNullOrEmpty (parseService.ShalaName)) {
-				navigationService.NavigateTo (ViewModelLocator.TeacherInfoPageKey, App.Locator.SignUp);
 			} else if (IsLoading) {
 				await App.Locator.Profile.InitializeTeacher ();
-			 	App.Locator.Main.GetStudentsCommand.Execute (null);
-				IsLoading = false;
+
+				if (string.IsNullOrEmpty (App.Locator.Profile.Model.ShalaName)) {
+					navigationService.NavigateTo (ViewModelLocator.TeacherInfoPageKey, App.Locator.SignUp);
+				} else {
+					App.Locator.Main.GetStudentsCommand.Execute (null);
+					IsLoading = false;
+				}
 			}
 		}
 

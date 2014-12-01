@@ -14,6 +14,8 @@ namespace AshtangaTeacher
 
 	public interface ITeacher
 	{
+		Task InitializeAsync (object userObj);
+
 		string TeacherId { get; set; }
 
 		string ObjectId { get; }
@@ -35,6 +37,12 @@ namespace AshtangaTeacher
 		string ShalaName { get; set; }
 
 		object UserObj { get; set; }
+
+		Task<bool> ShalaExistsAsync (string name);
+
+		Task UpdateRoleAsync (TeacherRole role);
+
+		Task UpdatePropertyAsync<T> (string name, T value);
 
 		Task SaveAsync ();
 

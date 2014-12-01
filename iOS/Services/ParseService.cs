@@ -21,104 +21,10 @@ namespace AshtangaTeacher.iOS
 		const string AdminRole = "Administrator";
 		const string ModeratorRole = "Moderator";
 
-
-		public string CurrentUserName { 
+		public object CurrentUser { 
 			get {
-				if (ParseUser.CurrentUser != null)
-					return ParseUser.CurrentUser.Username;
-				return null;
+				return ParseUser.CurrentUser;
 			} 
-		}
-
-		public async Task UpdateUserPropertyAsync(string name, string value)
-		{
-			ParseUser.CurrentUser [name] = value;
-			try {
-				await ParseUser.CurrentUser.SaveAsync ();
-			} catch {
-				// https://developers.facebook.com/bugs/789062014466095/
-			}
-		}
-
-		public async Task MakeUserAdminAsync ()
-		{
-			var adminRole = await GetRoleAsync (AdminRole);
-			adminRole.Users.Add (ParseUser.CurrentUser);
-			await adminRole.SaveAsync ();
-		}
-
-		public string ShalaName {
-			get {
-				if (ParseUser.CurrentUser != null && ParseUser.CurrentUser.ContainsKey("shalaName")) {
-					return ParseUser.CurrentUser.Get<string> ("shalaName");
-				}
-				return null;
-			}
-		}
-
-		ITeacher currentTeacher;
-		public async Task<ITeacher> GetTeacherAsync() 
-		{
-
-			if (ParseUser.CurrentUser != null) {
-				if (currentTeacher == null) {
-				
-					currentTeacher = DependencyService.Get<ITeacher> (DependencyFetchTarget.NewInstance);
-					currentTeacher.UserObj = ParseUser.CurrentUser;
-
-					var adminRole = await GetRoleAsync (AdminRole);
-					var modsRole = await GetRoleAsync (ModeratorRole);
-
-					var users = await adminRole.Users.Query.FindAsync ();
-					if (users != null && users.Any(x => x.ObjectId == currentTeacher.ObjectId)) {
-						currentTeacher.Role = TeacherRole.Administrator;
-					} else {
-						users = await modsRole.Users.Query.FindAsync ();
-						if (users != null && users.Any(x => x.ObjectId == currentTeacher.ObjectId))
-							currentTeacher.Role = TeacherRole.Moderator;
-					}
-
-					// Try the local cache first
-					var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
-					var imgPath = cameraService.GetImagePath (currentTeacher.TeacherId);
-
-					bool fetchImage = true;
-					if (File.Exists (imgPath)) {
-						var dt = File.GetLastWriteTimeUtc (imgPath);
-						if (ParseUser.CurrentUser.UpdatedAt != null && ParseUser.CurrentUser.UpdatedAt <= dt) {
-							currentTeacher.Image = ImageSource.FromFile (imgPath);
-							fetchImage = false;
-						} 
-					}
-
-					if (fetchImage) {
-
-						byte[] imageData = null;
-						if (ParseUser.CurrentUser.ContainsKey ("image")) {
-							var parseImg = ParseUser.CurrentUser.Get<ParseFile> ("image");
-							imageData = await new HttpClient ().GetByteArrayAsync (parseImg.Url);
-						} else if (ParseUser.CurrentUser.ContainsKey ("facebookImageUrl")) {
-							var url = ParseUser.CurrentUser.Get<string> ("facebookImageUrl");
-							imageData = await new HttpClient ().GetByteArrayAsync (url);
-						}
-
-						if (imageData != null) {
-							currentTeacher.Image = ImageSource.FromStream (() => new MemoryStream (imageData));
-
-							var deviceService = ServiceLocator.Current.GetInstance<IDeviceService> ();
-							deviceService.SaveToFile (imageData, imgPath);
-						}
-					}
-				}
-			}
-			return currentTeacher;
-		}
-
-		public async Task<bool> ShalaNameExists (string name)
-		{
-			var query = ParseUser.Query.WhereEqualTo("shalaNameLC", name.ToLower());
-			IEnumerable<ParseObject> results = await query.FindAsync ();
-			return results.Any ();
 		}
 
 		public async Task SignUpAsync (
@@ -163,18 +69,7 @@ namespace AshtangaTeacher.iOS
 
 		public async Task LogOutAsync ()
 		{
-			currentTeacher = null;
 			await Task.Run (() => ParseUser.LogOut ());
-		}
-
-		public async Task AddUserToRole (string objectId, string roleName)
-		{
-			var user = await ParseUser.Query.GetAsync (objectId);
-			if (user != null) {
-				var role = await ParseRole.Query.Where (x => x.Name == roleName).FirstOrDefaultAsync ();
-				role.Users.Add (user);
-				await role.SaveAsync ();
-			}
 		}
 
 		public async Task SignInAsync (string username, string password)
@@ -182,9 +77,9 @@ namespace AshtangaTeacher.iOS
 			await ParseUser.LogInAsync (username, password);
 		}
 
-		public async Task<List<ITeacher>> GetTeachers ()
+		public async Task<List<ITeacher>> GetTeachers (string shalaName)
 		{
-			var query = ParseUser.Query.Where (teacher => teacher.Get<string> ("shalaNameLC") == currentTeacher.ShalaName.ToLower ());
+			var query = ParseUser.Query.Where (teacher => teacher.Get<string> ("shalaNameLC") == shalaName.ToLower ());
 			IEnumerable<ParseUser> results = await query.FindAsync();
 
 			var adminRole = await GetRoleAsync (AdminRole);
@@ -195,7 +90,7 @@ namespace AshtangaTeacher.iOS
 			foreach (var o in results) {
 
 				var t = DependencyService.Get<ITeacher>(DependencyFetchTarget.NewInstance);
-				t.UserObj = o;
+				await t.InitializeAsync (o);
 									
 				var users = await adminRole.Users.Query.FindAsync ();
 				if (users != null && users.Any(x => x.ObjectId == o.ObjectId)) {
