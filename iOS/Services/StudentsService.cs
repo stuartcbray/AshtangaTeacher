@@ -66,30 +66,6 @@ namespace AshtangaTeacher.iOS
 			}
 			return list;
 		}
-			
-		public async Task<IList<IProgressNote>> GetStudentProgressNotesAsync(IStudent student)
-		{
-			ParseQuery<ParseObject> query = ParseObject.GetQuery("Student");
-			ParseObject studentObj = await query.GetAsync(student.ObjectId);
-
-			query = from note in ParseObject.GetQuery("ProgressNote")
-					where note["parent"] == studentObj
-				select note;
-
-			var notes = await query.FindAsync();
-
-			var list = new List<IProgressNote> ();
-			foreach (var n in notes) {
-				var note = DependencyService.Get<IProgressNote> (DependencyFetchTarget.NewInstance);
-				note.ObjectId = n.ObjectId;
-				note.InputDate = n.CreatedAt ?? DateTime.Now;
-				note.Text = n.Get<string> ("content");
-
-				list.Add (note);
-			}
-
-			return list;
-		}
 
 		public async Task<bool> SaveAsync(IStudent student)
 		{
@@ -114,26 +90,6 @@ namespace AshtangaTeacher.iOS
 			}
 
 			return false;
-		}
-
-		public async Task<bool> AddProgressNoteAsync(IStudent student, IProgressNote note)
-		{
-			ParseQuery<ParseObject> query = ParseObject.GetQuery("Student");
-			ParseObject studentObj = await query.GetAsync(student.ObjectId);
-
-			var noteObj = new ParseObject("ProgressNote")
-			{
-				{ "content", note.Text }
-			};
-
-			// Add a relation between the Student and ProgressNote
-			noteObj["parent"] = studentObj;
-			noteObj.ACL = studentObj.ACL;
-
-			// This will save both noteObj and studentObj
-			await noteObj.SaveAsync();
-
-			return true; 
 		}
 
 		public async Task<IStudent> AddAsync(IStudent student)

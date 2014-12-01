@@ -60,7 +60,7 @@
 
         <Label Text="{Binding ErrorMessage}" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="4" />
 
-        <ActivityIndicator Grid.Row="5" IsVisible="{Binding IsSaving}"
+        <ActivityIndicator Grid.Row="5" IsVisible="{Binding IsLoading}"
 	       IsRunning="true"
 	       Color="Black"
 	       VerticalOptions="Start"

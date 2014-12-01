@@ -120,6 +120,11 @@ namespace AshtangaTeacher
 								ErrorMessage = "Email is empty";
 								return;
 							}
+
+							if (Model.Image == null) {
+								ErrorMessage = "Image is empty";
+								return;
+							}
 								
 							IsLoading = true;
 							await studentService.AddAsync (student);

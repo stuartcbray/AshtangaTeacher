@@ -36,7 +36,9 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
-        
+
+        <ActivityIndicator Grid.Row="1" IsVisible="{Binding IsLoading}" IsRunning="true" Color="Black" VerticalOptions="Start" HorizontalOptions="CenterAndExpand" />
+	
         <Button Text="Add Note"
                 Grid.Row="2"
                 HorizontalOptions="Fill"

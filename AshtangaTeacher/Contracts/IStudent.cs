@@ -2,6 +2,8 @@
 using System.ComponentModel;
 using Xamarin.Forms;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace AshtangaTeacher
 {
@@ -20,6 +22,10 @@ namespace AshtangaTeacher
 		bool IsDirty { get; set; }
 
 		bool ThumbIsDirty { get; set; }
+
+		Task GetProgressNotesAsync ();
+
+		Task<bool> AddProgressNoteAsync (IProgressNote note);
 
 		ObservableCollection<IProgressNote> ProgressNotes { get; set; }
 

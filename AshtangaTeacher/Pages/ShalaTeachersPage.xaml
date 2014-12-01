@@ -5,27 +5,24 @@
   	</ContentPage.Padding>
 	<Grid>
 	    <Grid.RowDefinitions>
-			<RowDefinition Height="*" />
-			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
 	    </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
 	      <ColumnDefinition Width="*" />
 	    </Grid.ColumnDefinitions>
 	        
-	  	<Grid>
+	  	<Grid VerticalOptions="CenterAndExpand">
 		    <Grid.RowDefinitions>
-				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />
 		    </Grid.RowDefinitions>
 
 	        <Grid.ColumnDefinitions>
 		      <ColumnDefinition Width="*" />
 		    </Grid.ColumnDefinitions>
-
-		    <Label Text="Shala Teachers" Font="18" VerticalOptions="Center" HorizontalOptions="Center"  />
-
-	  		<ListView ItemsSource="{Binding ShalaTeachers}" Grid.Row="1" x:Name="TeachersList">
+		      
+	  		<ListView ItemsSource="{Binding ShalaTeachers}" Grid.Row="0" x:Name="TeachersList">
 	            <ListView.RowHeight>
 	                <OnPlatform x:TypeArguments="x:Int32" iOS="60" Android="60" />
 	            </ListView.RowHeight>
@@ -75,7 +72,7 @@
 	        </ListView>
 		</Grid>
 
-		<Grid Grid.Row="1" IsVisible="{Binding ShowPendingTeachers}">
+		<Grid Grid.Row="1" IsVisible="{Binding ShowPendingTeachers}" VerticalOptions="CenterAndExpand">
 		    <Grid.RowDefinitions>
 				<RowDefinition Height="Auto" />
 				<RowDefinition Height="*" />

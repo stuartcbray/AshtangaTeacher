@@ -14,9 +14,5 @@ namespace AshtangaTeacher
 		Task<IStudent> AddAsync(IStudent student);
 
 		Task<bool> DeleteAsync(IStudent student);
-
-		Task<bool> AddProgressNoteAsync(IStudent student, IProgressNote note);
-
-		Task<IList<IProgressNote>> GetStudentProgressNotesAsync(IStudent student);
 	}
 }
