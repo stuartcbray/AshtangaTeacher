@@ -164,6 +164,14 @@ namespace AshtangaTeacher.iOS
 
 			IsDirty = false;
 		}
+
+		public virtual async Task InitializeAsync (object userObj)
+		{
+			UserObj = userObj;
+			await GetImageAsync ();
+			ThumbIsDirty = false;
+			IsDirty = false;
+		}
 	}
 }
 

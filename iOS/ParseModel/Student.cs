@@ -95,13 +95,6 @@ namespace AshtangaTeacher.iOS
 		{
 			await ParseObj.DeleteAsync ();
 		}
-
-		public async Task InitializeAsync (object userObj)
-		{
-			UserObj = userObj;
-			await GetImageAsync ();
-			ThumbIsDirty = false;
-		}
 					
 		public Student ()
 		{

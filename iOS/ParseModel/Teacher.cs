@@ -67,10 +67,9 @@ namespace AshtangaTeacher.iOS
 			return results.Any ();
 		}
 
-		public async Task InitializeAsync (object userObj)
+		public override async Task InitializeAsync (object userObj)
 		{
-			this.UserObj = userObj;
-			await GetImageAsync ();
+			await base.InitializeAsync (userObj);
 
 			// Raise a PropertyChanged for the visible properties so they show up in the UI
 			OnPropertyChanged ("ShalaName");
@@ -78,9 +77,6 @@ namespace AshtangaTeacher.iOS
 			OnPropertyChanged ("Name");
 			OnPropertyChanged ("UserName");
 			OnPropertyChanged ("Role");
-
-			IsDirty = false;
-			ThumbIsDirty = false;
 		}
 			
 		public async Task UpdateRoleAsync(TeacherRole role)
