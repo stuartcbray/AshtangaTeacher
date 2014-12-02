@@ -44,7 +44,7 @@ namespace AshtangaTeacher.iOS
 			user ["shalaName"] = shalaName;
 			user ["shalaNameLC"] = shalaName.ToLower ();
 			user ["name"] = name;
-			user ["teacherId"] = Guid.NewGuid().ToString();
+			user ["uid"] = Guid.NewGuid().ToString();
 			user ["role"] = shalaExists ? (long)TeacherRole.None : (long)TeacherRole.Administrator;
 
 			await user.SignUpAsync ();
@@ -103,7 +103,7 @@ namespace AshtangaTeacher.iOS
 
 				// Try the local cache first
 				var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
-				var imgPath = cameraService.GetImagePath (t.TeacherId);
+				var imgPath = cameraService.GetImagePath (t.UID);
 
 				bool fetchImage = true;
 				if (File.Exists (imgPath)) {

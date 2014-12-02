@@ -7,33 +7,17 @@ using System.Collections.Generic;
 
 namespace AshtangaTeacher
 {
-	public interface IStudent
+	public interface IStudent : IUser
 	{
-		string ShalaName { get; set; }
-
-		string StudentId { get; set; }
-
-		string ObjectId { get; set; }
-
-		string Name { get; set; }
-
-		string Email { get; set; }
-
-		bool IsDirty { get; set; }
-
-		bool ThumbIsDirty { get; set; }
-
 		Task GetProgressNotesAsync ();
 
 		Task<bool> AddProgressNoteAsync (IProgressNote note);
 
+		Task DeleteAsync ();
+
 		ObservableCollection<IProgressNote> ProgressNotes { get; set; }
 
-		ImageSource Image { get; set; }
-
 		DateTime ExpiryDate { get; set; }
-
-		event PropertyChangedEventHandler PropertyChanged;
 	}
 }
 

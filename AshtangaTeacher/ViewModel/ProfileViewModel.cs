@@ -130,7 +130,7 @@ namespace AshtangaTeacher
 
 							try
 							{
-								var mediaFile = await mediaPicker.TakePhotoAsync(new CameraMediaStorageOptions
+								var mediaFile = await mediaPicker.SelectPhotoAsync(new CameraMediaStorageOptions
 									{
 										DefaultCamera = CameraDevice.Front,
 										MaxPixelDimension = 400
@@ -141,7 +141,7 @@ namespace AshtangaTeacher
 								var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
 
 								IsLoading = true;
-								var thumb = await cameraService.GetThumbAsync(imageSource, teacher.TeacherId);
+								var thumb = await cameraService.GetThumbAsync(imageSource, teacher.UID);
 								IsLoading = false;
 
 								teacher.Image = thumb;

@@ -15,8 +15,6 @@ namespace AshtangaTeacher
 		bool isLoading;
 		string errorMessage;
 
-		readonly IStudentsService studentService;
-
 		RelayCommand addProgressNoteCommand;
 		RelayCommand showProgressNotesCommand;
 		RelayCommand saveStudentCommand;
@@ -80,7 +78,7 @@ namespace AshtangaTeacher
 								var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
 
 								IsLoading = true;
-								var imageUrl = await cameraService.GetThumbAsync(imageSource, Model.StudentId);
+								var imageUrl = await cameraService.GetThumbAsync(imageSource, Model.UID);
 								IsLoading = false;
 
 								Model.Image = imageUrl;
@@ -158,7 +156,7 @@ namespace AshtangaTeacher
 					?? (saveStudentCommand = new RelayCommand (
 						async () => {
 							IsLoading = true;
-							await studentService.SaveAsync (Model);
+							await Model.SaveAsync ();
 							IsLoading = false;
 							var nav = ServiceLocator.Current.GetInstance<INavigator> ();
 							nav.GoBack ();
@@ -173,7 +171,7 @@ namespace AshtangaTeacher
 					?? (deleteStudentCommand = new RelayCommand (
 						async () => {
 							IsLoading = true;
-							await studentService.DeleteAsync (Model);
+							await Model.DeleteAsync ();
 							App.Locator.Main.Students.Remove (this);
 							IsLoading = false;
 							var nav = ServiceLocator.Current.GetInstance<INavigator> ();
@@ -182,9 +180,8 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public StudentViewModel (IStudentsService studentService, IStudent model)
+		public StudentViewModel (IStudent model)
 		{
-			this.studentService = studentService;
 			Model = model;
 			Model.PropertyChanged += (sender, e) => { 
 				if (e.PropertyName == "IsDirty") {

@@ -3,6 +3,11 @@ using System.Text.RegularExpressions;
 using System.Globalization;
 using Xamarin.Forms;
 using MonoTouch.Foundation;
+using System.Threading.Tasks;
+using Microsoft.Practices.ServiceLocation;
+using Xamarin.Forms.Platform.iOS;
+using System.Runtime.InteropServices;
+using Parse;
 
 namespace AshtangaTeacher.iOS
 {
@@ -51,6 +56,17 @@ namespace AshtangaTeacher.iOS
 			}
 			catch (RegexMatchTimeoutException) {
 				return false;
+			}
+		}
+			
+		public async Task<Byte[]> GetBytesAsync (ImageSource imageSource)
+		{
+			var renderer = new StreamImagesourceHandler ();
+			var image = await renderer.LoadImageAsync (imageSource);
+			using (NSData pngData = image.AsPNG()) {
+				Byte[] data = new Byte[pngData.Length];
+				Marshal.Copy(pngData.Bytes, data, 0, Convert.ToInt32(pngData.Length));
+				return data;
 			}
 		}
 

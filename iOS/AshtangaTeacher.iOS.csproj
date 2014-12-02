@@ -175,6 +175,7 @@
     <Compile Include="ParseModel\ProgressNote.cs" />
     <Compile Include="ParseModel\Teacher.cs" />
     <Compile Include="ParseModel\Student.cs" />
+    <Compile Include="ParseModel\User.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\iOS\Xamarin.MonoTouch.CSharp.targets" />
   <Import Project="..\packages\Xamarin.Forms.1.2.3.6257\build\portable-win+net45+wp80+MonoAndroid10+MonoTouch10\Xamarin.Forms.targets" Condition="Exists('..\packages\Xamarin.Forms.1.2.3.6257\build\portable-win+net45+wp80+MonoAndroid10+MonoTouch10\Xamarin.Forms.targets')" />

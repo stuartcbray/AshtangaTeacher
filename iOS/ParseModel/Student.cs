@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using GalaSoft.MvvmLight;
 using Xamarin.Forms;
 using System.Collections.Generic;
 using Microsoft.Practices.ServiceLocation;
@@ -12,92 +11,27 @@ using Parse;
 
 namespace AshtangaTeacher.iOS
 {
-	public class Student : ViewModelBasee, IStudent
+	public class Student : User, IStudent
 	{
-		bool isDirty, thumbIsDirty, notesInitialized;
+		const string Field_Email = "email";
+		const string Field_ExpiryDate = "expiryDate";
 
-		string name;
-		string email;
-		string studentId;
-
-		ImageSource image;
+		bool notesInitialized;
 		DateTime expiryDate;
-
-		public string StudentId { 
-			get { 
-				return studentId; 
-			} 
-			set {
-				studentId = value;
-				var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
-				image = cameraService.GetImagePath (studentId);
-			}
-		}
 
 		public ObservableCollection<IProgressNote> ProgressNotes { get; set; }
 
 		public ObservableCollection<DateTime> AttendanceRecord { get; set; }
 
-		public bool IsDirty {
-			get {
-				return isDirty;
-			}
-			set {
-				isDirty = value;
-				OnPropertyChanged ();
-			}
-		}
-
-		public bool ThumbIsDirty {
-			get {
-				return thumbIsDirty;
-			}
-			set {
-				thumbIsDirty = value;
-				OnPropertyChanged ();
-			}
-		}
-
-		public string ShalaName { 
-			get; 
-			set; 
-		}
-
-		public string ObjectId {
-			get;
-			set;
-		}
-
-		public ImageSource Image {
-			get {
-				return image;
-			}
-			set {
-				image = value;
-				ThumbIsDirty = true;
-				IsDirty = true;
-				OnPropertyChanged ("Image");
-			}
-		}
-
-		public string Name {
-			get {
-				return name;
-			}
-			set {
-				if (Set ("Name", ref name, value)) {
-					IsDirty = true;
-				}
-			}
-		}
-
 		public string Email {
 			get {
-				return email;
+				return ParseObj.ContainsKey (Field_Email) ? ParseObj.Get<string> (Field_Email) : "";
 			}
 			set {
-				if (Set ("Email", ref email, value)) {
+				if (Email != value) {
+					ParseObj [Field_Email] = value;
 					IsDirty = true;
+					OnPropertyChanged ();
 				}
 			}
 		}
@@ -112,8 +46,7 @@ namespace AshtangaTeacher.iOS
 				}
 			}
 		}
-
-
+			
 		public async Task<bool> AddProgressNoteAsync(IProgressNote note)
 		{
 			ParseQuery<ParseObject> query = ParseObject.GetQuery("Student");
@@ -141,12 +74,9 @@ namespace AshtangaTeacher.iOS
 			if (!notesInitialized) {
 				ProgressNotes.Clear ();
 
-				ParseQuery<ParseObject> query = ParseObject.GetQuery ("Student");
-				ParseObject studentObj = await query.GetAsync (ObjectId);
-
-				query = from note in ParseObject.GetQuery ("ProgressNote")
-				       where note ["parent"] == studentObj
-				       select note;
+				var query = from note in ParseObject.GetQuery ("ProgressNote")
+						where note ["parent"] == ParseObj
+				       	select note;
 
 				var notes = await query.FindAsync ();
 
@@ -160,10 +90,32 @@ namespace AshtangaTeacher.iOS
 				notesInitialized = true;
 			}
 		}
-			
+
+		public async Task DeleteAsync ()
+		{
+			await ParseObj.DeleteAsync ();
+		}
+
+		public async Task InitializeAsync (object userObj)
+		{
+			UserObj = userObj;
+			await GetImageAsync ();
+			ThumbIsDirty = false;
+		}
+					
 		public Student ()
 		{
 			ProgressNotes = new ObservableCollection<IProgressNote> ();
+			ParseObj = new ParseObject ("Student");
+			ShalaName = App.Locator.Profile.Model.ShalaName;
+			ExpiryDate = DateTime.Now;
+			UID = Guid.NewGuid ().ToString ();
+
+			// Students are only visible to Approved Teachers (Moderators)
+			var acl = new ParseACL();
+			acl.SetRoleWriteAccess("Moderator", true);
+			acl.SetRoleReadAccess("Moderator", true);
+			ParseObj.ACL = acl;
 		}
 
 	}

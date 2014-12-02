@@ -50,12 +50,7 @@ namespace AshtangaTeacher
 				return addStudentCommand
 				?? (addStudentCommand = new RelayCommand (
 						() => {
-
-							var student = DependencyService.Get<IStudent>(DependencyFetchTarget.NewInstance);
-							student.ShalaName =  App.Locator.Profile.Model.ShalaName;
-							student.ExpiryDate = DateTime.Now;
-
-							var vm = new AddStudentViewModel (studentsService, navigationService, student);
+							var vm = new AddStudentViewModel (navigationService);
 							navigationService.NavigateTo (ViewModelLocator.AddStudentPageKey, vm);
 					}));
 			}

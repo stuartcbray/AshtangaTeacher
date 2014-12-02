@@ -11,7 +11,6 @@ namespace AshtangaTeacher
 	{
 		bool isLoading, isPhotoVisible;
 
-		readonly IStudentsService studentService;
 		readonly INavigator navigationService;
 		readonly IStudent student;
 
@@ -80,7 +79,7 @@ namespace AshtangaTeacher
 
 							try
 							{
-								var mediaFile = await mediaPicker.TakePhotoAsync(new CameraMediaStorageOptions
+								var mediaFile = await mediaPicker.SelectPhotoAsync(new CameraMediaStorageOptions
 									{
 										DefaultCamera = CameraDevice.Front,
 										MaxPixelDimension = 400
@@ -91,7 +90,7 @@ namespace AshtangaTeacher
 								var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
 
 								IsLoading = true;
-								var thumb = await cameraService.GetThumbAsync(imageSource, student.StudentId);
+								var thumb = await cameraService.GetThumbAsync(imageSource, student.UID);
 								IsLoading = false;
 
 								student.Image = thumb;
@@ -127,10 +126,10 @@ namespace AshtangaTeacher
 							}
 								
 							IsLoading = true;
-							await studentService.AddAsync (student);
+							await student.SaveAsync ();
 							IsLoading = false;
 
-							App.Locator.Main.Students.Add (new StudentViewModel (studentService, student));
+							App.Locator.Main.Students.Add (new StudentViewModel (student));
 
 							navigationService.GoBack ();
 							
@@ -138,11 +137,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public AddStudentViewModel (IStudentsService service, INavigator nav, IStudent student)
+		public AddStudentViewModel (INavigator nav)
 		{
-			studentService = service;
 			navigationService = nav;
-			this.student = student;
+			student = DependencyService.Get<IStudent>(DependencyFetchTarget.NewInstance);
 		}
 	}
 }

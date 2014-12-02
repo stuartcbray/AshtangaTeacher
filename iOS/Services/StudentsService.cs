@@ -26,25 +26,20 @@ namespace AshtangaTeacher.iOS
 			// Consider returning ObservableCollection instead
 			var list = new ObservableCollection<StudentViewModel> ();
 			foreach (var s in results) {
-
-				var student = new StudentViewModel (this,  new Student { 
-						ShalaName = shalaName,
-						Name = s.Get<string> ("name"),
-						StudentId = s.Get<string> ("studentId"),
-						Email = s.Get<string> ("email"),
-						ObjectId = s.ObjectId,
-						ExpiryDate = new DateTime (s.Get<long> ("expiryDate"))
-				});
+			
+				var student = new Student ();
+				await student.InitializeAsync (s);
+				var vm = new StudentViewModel (student);
 
 				// Try the local cache first
 				var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
-				var imgPath = cameraService.GetImagePath (student.Model.StudentId);
+				var imgPath = cameraService.GetImagePath (vm.Model.UID);
 
 				bool fetchImage = true;
 				if (File.Exists (imgPath)) {
 					var dt = File.GetLastWriteTimeUtc (imgPath);
 					if (s.UpdatedAt != null && s.UpdatedAt <= dt) {
-						student.Model.Image = ImageSource.FromFile (imgPath);
+						vm.Model.Image = ImageSource.FromFile (imgPath);
 						fetchImage = false;
 					} 
 				}
@@ -53,118 +48,17 @@ namespace AshtangaTeacher.iOS
 					// Load from Parse
 					var parseImg = s.Get<ParseFile>("image");
 					byte[] imgData = await new HttpClient ().GetByteArrayAsync (parseImg.Url);
-					student.Model.Image = ImageSource.FromStream(() => new MemoryStream(imgData));
+					vm.Model.Image = ImageSource.FromStream(() => new MemoryStream(imgData));
 
-					// Now save local copy
-					var data = NSData.FromArray (imgData);
-					SaveThumbToDisk (data, imgPath);
+					var deviceService = ServiceLocator.Current.GetInstance<IDeviceService> ();
+					deviceService.SaveToFile (imgData, imgPath);
 				}
 
-				student.Model.IsDirty = false;
-				student.Model.ThumbIsDirty = false;
-				list.Add (student);
+				vm.Model.IsDirty = false;
+				vm.Model.ThumbIsDirty = false;
+				list.Add (vm);
 			}
 			return list;
-		}
-
-		public async Task<bool> SaveAsync(IStudent student)
-		{
-			ParseQuery<ParseObject> query = ParseObject.GetQuery("Student");
-			ParseObject studentObj = await query.GetAsync(student.ObjectId);
-
-			if (studentObj != null) {
-				studentObj ["name"] = student.Name;
-				studentObj ["email"] = student.Email;
-				studentObj ["shalaName"] = student.ShalaName;
-				studentObj ["shalaNameLC"] = student.ShalaName.ToLower ();
-				studentObj ["studentId"] = student.StudentId;
-				studentObj ["expiryDate"] = student.ExpiryDate.Ticks;
-				await studentObj.SaveAsync();
-
-				if (student.ThumbIsDirty) {
-					await SaveThumb (student, studentObj);
-				}
-
-				student.IsDirty = false;
-				return true;
-			}
-
-			return false;
-		}
-
-		public async Task<IStudent> AddAsync(IStudent student)
-		{
-			var studentObj = new ParseObject("Student");
-			studentObj ["name"] = student.Name;
-			studentObj ["email"] = student.Email;
-			studentObj ["shalaName"] = student.ShalaName;
-			studentObj ["shalaNameLC"] = student.ShalaName.ToLower ();
-			studentObj ["studentId"] = student.StudentId;
-			studentObj ["expiryDate"] = student.ExpiryDate.Ticks;
-
-			var studentACL = new ParseACL();
-			studentACL.SetRoleWriteAccess("Moderator", true);
-			studentACL.SetRoleReadAccess("Moderator", true);
-			studentObj.ACL = studentACL;
-
-			await studentObj.SaveAsync();
-			await SaveThumb (student, studentObj);
-			
-			// After the SaveAsync we have an ObjectId
-			student.ObjectId = studentObj.ObjectId;
-			student.IsDirty = false;
-			return student;
-		}
-
-		public async Task<bool> DeleteAsync(IStudent student)
-		{
-			ParseQuery<ParseObject> query = ParseObject.GetQuery("Student");
-			ParseObject studentObj = await query.GetAsync(student.ObjectId);
-
-			if (studentObj != null) {
-				await studentObj.DeleteAsync ();
-				return true;
-			}
-
-			return false;
-		}
-
-		void SaveThumbToDisk(NSData data, string fileName)
-		{
-			var docFolder = Environment.GetFolderPath (Environment.SpecialFolder.Personal);
-			string pngFile = System.IO.Path.Combine (docFolder, fileName);
-
-			NSError err;
-			if (data.Save (pngFile, false, out err)) {
-				Console.WriteLine ("Saved file " + pngFile);
-			} else {
-				Console.WriteLine ("NOT saved as " + pngFile + " because" + err.LocalizedDescription);
-			}
-		}
-
-		async Task SaveThumb(IStudent student, ParseObject studentObj)
-		{
-			var renderer = new StreamImagesourceHandler ();
-			var image = await renderer.LoadImageAsync (student.Image);
-			using (NSData pngData = image.AsPNG()) {
-			
-				Byte[] data = new Byte[pngData.Length];
-				Marshal.Copy(pngData.Bytes, data, 0, Convert.ToInt32(pngData.Length));
-
-				ParseFile parseImg = new ParseFile(student.StudentId + ".PNG", data);
-
-				try {
-					await parseImg.SaveAsync ();
-
-					studentObj["image"] = parseImg;
-					await studentObj.SaveAsync ();
-				} catch {
-					// https://developers.facebook.com/bugs/789062014466095/
-				}
-
-				SaveThumbToDisk (pngData, student.StudentId + ".PNG");
-			}
-			student.ThumbIsDirty = false;
 		}
 	}
 }

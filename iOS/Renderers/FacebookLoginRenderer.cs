@@ -57,7 +57,7 @@ namespace AshtangaTeacher.iOS
 						user["name"] = name.Trim ();
 						user.Email = email;
 						user["facebookImageUrl"] = string.Format("https://graph.facebook.com/{0}/picture?width=300&height=300", id);
-						user["teacherId"] = Guid.NewGuid().ToString();
+						user["uid"] = Guid.NewGuid().ToString();
 
 						try {
 							await user.SaveAsync ();

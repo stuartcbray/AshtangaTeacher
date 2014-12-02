@@ -1,4 +1,6 @@
 ﻿using Xamarin.Forms;
+using System.Threading.Tasks;
+using System;
 
 namespace AshtangaTeacher
 {
@@ -6,6 +8,7 @@ namespace AshtangaTeacher
 	{
 		bool IsValidEmail (string strIn);
 		bool SaveToFile (byte[] data, string fileName);
+		Task<Byte[]> GetBytesAsync (ImageSource imageSource);
 	}
 }
 
