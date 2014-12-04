@@ -1,9 +1,7 @@
-﻿using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Views;
-using GalaSoft.MvvmLight;
-using Xamarin.Forms.Labs.Services.Media;
+﻿using Xamarin.Forms.Labs.Services.Media;
 using Xamarin.Forms;
 using Microsoft.Practices.ServiceLocation;
+using Xamarin.Forms.Labs.Mvvm;
 
 namespace AshtangaTeacher
 {
@@ -17,9 +15,9 @@ namespace AshtangaTeacher
 		ImageSource imageSource;
 		IMediaPicker mediaPicker;
 
-		RelayCommand addStudentCommand;
-		RelayCommand cancelCommand;
-		RelayCommand addStudentPhotoCommand;
+		Command addStudentCommand;
+		Command cancelCommand;
+		Command addStudentPhotoCommand;
 
 		string errorMessage;
 
@@ -49,7 +47,7 @@ namespace AshtangaTeacher
 			}
 			set {
 				if (Set (() => IsLoading, ref isLoading, value)) {
-					RaisePropertyChanged ("IsReady");
+					OnPropertyChanged ("IsReady");
 				}
 			}
 		}
@@ -60,17 +58,17 @@ namespace AshtangaTeacher
 			}
 		}
 			
-		public RelayCommand CancelCommand {
+		public Command CancelCommand {
 			get {
 				return cancelCommand
-				?? (cancelCommand = new RelayCommand (() => navigationService.GoBack ()));
+				?? (cancelCommand = new Command (() => navigationService.GoBack ()));
 			}
 		}
 
-		public RelayCommand AddStudentPhotoCommand {
+		public Command AddStudentPhotoCommand {
 			get {
 				return addStudentPhotoCommand
-					?? (addStudentPhotoCommand = new RelayCommand (
+					?? (addStudentPhotoCommand = new Command (
 						async () => 
 						{
 							mediaPicker = DependencyService.Get<IMediaPicker>();
@@ -87,7 +85,7 @@ namespace AshtangaTeacher
 								imageSource = ImageSource.FromStream(() => mediaFile.Source);
 								IsPhotoVisible = true;
 
-								var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+								var cameraService = DependencyService.Get<ICameraService> ();
 
 								IsLoading = true;
 								var thumb = await cameraService.GetThumbAsync(imageSource, student.UID);
@@ -103,10 +101,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand AddStudentCommand {
+		public Command AddStudentCommand {
 			get {
 				return addStudentCommand
-				?? (addStudentCommand = new RelayCommand (
+				?? (addStudentCommand = new Command (
 						async () => {
 						
 							// Perform some simple validation...
@@ -137,9 +135,9 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public AddStudentViewModel (INavigator nav)
+		public AddStudentViewModel ()
 		{
-			navigationService = nav;
+			navigationService = NavigationService.Instance;
 			student = DependencyService.Get<IStudent>(DependencyFetchTarget.NewInstance);
 		}
 	}

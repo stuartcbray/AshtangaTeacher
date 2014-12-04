@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Microsoft.Practices.ServiceLocation;
-using MonoTouch.Foundation;
 using Parse;
 using Xamarin.Forms;
-using Xamarin.Forms.Platform.iOS;
+using AshtangaTeacher.iOS;
+
+[assembly: Xamarin.Forms.Dependency (typeof (ParseService))]
 
 namespace AshtangaTeacher.iOS
 {
@@ -102,7 +101,7 @@ namespace AshtangaTeacher.iOS
 				}
 
 				// Try the local cache first
-				var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+				var cameraService = DependencyService.Get<ICameraService> ();
 				var imgPath = cameraService.GetImagePath (t.UID);
 
 				bool fetchImage = true;
@@ -128,7 +127,7 @@ namespace AshtangaTeacher.iOS
 					if (imageData != null) {
 						t.Image = ImageSource.FromStream (() => new MemoryStream (imageData));
 
-						var deviceService = ServiceLocator.Current.GetInstance<IDeviceService> ();
+						var deviceService = DependencyService.Get<IDeviceService> ();
 						deviceService.SaveToFile (imageData, imgPath);
 					}
 				}

@@ -8,7 +8,7 @@ using System.Net.Http;
 
 namespace AshtangaTeacher.iOS
 {
-	public class User : ViewModelBasee
+	public abstract class User : ViewModelBase
 	{
 		bool isDirty, thumbIsDirty;
 		ImageSource image;
@@ -107,7 +107,7 @@ namespace AshtangaTeacher.iOS
 
 		protected async Task GetImageAsync()
 		{
-			var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+			var cameraService = DependencyService.Get<ICameraService> ();
 			var imgPath = cameraService.GetImagePath (UID);
 
 			if (File.Exists (imgPath)) {
@@ -129,7 +129,7 @@ namespace AshtangaTeacher.iOS
 			}
 
 			if (imageData != null) {
-				var deviceService = ServiceLocator.Current.GetInstance<IDeviceService> ();
+				var deviceService = DependencyService.Get<IDeviceService> ();
 				deviceService.SaveToFile (imageData, imgPath);
 				Image = ImageSource.FromStream (() => new MemoryStream (imageData));
 			}
@@ -139,8 +139,8 @@ namespace AshtangaTeacher.iOS
 		{
 			if (ThumbIsDirty) {
 
-				var device = ServiceLocator.Current.GetInstance<IDeviceService> ();
-				Byte[] data = await device.GetBytesAsync (Image);
+				var deviceService = DependencyService.Get<IDeviceService> ();
+				Byte[] data = await deviceService.GetBytesAsync (Image);
 
 				ParseFile parseImg = new ParseFile(UID + ".PNG", data);
 
@@ -150,8 +150,8 @@ namespace AshtangaTeacher.iOS
 				} catch {
 					// https://developers.facebook.com/bugs/789062014466095/
 				}
-				var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
-				device.SaveToFile (data, cameraService.GetImagePath(UID));
+				var cameraService = DependencyService.Get<ICameraService> ();
+				deviceService.SaveToFile (data, cameraService.GetImagePath(UID));
 
 				ThumbIsDirty = false;
 			}

@@ -1,12 +1,19 @@
-﻿using System;
-using GalaSoft.MvvmLight.Views;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 
 namespace AshtangaTeacher
 {
-	public interface INavigator : INavigationService
+	public interface INavigator
 	{
+		string CurrentPageKey { get; }
+
 		void PopToRoot ();
+
+		void GoBack ();
+
+		void NavigateTo (string pageKey);
+
+		void NavigateTo (string pageKey, object parameter);
+	
 		void SetRootNavigation (NavigationPage navigation);
 	}
 }

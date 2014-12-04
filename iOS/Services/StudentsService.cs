@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Parse;
-using Facebook;
 using System.Collections.ObjectModel;
-using System.Collections;
-using Microsoft.Practices.ServiceLocation;
-using MonoTouch.UIKit;
-using MonoTouch.Foundation;
-using System.Runtime.InteropServices;
-using Xamarin.Forms.Platform.iOS;
-using System.Net.Http;
-using Xamarin.Forms;
 using System.IO;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Microsoft.Practices.ServiceLocation;
+using Parse;
+using Xamarin.Forms;
+using AshtangaTeacher.iOS;
+
+[assembly: Xamarin.Forms.Dependency (typeof (StudentsService))]
 
 namespace AshtangaTeacher.iOS
 {
@@ -32,7 +29,7 @@ namespace AshtangaTeacher.iOS
 				var vm = new StudentViewModel (student);
 
 				// Try the local cache first
-				var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+				var cameraService = DependencyService.Get<ICameraService> ();
 				var imgPath = cameraService.GetImagePath (vm.Model.UID);
 
 				bool fetchImage = true;
@@ -50,7 +47,7 @@ namespace AshtangaTeacher.iOS
 					byte[] imgData = await new HttpClient ().GetByteArrayAsync (parseImg.Url);
 					vm.Model.Image = ImageSource.FromStream(() => new MemoryStream(imgData));
 
-					var deviceService = ServiceLocator.Current.GetInstance<IDeviceService> ();
+					var deviceService = DependencyService.Get<IDeviceService> ();
 					deviceService.SaveToFile (imgData, imgPath);
 				}
 

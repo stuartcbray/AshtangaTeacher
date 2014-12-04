@@ -1,9 +1,7 @@
 ﻿using System;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
 using Xamarin.Forms;
+using Xamarin.Forms.Labs.Mvvm;
 
 namespace AshtangaTeacher
 {
@@ -19,9 +17,9 @@ namespace AshtangaTeacher
 		string shalaName;
 		string errorMessage;
 
-		RelayCommand signUpCommand;
-		RelayCommand cancelCommand;
-		RelayCommand saveShalaCommand;
+		Command signUpCommand;
+		Command cancelCommand;
+		Command saveShalaCommand;
 
 		readonly IParseService parseService;
 		readonly INavigator navigationService;
@@ -99,7 +97,7 @@ namespace AshtangaTeacher
 			}
 			set {
 				if (Set (() => IsLoading, ref isLoading, value)) {
-					RaisePropertyChanged ("IsReady");
+					OnPropertyChanged ("IsReady");
 				}
 			}
 		}
@@ -110,10 +108,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand SaveShalaCommand {
+		public Command SaveShalaCommand {
 			get {
 				return saveShalaCommand
-					?? (saveShalaCommand = new RelayCommand (
+					?? (saveShalaCommand = new Command (
 						async () => {
 							if (string.IsNullOrEmpty(ShalaName)) {
 								ErrorMessage = "Shala Name cannot be empty";
@@ -128,8 +126,7 @@ namespace AshtangaTeacher
 
 								var exists = await teacher.ShalaExistsAsync(ShalaName);
 								if (exists) {
-									var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
-									bool joinShala = await dialog.ShowMessage ("Shala already exists. Would you like to request to join as a Teacher?", 
+									bool joinShala = await DialogService.Instance.ShowMessage ("Shala already exists. Would you like to request to join as a Teacher?", 
 										"Shala Exists", "Yes", "No", null);
 									if (!joinShala) 
 									{
@@ -153,10 +150,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand CancelCommand {
+		public Command CancelCommand {
 			get {
 				return cancelCommand
-				?? (cancelCommand = new RelayCommand (
+				?? (cancelCommand = new Command (
 					() => {
 						UserName = Email = Password = PasswordDupe = ShalaName = "";
 						navigationService.GoBack ();
@@ -164,10 +161,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand SignUpCommand {
+		public Command SignUpCommand {
 			get {
 				return signUpCommand
-				?? (signUpCommand = new RelayCommand (
+				?? (signUpCommand = new Command (
 					async () => {
 							// Perform some simple validation...
 							if (string.IsNullOrEmpty (Name)) {
@@ -203,8 +200,7 @@ namespace AshtangaTeacher
 								teacher.UserObj = parseService.CurrentUser;
 								var shalaExists = await teacher.ShalaExistsAsync(ShalaName);
 								if (shalaExists) {
-									var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
-									bool joinShala = await dialog.ShowMessage ("Shala already exists. Would you like to request to join as a Teacher?", 
+									bool joinShala = await DialogService.Instance.ShowMessage ("Shala already exists. Would you like to request to join as a Teacher?", 
 										"Shala Exists", "Yes", "No", null);
 									if (!joinShala) {
 										ShalaName = "";
@@ -231,11 +227,11 @@ namespace AshtangaTeacher
 			ErrorMessage = UserName = Name = Password =  PasswordDupe = Email = ShalaName = "";
 		}
 
-		public SignUpViewModel (INavigator navigationService, IParseService parseService, IDeviceService deviceService)
+		public SignUpViewModel ()
 		{
-			this.parseService = parseService;
-			this.navigationService = navigationService;
-			this.deviceService = deviceService;
+			parseService = DependencyService.Get<IParseService>();
+			navigationService = NavigationService.Instance;
+			deviceService = DependencyService.Get<IDeviceService>();
 		}
 	}
 }

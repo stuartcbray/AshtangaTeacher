@@ -1,6 +1,4 @@
-﻿using System;
-using GalaSoft.MvvmLight;
-using Xamarin.Forms;
+﻿using Xamarin.Forms;
 using System.Threading.Tasks;
 
 namespace AshtangaTeacher
@@ -20,7 +18,7 @@ namespace AshtangaTeacher
 			}
 			set {
 				if (Set (() => IsLoading, ref isLoading, value)) {
-					RaisePropertyChanged ("IsReady");
+					OnPropertyChanged ("IsReady");
 				}
 			}
 		}
@@ -31,13 +29,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public MainTabsViewModel (
-			INavigator navigationService,
-			IParseService parseService
-		)
+		public MainTabsViewModel ()
 		{
-			this.parseService = parseService;
-			this.navigationService = navigationService;
+			parseService = DependencyService.Get<IParseService>();
+			navigationService = NavigationService.Instance;
 			isLoading = true;
 		}
 

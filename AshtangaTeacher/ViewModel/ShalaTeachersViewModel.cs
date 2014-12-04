@@ -1,17 +1,13 @@
-﻿using System;
-using GalaSoft.MvvmLight;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
-using System.Linq;
-using Microsoft.Practices.ServiceLocation;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using GalaSoft.MvvmLight.Command;
+using Xamarin.Forms.Labs.Mvvm;
+using Xamarin.Forms;
 
 namespace AshtangaTeacher
 {
 	public class ShalaTeachersViewModel : ViewModelBase
 	{
-		RelayCommand<ITeacher> showTeacherCommand;
+		Command<ITeacher> showTeacherCommand;
 		INavigator navigationService;
 
 		bool showPendingTeachers;
@@ -38,10 +34,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand<ITeacher> ShowTeacherCommand {
+		public Command<ITeacher> ShowTeacherCommand {
 			get {
 				return showTeacherCommand
-					?? (showTeacherCommand = new RelayCommand<ITeacher> (
+					?? (showTeacherCommand = new Command<ITeacher> (
 						teacher => {
 							if (!ShowTeacherCommand.CanExecute (teacher)) {
 								return;
@@ -76,9 +72,9 @@ namespace AshtangaTeacher
 		}
 
 
-		public ShalaTeachersViewModel (INavigator navigationService)
+		public ShalaTeachersViewModel ()
 		{
-			this.navigationService = navigationService;
+			navigationService = NavigationService.Instance;
 		}
 	}
 }

@@ -1,10 +1,9 @@
 ﻿using System;
-using GalaSoft.MvvmLight.Command;
 using Microsoft.Practices.ServiceLocation;
-using GalaSoft.MvvmLight;
 using Xamarin.Forms.Labs.Services.Media;
 using Xamarin.Forms;
 using System.Threading.Tasks;
+using Xamarin.Forms.Labs.Mvvm;
 
 namespace AshtangaTeacher
 {
@@ -22,10 +21,10 @@ namespace AshtangaTeacher
 		ImageSource imageSource;
 		IMediaPicker mediaPicker;
 
-		RelayCommand shalaTeachersCommand;
-		RelayCommand addTeacherPhotoCommand;
-		RelayCommand saveTeacherCommand;
-		RelayCommand logOutCommand;
+		Command shalaTeachersCommand;
+		Command addTeacherPhotoCommand;
+		Command saveTeacherCommand;
+		Command logOutCommand;
 
 		public ITeacher Model {
 			get {
@@ -36,10 +35,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand ShalaTeachersCommand {
+		public Command ShalaTeachersCommand {
 			get {
 				return shalaTeachersCommand
-					?? (shalaTeachersCommand = new RelayCommand (
+					?? (shalaTeachersCommand = new Command (
 						async () => {
 							IsLoading = true;
 							var teachers = await parseService.GetTeachers (Model.ShalaName);
@@ -66,8 +65,8 @@ namespace AshtangaTeacher
 			}
 			set {
 				if (Set (() => IsLoading, ref isLoading, value)) {
-					RaisePropertyChanged ("IsReady");
-					SaveTeacherCommand.RaiseCanExecuteChanged();
+					OnPropertyChanged ("IsReady");
+					SaveTeacherCommand.ChangeCanExecute();
 				}
 			}
 		}
@@ -87,10 +86,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand SaveTeacherCommand {
+		public Command SaveTeacherCommand {
 			get {
 				return saveTeacherCommand
-					?? (saveTeacherCommand = new RelayCommand (
+					?? (saveTeacherCommand = new Command (
 						async () => {
 							IsLoading = true;
 							await Model.SaveAsync ();
@@ -100,17 +99,17 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand LogOutCommand {
+		public Command LogOutCommand {
 			get {
 				return logOutCommand
-					?? (logOutCommand = new RelayCommand (
+					?? (logOutCommand = new Command (
 						async () => {
 							await parseService.LogOutAsync ();
 							navigationService.SetRootNavigation(App.RootNavPage);
 
 							// Reset view models and ensure we re-load the new Teacher 
 							App.Locator.MainTabs.IsLoading = true;
-							ViewModelLocator.Reset ();
+							App.Locator.Reset ();
 
 							navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
 						}));
@@ -118,10 +117,10 @@ namespace AshtangaTeacher
 		}
 
 
-		public RelayCommand AddTeacherPhotoCommand {
+		public Command AddTeacherPhotoCommand {
 			get {
 				return addTeacherPhotoCommand
-					?? (addTeacherPhotoCommand = new RelayCommand (
+					?? (addTeacherPhotoCommand = new Command (
 						async () => 
 						{
 							mediaPicker = DependencyService.Get<IMediaPicker>();
@@ -138,7 +137,7 @@ namespace AshtangaTeacher
 								imageSource = ImageSource.FromStream(() => mediaFile.Source);
 								IsPhotoVisible = true;
 
-								var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+								var cameraService = DependencyService.Get<ICameraService> ();
 
 								IsLoading = true;
 								var thumb = await cameraService.GetThumbAsync(imageSource, teacher.UID);
@@ -162,18 +161,15 @@ namespace AshtangaTeacher
 			IsLoading = false;
 		}
 
-		public ProfileViewModel (
-			INavigator navigationService,
-			IParseService parseService
-		)
+		public ProfileViewModel ()
 		{
-			this.parseService = parseService;
-			this.navigationService = navigationService;
+			parseService = DependencyService.Get<IParseService>();
+			navigationService = NavigationService.Instance;
 			teacher = DependencyService.Get<ITeacher> (DependencyFetchTarget.NewInstance);
 
 			teacher.PropertyChanged += (sender, e) => { 
 				if (e.PropertyName == "IsDirty") {
-					SaveTeacherCommand.RaiseCanExecuteChanged();
+					SaveTeacherCommand.ChangeCanExecute();
 				}
 			};
 		}

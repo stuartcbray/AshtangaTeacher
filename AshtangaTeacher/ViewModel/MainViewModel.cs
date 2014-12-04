@@ -1,10 +1,8 @@
 ﻿using System;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
 using System.Collections.ObjectModel;
-using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
 using Xamarin.Forms;
+using Xamarin.Forms.Labs.Mvvm;
 
 namespace AshtangaTeacher
 {
@@ -14,17 +12,17 @@ namespace AshtangaTeacher
 		readonly INavigator navigationService;
 
 		bool isLoading;
-		RelayCommand getStudentsCommand;
-		RelayCommand addStudentCommand;
-		RelayCommand<StudentViewModel> showDetailsCommand;
+		Command getStudentsCommand;
+		Command addStudentCommand;
+		Command<StudentViewModel> showDetailsCommand;
 
 		public bool IsLoading {
 			get {
 				return isLoading;
 			}
 			set {
-				if (Set (() => IsLoading, ref isLoading, value)) {
-					RaisePropertyChanged ("IsReady");
+				if (Set ("IsLoading", ref isLoading, value)) {
+					OnPropertyChanged ("IsReady");
 				}
 			}
 		}
@@ -45,29 +43,25 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand AddStudentCommand {
+		public Command AddStudentCommand {
 			get {
 				return addStudentCommand
-				?? (addStudentCommand = new RelayCommand (
-						() => {
-							var vm = new AddStudentViewModel (navigationService);
-							navigationService.NavigateTo (ViewModelLocator.AddStudentPageKey, vm);
-					}));
+				?? (addStudentCommand = new Command (
+					() => navigationService.NavigateTo (ViewModelLocator.AddStudentPageKey, new AddStudentViewModel ())));
 			}
 		}
 
-		public RelayCommand GetStudentsCommand {
+		public Command GetStudentsCommand {
 			get {
 				return getStudentsCommand
-				?? (getStudentsCommand = new RelayCommand (
+				?? (getStudentsCommand = new Command (
 					async () => {
 							Students.Clear ();
 							IsLoading = true;
 							try {
 								Students = await studentsService.GetAllAsync (App.Locator.Profile.Model.ShalaName);
 							} catch (Exception ex) {
-								var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
-								await dialog.ShowError (ex, "Error when refreshing", "OK", null);
+								await DialogService.Instance.ShowError (ex, "Error when refreshing", "OK", null);
 							}
 							IsLoading = false;
 					}));
@@ -75,10 +69,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand<StudentViewModel> ShowDetailsCommand {
+		public Command<StudentViewModel> ShowDetailsCommand {
 			get {
 				return showDetailsCommand
-				?? (showDetailsCommand = new RelayCommand<StudentViewModel> (
+				?? (showDetailsCommand = new Command<StudentViewModel> (
 					student => {
 						if (!ShowDetailsCommand.CanExecute (student)) {
 							return;
@@ -91,13 +85,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public MainViewModel (
-			INavigator navigationService,
-			IStudentsService studentsService
-		)
+		public MainViewModel ()
 		{
-			this.studentsService = studentsService;
-			this.navigationService = navigationService;
+			navigationService = NavigationService.Instance;
+			studentsService = DependencyService.Get<IStudentsService>();
 			IsLoading = true;
 		}
 	}

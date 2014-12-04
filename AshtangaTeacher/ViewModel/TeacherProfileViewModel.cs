@@ -1,10 +1,9 @@
 ﻿using System;
-using GalaSoft.MvvmLight.Command;
 using Microsoft.Practices.ServiceLocation;
-using GalaSoft.MvvmLight;
 using Xamarin.Forms.Labs.Services.Media;
 using Xamarin.Forms;
 using System.Threading.Tasks;
+using Xamarin.Forms.Labs.Mvvm;
 
 namespace AshtangaTeacher
 {
@@ -14,8 +13,8 @@ namespace AshtangaTeacher
 		string errorMessage;
 		ITeacher teacher;
 
-		RelayCommand acceptTeacherRequestCommand;
-		RelayCommand ignoreTeacherRequestCommand;
+		Command acceptTeacherRequestCommand;
+		Command ignoreTeacherRequestCommand;
 
 		public ITeacher Model {
 			get {
@@ -41,7 +40,7 @@ namespace AshtangaTeacher
 			}
 			set {
 				if (Set (() => IsLoading, ref isLoading, value)) {
-					RaisePropertyChanged ("IsReady");
+					OnPropertyChanged ("IsReady");
 				}
 			}
 		}
@@ -59,35 +58,32 @@ namespace AshtangaTeacher
 		}
 
 
-		public RelayCommand AcceptTeacherRequestCommand {
+		public Command AcceptTeacherRequestCommand {
 			get {
 				return acceptTeacherRequestCommand
-					?? (acceptTeacherRequestCommand = new RelayCommand (
+					?? (acceptTeacherRequestCommand = new Command (
 						async () => {
 							IsLoading = true;
 							await teacher.UpdateRoleAsync (TeacherRole.Moderator);
 							IsLoading = false;
 
 							App.Locator.ShalaTeachers.AcceptTeacher (Model);
-
-							var navigationService = ServiceLocator.Current.GetInstance<INavigator> ();
-							navigationService.GoBack ();
+							NavigationService.Instance.GoBack ();
 						}));
 			}
 		}
 
 
-		public RelayCommand IgnoreTeacherRequestCommand {
+		public Command IgnoreTeacherRequestCommand {
 			get {
 				return ignoreTeacherRequestCommand
-					?? (ignoreTeacherRequestCommand = new RelayCommand (
+					?? (ignoreTeacherRequestCommand = new Command (
 					 () => {
 							IsLoading = true;
 							//await parseService.IgnoreTeacher (teacher);
 							IsLoading = false;
 
-							var navigationService = ServiceLocator.Current.GetInstance<INavigator> ();
-							navigationService.GoBack ();
+							NavigationService.Instance.GoBack ();
 						}));
 			}
 		}

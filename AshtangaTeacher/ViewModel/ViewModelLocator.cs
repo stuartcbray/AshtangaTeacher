@@ -1,5 +1,5 @@
-﻿using GalaSoft.MvvmLight.Ioc;
-using Microsoft.Practices.ServiceLocation;
+﻿using System.Collections.Generic;
+using System;
 
 namespace AshtangaTeacher
 {
@@ -19,66 +19,76 @@ namespace AshtangaTeacher
 		public const string ShalaTeachersPageKey = "ShalaTeachersPage";
 		public const string TeacherProfilePageKey = "TeacherProfilePage";
 
+		Dictionary<string, Type> pagesByKey = new Dictionary<string, Type> () {
+			{ AddProgressNotePageKey, typeof(AddProgressNotePage) },
+			{ ProgressNotesPageKey, typeof(ProgressNotesPage) },
+			{ AddStudentPageKey, typeof(AddStudentPage) },
+			{ StudentDetailsPageKey, typeof(StudentDetailsPage) },
+			{ MainPageKey, typeof(MainPage) },
+			{ LoginPageKey, typeof(LoginPage) },
+			{ SignUpPageKey, typeof(SignUpPage) },
+			{ FacebookSignInKey, typeof(FacebookLoginPage) },
+			{ TeacherInfoPageKey, typeof(TeacherInfoPage) },
+			{ MainTabsPageKey, typeof(MainTabsPage) },
+			{ ProfilePageKey, typeof(ProfilePage) },
+			{ ShalaTeachersPageKey, typeof(ShalaTeachersPage) },
+			{ TeacherProfilePageKey, typeof(TeacherProfilePage) }
+		};
+
+		public Dictionary<string, Type> PagesByKey {
+			get {
+				return pagesByKey;
+			}
+		}
+
+		MainViewModel mainViewModel;
 		public MainViewModel Main {
 			get {
-				if (!SimpleIoc.Default.IsRegistered<MainViewModel> ()) {
-					SimpleIoc.Default.Register<MainViewModel> ();
-				}
-				return ServiceLocator.Current.GetInstance<MainViewModel> ();
+				return mainViewModel ?? (mainViewModel = new MainViewModel ());
 			}
 		}
 
+		ProfileViewModel profileViewModel;
 		public ProfileViewModel Profile {
 			get {
-				if (!SimpleIoc.Default.IsRegistered<ProfileViewModel> ()) {
-					SimpleIoc.Default.Register<ProfileViewModel> ();
-				}
-				return ServiceLocator.Current.GetInstance<ProfileViewModel> ();
+				return profileViewModel ?? (profileViewModel = new ProfileViewModel ());
 			}
 		}
 
+		MainTabsViewModel mainTabsViewModel;
 		public MainTabsViewModel MainTabs {
 			get {
-				if (!SimpleIoc.Default.IsRegistered<MainTabsViewModel> ()) {
-					SimpleIoc.Default.Register<MainTabsViewModel> ();
-				}
-				return ServiceLocator.Current.GetInstance<MainTabsViewModel> ();
+				return mainTabsViewModel ?? (mainTabsViewModel = new MainTabsViewModel ());
 			}
 		}
 
+		LoginViewModel loginViewModel;
 		public LoginViewModel Login {
 			get {
-				if (!SimpleIoc.Default.IsRegistered<LoginViewModel> ()) {
-					SimpleIoc.Default.Register<LoginViewModel> ();
-				}
-				return ServiceLocator.Current.GetInstance<LoginViewModel> ();
+				return loginViewModel ?? (loginViewModel = new LoginViewModel ());
 			}
 		}
 
+		SignUpViewModel signUpViewModel;
 		public SignUpViewModel SignUp {
 			get {
-				if (!SimpleIoc.Default.IsRegistered<SignUpViewModel> ()) {
-					SimpleIoc.Default.Register<SignUpViewModel> ();
-				}
-				return ServiceLocator.Current.GetInstance<SignUpViewModel> ();
+				return signUpViewModel ?? (signUpViewModel = new SignUpViewModel ());
 			}
 		}
 
+		ShalaTeachersViewModel shalaTeachersViewModel;
 		public ShalaTeachersViewModel ShalaTeachers {
 			get {
-				if (!SimpleIoc.Default.IsRegistered<ShalaTeachersViewModel> ()) {
-					SimpleIoc.Default.Register<ShalaTeachersViewModel> ();
-				}
-				return ServiceLocator.Current.GetInstance<ShalaTeachersViewModel> ();
+				return shalaTeachersViewModel ?? (shalaTeachersViewModel = new ShalaTeachersViewModel ());
 			}
 		}
 
-		public static void Reset ()
+		public void Reset ()
 		{
 			// These need to be re-instantiated with each login
-			SimpleIoc.Default.Unregister<ShalaTeachersViewModel> ();
-			SimpleIoc.Default.Unregister<LoginViewModel> ();
-			SimpleIoc.Default.Unregister<SignUpViewModel> ();
+			shalaTeachersViewModel = null;
+			loginViewModel = null;
+			signUpViewModel = null;
 		}
 	}
 }

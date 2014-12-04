@@ -1,13 +1,14 @@
 ﻿using System;
-using System.Text.RegularExpressions;
 using System.Globalization;
-using Xamarin.Forms;
-using MonoTouch.Foundation;
-using System.Threading.Tasks;
-using Microsoft.Practices.ServiceLocation;
-using Xamarin.Forms.Platform.iOS;
 using System.Runtime.InteropServices;
-using Parse;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using MonoTouch.Foundation;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.iOS;
+using AshtangaTeacher.iOS;
+
+[assembly: Xamarin.Forms.Dependency (typeof (DeviceService))]
 
 namespace AshtangaTeacher.iOS
 {

@@ -1,12 +1,10 @@
 ﻿using System;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Views;
 using Microsoft.Practices.ServiceLocation;
 using System.Collections.ObjectModel;
 using Xamarin.Forms;
 using Xamarin.Forms.Labs.Services.Media;
 using System.Threading.Tasks;
+using Xamarin.Forms.Labs.Mvvm;
 
 namespace AshtangaTeacher
 {
@@ -15,12 +13,12 @@ namespace AshtangaTeacher
 		bool isLoading;
 		string errorMessage;
 
-		RelayCommand addProgressNoteCommand;
-		RelayCommand showProgressNotesCommand;
-		RelayCommand saveStudentCommand;
-		RelayCommand deleteStudentCommand;
-		RelayCommand updatePhotoCommand;
-		RelayCommand<string> saveProgressNoteCommand;
+		Command addProgressNoteCommand;
+		Command showProgressNotesCommand;
+		Command saveStudentCommand;
+		Command deleteStudentCommand;
+		Command updatePhotoCommand;
+		Command<string> saveProgressNoteCommand;
 
 		ImageSource imageSource;
 		IMediaPicker mediaPicker;
@@ -40,8 +38,8 @@ namespace AshtangaTeacher
 			}
 			set {
 				if (Set (() => IsLoading, ref isLoading, value)) {
-					SaveProgressNoteCommand.RaiseCanExecuteChanged ();
-					RaisePropertyChanged ("IsReady");
+					SaveProgressNoteCommand.ChangeCanExecute ();
+					OnPropertyChanged ("IsReady");
 				}
 			}
 		}
@@ -57,10 +55,10 @@ namespace AshtangaTeacher
 			private set;
 		}
 
-		public RelayCommand UpdatePhotoCommand {
+		public Command UpdatePhotoCommand {
 			get {
 				return updatePhotoCommand
-					?? (updatePhotoCommand = new RelayCommand (
+					?? (updatePhotoCommand = new Command (
 						async () => 
 						{
 							mediaPicker = DependencyService.Get<IMediaPicker>();
@@ -75,7 +73,7 @@ namespace AshtangaTeacher
 									});
 								imageSource = ImageSource.FromStream(() => mediaFile.Source);
 
-								var cameraService = ServiceLocator.Current.GetInstance<ICameraService> ();
+								var cameraService = DependencyService.Get<ICameraService> ();
 
 								IsLoading = true;
 								var imageUrl = await cameraService.GetThumbAsync(imageSource, Model.UID);
@@ -91,32 +89,26 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand ShowProgressNotesCommand {
+		public Command ShowProgressNotesCommand {
 			get {
 				return showProgressNotesCommand
-				?? (showProgressNotesCommand = new RelayCommand (
-					 () => {
-							var nav = ServiceLocator.Current.GetInstance<INavigator> ();
-							nav.NavigateTo (ViewModelLocator.ProgressNotesPageKey, this);
-						}));
+				?? (showProgressNotesCommand = new Command (
+					() => NavigationService.Instance.NavigateTo (ViewModelLocator.ProgressNotesPageKey, this)));
 			}
 		}
 
-		public RelayCommand AddProgressNoteCommand {
+		public Command AddProgressNoteCommand {
 			get {
 				return addProgressNoteCommand
-				?? (addProgressNoteCommand = new RelayCommand (
-					() => {
-						var nav = ServiceLocator.Current.GetInstance<INavigator> ();
-						nav.NavigateTo (ViewModelLocator.AddProgressNotePageKey, this);
-					}));
+				?? (addProgressNoteCommand = new Command (
+					() => NavigationService.Instance.NavigateTo (ViewModelLocator.AddProgressNotePageKey, this)));
 			}
 		}
 
-		public RelayCommand<string> SaveProgressNoteCommand {
+		public Command<string> SaveProgressNoteCommand {
 			get {
 				return saveProgressNoteCommand
-				?? (saveProgressNoteCommand = new RelayCommand<string> (
+				?? (saveProgressNoteCommand = new Command<string> (
 					async text => {
 						
 						var note = DependencyService.Get<IProgressNote>(DependencyFetchTarget.NewInstance);
@@ -128,16 +120,14 @@ namespace AshtangaTeacher
 						IsLoading = false;
 
 						if (!result) {
-							var dialog = ServiceLocator.Current.GetInstance<IDialogService> ();
-							await dialog.ShowError (
+							await DialogService.Instance.ShowError (
 								"Error when saving, your note was not saved",
 								"Error",
 								"OK",
 								null);
 						}
-
-						var nav = ServiceLocator.Current.GetInstance<INavigator> ();
-						nav.GoBack ();
+								
+						NavigationService.Instance.GoBack ();
 					},
 					text => !string.IsNullOrEmpty (text) && !IsLoading));
 			}
@@ -150,32 +140,30 @@ namespace AshtangaTeacher
 			IsLoading = false;
 		}
 
-		public RelayCommand SaveStudentCommand {
+		public Command SaveStudentCommand {
 			get {
 				return saveStudentCommand
-					?? (saveStudentCommand = new RelayCommand (
+					?? (saveStudentCommand = new Command (
 						async () => {
 							IsLoading = true;
 							await Model.SaveAsync ();
 							IsLoading = false;
-							var nav = ServiceLocator.Current.GetInstance<INavigator> ();
-							nav.GoBack ();
+							NavigationService.Instance.GoBack ();
 						}, 
 					() => Model.IsDirty));
 			}
 		}
 
-		public RelayCommand DeleteStudentCommand {
+		public Command DeleteStudentCommand {
 			get {
 				return deleteStudentCommand
-					?? (deleteStudentCommand = new RelayCommand (
+					?? (deleteStudentCommand = new Command (
 						async () => {
 							IsLoading = true;
 							await Model.DeleteAsync ();
 							App.Locator.Main.Students.Remove (this);
 							IsLoading = false;
-							var nav = ServiceLocator.Current.GetInstance<INavigator> ();
-							nav.GoBack ();
+							NavigationService.Instance.GoBack ();
 						}));
 			}
 		}
@@ -185,7 +173,7 @@ namespace AshtangaTeacher
 			Model = model;
 			Model.PropertyChanged += (sender, e) => { 
 				if (e.PropertyName == "IsDirty") {
-					SaveStudentCommand.RaiseCanExecuteChanged();
+					SaveStudentCommand.ChangeCanExecute();
 				}
 			};
 		}

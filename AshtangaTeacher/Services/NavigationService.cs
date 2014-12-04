@@ -2,16 +2,34 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using GalaSoft.MvvmLight.Views;
 using Xamarin.Forms;
 
 namespace AshtangaTeacher
 {
-	// Borrowed from MVVM Light Framework
+	// Inspired from MVVM Light INavigationService
 	public class NavigationService : INavigator
 	{
-		private readonly Dictionary<string, Type> pagesByKey = new Dictionary<string, Type>();
-		private NavigationPage navigation;
+		Dictionary<string, Type> pagesByKey;
+		NavigationPage navigation;
+
+		static NavigationService instance;
+		static object instanceLock = new object();
+
+		public static NavigationService Instance {
+			get {
+				if (instance == null) {
+					lock (instanceLock) {
+						if (instance == null)
+							instance = new NavigationService ();
+					}
+				}
+				return instance;
+			}
+		}
+
+		NavigationService ()
+		{
+		}
 
 		public string CurrentPageKey
 		{
@@ -106,19 +124,9 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public void Configure(string pageKey, Type pageType)
+		public void Initialize (Dictionary<string, Type> pages)
 		{
-			lock (pagesByKey)
-			{
-				if (pagesByKey.ContainsKey(pageKey))
-				{
-					pagesByKey[pageKey] = pageType;
-				}
-				else
-				{
-					pagesByKey.Add(pageKey, pageType);
-				}
-			}
+			pagesByKey = pages;
 		}
 
 		public void SetRootNavigation(NavigationPage navigation)

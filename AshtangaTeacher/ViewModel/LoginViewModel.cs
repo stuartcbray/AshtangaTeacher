@@ -1,7 +1,6 @@
 ﻿using System;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Views;
+using Xamarin.Forms;
+using Xamarin.Forms.Labs.Mvvm;
 
 namespace AshtangaTeacher
 {
@@ -12,10 +11,10 @@ namespace AshtangaTeacher
 		string passWord;
 		string errorMessage;
 
-		RelayCommand signUpCommand;
-		RelayCommand facebookLoginSuccessCommand;
-		RelayCommand signInCommand;
-		RelayCommand facebookSignInCommand;
+		Command signUpCommand;
+		Command facebookLoginSuccessCommand;
+		Command signInCommand;
+		Command facebookSignInCommand;
 
 		readonly IParseService parseService;
 		readonly INavigator navigationService;
@@ -30,7 +29,7 @@ namespace AshtangaTeacher
 			}
 			set {
 				if (Set (() => IsLoading, ref isLoading, value)) {
-					RaisePropertyChanged ("IsReady");
+					OnPropertyChanged ("IsReady");
 				}
 			}
 		}
@@ -74,10 +73,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand FacebookSignInCommand {
+		public Command FacebookSignInCommand {
 			get {
 				return facebookSignInCommand
-					?? (facebookSignInCommand = new RelayCommand (
+					?? (facebookSignInCommand = new Command (
 						() => {
 							navigationService.NavigateTo (ViewModelLocator.FacebookSignInKey, null);
 						}
@@ -86,10 +85,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand FacebookLoginSuccessCommand {
+		public Command FacebookLoginSuccessCommand {
 			get {
 				return facebookLoginSuccessCommand
-					?? (facebookLoginSuccessCommand = new RelayCommand (
+					?? (facebookLoginSuccessCommand = new Command (
 						 () => {
 								navigationService.PopToRoot ();
 							}
@@ -98,10 +97,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand SignInCommand {
+		public Command SignInCommand {
 			get {
 				return signInCommand
-				?? (signInCommand = new RelayCommand (
+				?? (signInCommand = new Command (
 					async () => {
 							if (!IsLoading) {
 								IsLoading = true;
@@ -118,10 +117,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public RelayCommand SignUpCommand {
+		public Command SignUpCommand {
 			get {
 				return signUpCommand
-				?? (signUpCommand = new RelayCommand (
+				?? (signUpCommand = new Command (
 						() => navigationService.NavigateTo (ViewModelLocator.SignUpPageKey, App.Locator.SignUp)));
 			}
 		}
@@ -133,10 +132,10 @@ namespace AshtangaTeacher
 			Password = "";
 		}
 
-		public LoginViewModel (INavigator navigationService, IParseService parseService)
+		public LoginViewModel ()
 		{
-			this.parseService = parseService;
-			this.navigationService = navigationService;
+			parseService = DependencyService.Get<IParseService>();
+			navigationService = NavigationService.Instance;
 		}
 	}
 }

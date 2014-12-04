@@ -1,14 +1,31 @@
 ﻿using System;
 using System.Threading.Tasks;
-using GalaSoft.MvvmLight.Views;
 using Xamarin.Forms;
 
 namespace AshtangaTeacher
 {
-	// Borrowed from MVVM Light Flowers demo
-	public class DialogService : IDialogService
+	public class DialogService
 	{
-		private Page _dialogPage;
+		static DialogService instance;
+		static object instanceLock = new object();
+
+		public static DialogService Instance {
+			get {
+				if (instance == null) {
+					lock (instanceLock) {
+						if (instance == null)
+							instance = new DialogService ();
+					}
+				}
+				return instance;
+			}
+		}
+
+		DialogService ()
+		{
+		}
+
+		Page _dialogPage;
 
 		public void Initialize(Page dialogPage)
 		{

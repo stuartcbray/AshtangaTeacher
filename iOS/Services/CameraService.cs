@@ -1,11 +1,12 @@
 ﻿using System;
-using Xamarin.Forms;
-using Xamarin.Forms.Platform.iOS;
-using MonoTouch.Foundation;
+using System.Drawing;
 using System.Threading.Tasks;
 using MonoTouch.UIKit;
-using System.Drawing;
-using Microsoft.Practices.ServiceLocation;
+using Xamarin.Forms;
+using Xamarin.Forms.Platform.iOS;
+using AshtangaTeacher.iOS;
+
+[assembly: Xamarin.Forms.Dependency (typeof (CameraService))]
 
 namespace AshtangaTeacher.iOS
 {
