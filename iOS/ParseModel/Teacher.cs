@@ -5,6 +5,10 @@ using Parse;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections.ObjectModel;
+using Xamarin.Forms;
+using System.Net.Http;
+using System.IO;
 
 [assembly: Xamarin.Forms.Dependency (typeof (Teacher))]
 
@@ -93,6 +97,22 @@ namespace AshtangaTeacher.iOS
 		{
 			ParseObj [name] = value;
 			await SaveAsync ();
+		}
+
+		public async Task<ObservableCollection<StudentViewModel>> GetStudentsAsync ()
+		{
+			var query = ParseObject.GetQuery ("Student").Where (student => student.Get<string> ("shalaNameLC") == ShalaName.ToLower ());
+			IEnumerable<ParseObject> results = await query.FindAsync();
+
+			var list = new ObservableCollection<StudentViewModel> ();
+			foreach (var s in results) {
+
+				var student = new Student ();
+				await student.InitializeAsync (s);
+				var vm = new StudentViewModel (student);
+				list.Add (vm);
+			}
+			return list;
 		}
 
 		public Teacher() 

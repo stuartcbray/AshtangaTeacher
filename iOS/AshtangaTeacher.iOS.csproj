@@ -159,7 +159,6 @@
     <Compile Include="Main.cs" />
     <Compile Include="AppDelegate.cs" />
     <Compile Include="Services\ParseService.cs" />
-    <Compile Include="Services\StudentsService.cs" />
     <Compile Include="Renderers\FacebookLoginRenderer.cs" />
     <Compile Include="Services\CameraService.cs" />
     <Compile Include="Services\DeviceService.cs" />

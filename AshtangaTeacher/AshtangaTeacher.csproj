@@ -41,7 +41,6 @@
     <Compile Include="Pages\StudentDetailsPage.xaml.cs">
       <DependentUpon>StudentDetailsPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Contracts\IStudentsService.cs" />
     <Compile Include="Contracts\IParseService.cs" />
     <Compile Include="Pages\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>

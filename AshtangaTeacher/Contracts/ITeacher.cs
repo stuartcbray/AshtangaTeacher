@@ -2,6 +2,7 @@
 using Xamarin.Forms;
 using System.ComponentModel;
 using System.Threading.Tasks;
+using System.Collections.ObjectModel;
 
 namespace AshtangaTeacher
 {
@@ -23,6 +24,8 @@ namespace AshtangaTeacher
 		Task UpdateRoleAsync (TeacherRole role);
 
 		Task UpdatePropertyAsync<T> (string name, T value);
+
+		Task<ObservableCollection<StudentViewModel>> GetStudentsAsync ();
 	}
 }
 

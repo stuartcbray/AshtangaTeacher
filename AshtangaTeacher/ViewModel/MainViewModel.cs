@@ -8,7 +8,6 @@ namespace AshtangaTeacher
 {
 	public class MainViewModel : ViewModelBase
 	{
-		readonly IStudentsService studentsService;
 		readonly INavigator navigationService;
 
 		bool isLoading;
@@ -59,7 +58,7 @@ namespace AshtangaTeacher
 							Students.Clear ();
 							IsLoading = true;
 							try {
-								Students = await studentsService.GetAllAsync (App.Locator.Profile.Model.ShalaName);
+								Students = await App.Locator.Profile.Model.GetStudentsAsync ();
 							} catch (Exception ex) {
 								await DialogService.Instance.ShowError (ex, "Error when refreshing", "OK", null);
 							}
@@ -88,7 +87,6 @@ namespace AshtangaTeacher
 		public MainViewModel ()
 		{
 			navigationService = NavigationService.Instance;
-			studentsService = DependencyService.Get<IStudentsService>();
 			IsLoading = true;
 		}
 	}
