@@ -52,8 +52,8 @@
 	    	</Grid>
 	    </Grid>
 
-		<Entry Text="{Binding Model.Name}" Placeholder="Name" HorizontalOptions="Fill" Grid.Row="1" />
-		<Entry Text="{Binding Model.Email}" Placeholder="Email" HorizontalOptions="Fill" Grid.Row="2" />	
+		<Entry Text="{Binding Model.Name}" Keyboard="Text" Placeholder="Name" HorizontalOptions="Fill" Grid.Row="1" />
+		<Entry Text="{Binding Model.Email}" Keyboard="Email" Placeholder="Email" HorizontalOptions="Fill" Grid.Row="2" />	
 
 		<StackLayout Grid.Row="3" HorizontalOptions="Fill">
 			<Label Text="Expiry Date"/>

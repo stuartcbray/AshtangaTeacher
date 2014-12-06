@@ -47,11 +47,8 @@
                     VerticalOptions="Center" />
         </Grid>
 
-        <Entry Text="{Binding Model.Name}"
-               Grid.Row="1"
-               TextColor="#fffa28d4"/>
-
-        <Entry Text="{Binding Model.Email}" Grid.Row="2"/>
+        <Entry Text="{Binding Model.Name}" Keyboard="Text" Grid.Row="1" />
+        <Entry Text="{Binding Model.Email}" Keyboard="Email" Grid.Row="2"/>
 
         <StackLayout Orientation="Horizontal" Grid.Row="3" HorizontalOptions="Fill">
             <Label Text="Expires on " />

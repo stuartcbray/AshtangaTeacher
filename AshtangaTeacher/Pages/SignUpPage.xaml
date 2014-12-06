@@ -21,11 +21,11 @@
 		    </Grid.ColumnDefinitions>
 		        
 		    <Label Text="Sign Up" TextColor="White" Font="26" VerticalOptions="End" HorizontalOptions="Center"  />
-			<Entry Text="{Binding Name}" Placeholder="Name" Grid.Row="1" HorizontalOptions="Fill" />
-			<Entry Text="{Binding Email}" Placeholder="Email Address" Grid.Row="2" HorizontalOptions="Fill" />
+			<Entry Text="{Binding Name}" Keyboard="Text" Placeholder="Name" Grid.Row="1" HorizontalOptions="Fill" />
+			<Entry Text="{Binding Email}" Keyboard="Email" Placeholder="Email Address" Grid.Row="2" HorizontalOptions="Fill" />
 			<Entry Text="{Binding Password}" Placeholder="Password" IsPassword="true" Grid.Row="3" HorizontalOptions="Fill" />
 			<Entry Text="{Binding PasswordDupe}" Placeholder="Re-enter Password" IsPassword="true" Grid.Row="4" HorizontalOptions="Fill" />
-			<Entry Text="{Binding ShalaName}" Placeholder="Shala Name" Grid.Row="5" HorizontalOptions="Fill" />
+			<Entry Text="{Binding ShalaName}" Keyboard="Text" Placeholder="Shala Name" Grid.Row="5" HorizontalOptions="Fill" />
 			<Label Text="{Binding ErrorMessage}" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="6" />
 
 			<ActivityIndicator Grid.Row="7" IsVisible="{Binding IsLoading}"

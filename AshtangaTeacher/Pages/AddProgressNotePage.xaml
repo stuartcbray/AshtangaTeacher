@@ -23,7 +23,7 @@
             <BoxView BackgroundColor="#FFAAAAAA" />
         </Frame>
 
-        <Editor Grid.Row="1"
+        <Editor Grid.Row="1" Keyboard="Text"
                 x:Name="NoteText" />
 
         <Button Text="Save Note"
