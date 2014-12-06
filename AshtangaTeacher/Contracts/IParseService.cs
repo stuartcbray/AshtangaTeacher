@@ -25,6 +25,8 @@ namespace AshtangaTeacher
 
 		Task SignInAsync (string username, string password);
 
+		Task ResetPasswordAsync (string email);
+
 		bool ShowLogin ();
 	}
 }

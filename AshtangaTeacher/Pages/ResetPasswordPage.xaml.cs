@@ -4,11 +4,12 @@ using Xamarin.Forms;
 
 namespace AshtangaTeacher
 {	
-	public partial class TeacherInfoPage : ContentPage
+	public partial class ResetPasswordPage : ContentPage
 	{	
-		public TeacherInfoPage (SignUpViewModel vm)
+		public ResetPasswordPage (SignUpViewModel vm)
 		{
 			InitializeComponent ();
+			NavigationPage.SetHasNavigationBar (this, false);
 			BindingContext = vm;
 		}
 	}

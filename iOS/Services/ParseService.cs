@@ -92,6 +92,11 @@ namespace AshtangaTeacher.iOS
 			}
 		}
 
+		public async Task ResetPasswordAsync (string email)
+		{
+			await ParseUser.RequestPasswordResetAsync (email);
+		}
+
 		async Task<ParseRole> GetRoleAsync(string roleName)
 		{
 			return await ParseRole.Query.Where (x => x.Name == roleName).FirstOrDefaultAsync ();

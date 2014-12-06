@@ -6,7 +6,7 @@ namespace AshtangaTeacher
 {
 	public class ShalaTeachersViewModel : ViewModelBase
 	{
-		bool isLoading, initialLoad;
+		bool isLoading;
 
 		Command<ITeacher> showTeacherCommand;
 
@@ -54,12 +54,9 @@ namespace AshtangaTeacher
 
 		public async Task Init ()
 		{
-			if (!initialLoad) {
-				IsLoading = true;
-				ShalaTeachers = await App.Profile.Model.GetTeachersAsync ();
-				IsLoading = false;
-				initialLoad = true;
-			}
+			IsLoading = true;
+			ShalaTeachers = await App.Profile.Model.GetTeachersAsync ();
+			IsLoading = false;
 		}
 	}
 }

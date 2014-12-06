@@ -32,6 +32,7 @@
 	 	<StackLayout Grid.Row="5" VerticalOptions="End">
 	 		<Button Text="Sign Up for Astanga Teacher" Command="{Binding SignUpCommand}"></Button>
 			<Button Text="Sign In with Facebook" Command="{Binding FacebookSignInCommand}"></Button>
+			<Button Text="Reset Password" Command="{Binding ResetPasswordCommand}"></Button>
 	 	</StackLayout>
 
 	</Grid>

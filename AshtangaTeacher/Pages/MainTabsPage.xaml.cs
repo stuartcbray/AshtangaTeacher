@@ -42,7 +42,6 @@ namespace AshtangaTeacher
 			ViewModel.IsLoading = true;
 			CurrentPage = Children [0];
 			App.Students.Students.Clear ();
-
 		}
 	}
 }

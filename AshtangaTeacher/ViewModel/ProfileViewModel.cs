@@ -96,6 +96,7 @@ namespace AshtangaTeacher
 							IsLoading = true;
 							await Model.SaveAsync ();
 							IsLoading = false;
+							ErrorMessage = "";
 						}, 
 						() => Model.IsDirty && IsReady));
 			}

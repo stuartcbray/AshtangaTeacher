@@ -20,6 +20,7 @@ namespace AshtangaTeacher
 		Command signUpCommand;
 		Command cancelCommand;
 		Command saveShalaCommand;
+		Command resetPasswordCommand;
 
 		readonly IParseService parseService;
 		readonly INavigator navigationService;
@@ -161,6 +162,27 @@ namespace AshtangaTeacher
 			}
 		}
 
+		public Command ResetPasswordCommand {
+			get {
+				return resetPasswordCommand
+					?? (resetPasswordCommand = new Command (
+						async () => {
+
+							if (!deviceService.IsValidEmail (Email)) {
+								ErrorMessage = "Invalid Email";
+								return;
+							}
+
+							IsLoading = true;
+							await parseService.ResetPasswordAsync (Email);
+							IsLoading = false;
+
+							await DialogService.Instance.ShowMessage ("You have been sent a password reset email.", "Password Reset");
+							navigationService.GoBack ();
+						}));
+			}
+		}
+
 		public Command SignUpCommand {
 			get {
 				return signUpCommand
@@ -220,11 +242,6 @@ namespace AshtangaTeacher
 					}));
 
 			}
-		}
-
-		public void Reset ()
-		{
-			ErrorMessage = UserName = Name = Password =  PasswordDupe = Email = ShalaName = "";
 		}
 
 		public SignUpViewModel ()

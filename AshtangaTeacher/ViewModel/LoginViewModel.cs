@@ -14,6 +14,7 @@ namespace AshtangaTeacher
 		Command signUpCommand;
 		Command signInCommand;
 		Command facebookSignInCommand;
+		Command resetPasswordCommand;
 
 		readonly IParseService parseService;
 		readonly INavigator navigationService;
@@ -69,6 +70,17 @@ namespace AshtangaTeacher
 			}
 			set {
 				Set (() => ErrorMessage, ref errorMessage, value);
+			}
+		}
+
+		public Command ResetPasswordCommand {
+			get {
+				return resetPasswordCommand
+					?? (resetPasswordCommand = new Command (
+						() => {
+							navigationService.NavigateTo (PageLocator.ResetPasswordPageKey, new SignUpViewModel ());
+						}
+					));
 			}
 		}
 
