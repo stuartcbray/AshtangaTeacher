@@ -12,7 +12,6 @@ namespace AshtangaTeacher
 		string errorMessage;
 
 		Command signUpCommand;
-		Command facebookLoginSuccessCommand;
 		Command signInCommand;
 		Command facebookSignInCommand;
 
@@ -78,21 +77,9 @@ namespace AshtangaTeacher
 				return facebookSignInCommand
 					?? (facebookSignInCommand = new Command (
 						() => {
-							navigationService.NavigateTo (ViewModelLocator.FacebookSignInKey, null);
+							navigationService.NavigateTo (PageLocator.FacebookSignInKey, null);
 						}
 					));
-
-			}
-		}
-
-		public Command FacebookLoginSuccessCommand {
-			get {
-				return facebookLoginSuccessCommand
-					?? (facebookLoginSuccessCommand = new Command (
-						 () => {
-								navigationService.PopToRoot ();
-							}
-						));
 
 			}
 		}
@@ -121,15 +108,8 @@ namespace AshtangaTeacher
 			get {
 				return signUpCommand
 				?? (signUpCommand = new Command (
-						() => navigationService.NavigateTo (ViewModelLocator.SignUpPageKey, App.Locator.SignUp)));
+						() => navigationService.NavigateTo (PageLocator.SignUpPageKey, new SignUpViewModel ())));
 			}
-		}
-			
-		public void ClearFields ()
-		{
-			ErrorMessage = "";
-			Email = "";
-			Password = "";
 		}
 
 		public LoginViewModel ()

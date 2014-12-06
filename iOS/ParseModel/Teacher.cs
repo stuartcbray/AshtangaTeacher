@@ -115,6 +115,21 @@ namespace AshtangaTeacher.iOS
 			return list;
 		}
 
+		public async Task<ObservableCollection<ITeacher>> GetTeachersAsync ()
+		{
+			var query = ParseUser.Query.Where (teacher => teacher.Get<string> ("shalaNameLC") == ShalaName.ToLower ());
+			IEnumerable<ParseUser> results = await query.FindAsync();
+
+			var teachers = new ObservableCollection<ITeacher> ();
+			foreach (var o in results) {
+				var t = DependencyService.Get<ITeacher>(DependencyFetchTarget.NewInstance);
+				await t.InitializeAsync (o);
+				teachers.Add (t);
+			}
+
+			return teachers;
+		}
+
 		public Teacher() 
 		{
 			ParseObj = new ParseUser ();

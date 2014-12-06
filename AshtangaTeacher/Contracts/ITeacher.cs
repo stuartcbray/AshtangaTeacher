@@ -26,6 +26,8 @@ namespace AshtangaTeacher
 		Task UpdatePropertyAsync<T> (string name, T value);
 
 		Task<ObservableCollection<StudentViewModel>> GetStudentsAsync ();
+
+		Task<ObservableCollection<ITeacher>> GetTeachersAsync ();
 	}
 }
 

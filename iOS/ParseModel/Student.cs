@@ -100,7 +100,7 @@ namespace AshtangaTeacher.iOS
 		{
 			ProgressNotes = new ObservableCollection<IProgressNote> ();
 			ParseObj = new ParseObject ("Student");
-			ShalaName = App.Locator.Profile.Model.ShalaName;
+			ShalaName = App.Profile.Model.ShalaName;
 			ExpiryDate = DateTime.Now;
 			UID = Guid.NewGuid ().ToString ();
 

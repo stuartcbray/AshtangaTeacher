@@ -3,7 +3,7 @@ using System;
 
 namespace AshtangaTeacher
 {
-	public class ViewModelLocator
+	public static class PageLocator
 	{
 		public const string AddProgressNotePageKey = "AddProgressNotePage";
 		public const string ProgressNotesPageKey = "ProgressNotesPage";
@@ -19,7 +19,7 @@ namespace AshtangaTeacher
 		public const string ShalaTeachersPageKey = "ShalaTeachersPage";
 		public const string TeacherProfilePageKey = "TeacherProfilePage";
 
-		Dictionary<string, Type> pagesByKey = new Dictionary<string, Type> () {
+		static Dictionary<string, Type> pagesByKey = new Dictionary<string, Type> () {
 			{ AddProgressNotePageKey, typeof(AddProgressNotePage) },
 			{ ProgressNotesPageKey, typeof(ProgressNotesPage) },
 			{ AddStudentPageKey, typeof(AddStudentPage) },
@@ -35,60 +35,10 @@ namespace AshtangaTeacher
 			{ TeacherProfilePageKey, typeof(TeacherProfilePage) }
 		};
 
-		public Dictionary<string, Type> PagesByKey {
+		public static Dictionary<string, Type> PagesByKey {
 			get {
 				return pagesByKey;
 			}
-		}
-
-		MainViewModel mainViewModel;
-		public MainViewModel Main {
-			get {
-				return mainViewModel ?? (mainViewModel = new MainViewModel ());
-			}
-		}
-
-		ProfileViewModel profileViewModel;
-		public ProfileViewModel Profile {
-			get {
-				return profileViewModel ?? (profileViewModel = new ProfileViewModel ());
-			}
-		}
-
-		MainTabsViewModel mainTabsViewModel;
-		public MainTabsViewModel MainTabs {
-			get {
-				return mainTabsViewModel ?? (mainTabsViewModel = new MainTabsViewModel ());
-			}
-		}
-
-		LoginViewModel loginViewModel;
-		public LoginViewModel Login {
-			get {
-				return loginViewModel ?? (loginViewModel = new LoginViewModel ());
-			}
-		}
-
-		SignUpViewModel signUpViewModel;
-		public SignUpViewModel SignUp {
-			get {
-				return signUpViewModel ?? (signUpViewModel = new SignUpViewModel ());
-			}
-		}
-
-		ShalaTeachersViewModel shalaTeachersViewModel;
-		public ShalaTeachersViewModel ShalaTeachers {
-			get {
-				return shalaTeachersViewModel ?? (shalaTeachersViewModel = new ShalaTeachersViewModel ());
-			}
-		}
-
-		public void Reset ()
-		{
-			// These need to be re-instantiated with each login
-			shalaTeachersViewModel = null;
-			loginViewModel = null;
-			signUpViewModel = null;
 		}
 	}
 }

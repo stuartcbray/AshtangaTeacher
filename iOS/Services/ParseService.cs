@@ -76,68 +76,6 @@ namespace AshtangaTeacher.iOS
 			await ParseUser.LogInAsync (username, password);
 		}
 
-		public async Task<List<ITeacher>> GetTeachers (string shalaName)
-		{
-			var query = ParseUser.Query.Where (teacher => teacher.Get<string> ("shalaNameLC") == shalaName.ToLower ());
-			IEnumerable<ParseUser> results = await query.FindAsync();
-
-			var adminRole = await GetRoleAsync (AdminRole);
-			var modsRole = await GetRoleAsync (ModeratorRole);
-
-			var teachers = new List<ITeacher> ();
-
-			foreach (var o in results) {
-
-				var t = DependencyService.Get<ITeacher>(DependencyFetchTarget.NewInstance);
-				await t.InitializeAsync (o);
-									
-				var users = await adminRole.Users.Query.FindAsync ();
-				if (users != null && users.Any(x => x.ObjectId == o.ObjectId)) {
-					t.Role = TeacherRole.Administrator;
-				} else {
-					users = await modsRole.Users.Query.FindAsync ();
-					if (users != null && users.Any(x => x.ObjectId == o.ObjectId))
-						t.Role = TeacherRole.Moderator;
-				}
-
-				// Try the local cache first
-				var cameraService = DependencyService.Get<ICameraService> ();
-				var imgPath = cameraService.GetImagePath (t.UID);
-
-				bool fetchImage = true;
-				if (File.Exists (imgPath)) {
-					var dt = File.GetLastWriteTimeUtc (imgPath);
-					if (o.UpdatedAt != null && o.UpdatedAt <= dt) {
-						t.Image = ImageSource.FromFile (imgPath);
-						fetchImage = false;
-					} 
-				}
-
-				if (fetchImage) {
-
-					byte[] imageData = null;
-					if (o.ContainsKey ("image")) {
-						var parseImg = o.Get<ParseFile> ("image");
-						imageData = await new HttpClient ().GetByteArrayAsync (parseImg.Url);
-					} else if (o.ContainsKey ("facebookImageUrl")) {
-						var url = o.Get<string> ("facebookImageUrl");
-						imageData = await new HttpClient ().GetByteArrayAsync (url);
-					}
-
-					if (imageData != null) {
-						t.Image = ImageSource.FromStream (() => new MemoryStream (imageData));
-
-						var deviceService = DependencyService.Get<IDeviceService> ();
-						deviceService.SaveToFile (imageData, imgPath);
-					}
-				}
-
-				teachers.Add (t);
-			}
-
-			return teachers;
-		}
-
 		public async Task InitializeRoles ()
 		{
 			if (!rolesInitialized) {

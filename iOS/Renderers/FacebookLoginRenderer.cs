@@ -65,11 +65,11 @@ namespace AshtangaTeacher.iOS
 						catch (Exception ex) {
 							await user.DeleteAsync ();
 							ParseUser.LogOut ();
-							App.Locator.Login.ErrorMessage = ex.Message;
+							await DialogService.Instance.ShowError (ex.Message, "Login Error", "OK", null);
 						}
 					} 
 
-					App.Locator.Login.FacebookLoginSuccessCommand.Execute (null); 
+					NavigationService.Instance.PopToRoot ();
 				};
 
 				PresentViewController (auth.GetUI (), true, null);

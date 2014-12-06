@@ -26,6 +26,13 @@ namespace AshtangaTeacher
 		Command saveTeacherCommand;
 		Command logOutCommand;
 
+		ShalaTeachersViewModel shalaTeachersViewModel;
+		public ShalaTeachersViewModel ShalaTeachersViewModel {
+			get {
+				return shalaTeachersViewModel ?? (shalaTeachersViewModel = new ShalaTeachersViewModel ());
+			}
+		}
+
 		public ITeacher Model {
 			get {
 				return teacher;
@@ -39,13 +46,8 @@ namespace AshtangaTeacher
 			get {
 				return shalaTeachersCommand
 					?? (shalaTeachersCommand = new Command (
-						async () => {
-							IsLoading = true;
-							var teachers = await parseService.GetTeachers (Model.ShalaName);
-							IsLoading = false;
-							App.Locator.ShalaTeachers.Init (teachers);
-
-							navigationService.NavigateTo (ViewModelLocator.ShalaTeachersPageKey, App.Locator.ShalaTeachers);
+						() => {
+							navigationService.NavigateTo (PageLocator.ShalaTeachersPageKey, ShalaTeachersViewModel);
 						}));
 			}
 		}
@@ -105,13 +107,10 @@ namespace AshtangaTeacher
 					?? (logOutCommand = new Command (
 						async () => {
 							await parseService.LogOutAsync ();
+							App.TabsPage.Reset ();
+
 							navigationService.SetRootNavigation(App.RootNavPage);
-
-							// Reset view models and ensure we re-load the new Teacher 
-							App.Locator.MainTabs.IsLoading = true;
-							App.Locator.Reset ();
-
-							navigationService.NavigateTo (ViewModelLocator.LoginPageKey, App.Locator.Login);
+							navigationService.NavigateTo(PageLocator.LoginPageKey, new LoginViewModel ());
 						}));
 			}
 		}

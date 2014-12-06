@@ -25,8 +25,6 @@ namespace AshtangaTeacher
 
 		Task SignInAsync (string username, string password);
 
-		Task<List<ITeacher>> GetTeachers (string shalaName);
-
 		bool ShowLogin ();
 	}
 }

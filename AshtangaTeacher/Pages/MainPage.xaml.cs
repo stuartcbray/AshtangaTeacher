@@ -6,15 +6,15 @@ namespace AshtangaTeacher
 {	
 	public partial class MainPage : ContentPage
 	{	
-		public MainViewModel ViewModel
+		public StudentsViewModel ViewModel
 		{
 			get
 			{
-				return (MainViewModel)BindingContext;
+				return (StudentsViewModel)BindingContext;
 			}
 		}
 
-		public MainPage(MainViewModel vm)
+		public MainPage(StudentsViewModel vm)
 		{
 			InitializeComponent();
 

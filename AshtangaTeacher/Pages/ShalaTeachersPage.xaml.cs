@@ -18,10 +18,15 @@ namespace AshtangaTeacher
 		{
 			InitializeComponent ();
 			BindingContext = vm;
-			Title = App.Locator.Profile.Model.ShalaName +  " Teachers";
+			Title = App.Profile.Model.ShalaName +  " Teachers";
 
 			TeachersList.ItemTapped += (s, e) => ViewModel.ShowTeacherCommand.Execute (e.Item);
-			PendingTeachersList.ItemTapped += (s, e) => ViewModel.ShowTeacherCommand.Execute (e.Item);
+		}
+
+		protected override async void OnAppearing()
+		{
+			base.OnAppearing ();
+			await ViewModel.Init ();
 		}
 	}
 }

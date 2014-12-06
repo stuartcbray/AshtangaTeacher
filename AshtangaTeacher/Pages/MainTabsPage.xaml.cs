@@ -14,8 +14,8 @@ namespace AshtangaTeacher
 			InitializeComponent();
 			BindingContext = vm;
 			NavigationPage.SetHasNavigationBar (this, false);
-			this.Children.Add(new NavigationPage(new MainPage(App.Locator.Main)) { Title="Students", Icon="students.png" });
-			this.Children.Add(new NavigationPage(new ProfilePage(App.Locator.Profile)) { Title="My Profile", Icon="profile.png" });
+			this.Children.Add(new NavigationPage(new MainPage(App.Students)) { Title="Students", Icon="students.png" });
+			this.Children.Add(new NavigationPage(new ProfilePage(App.Profile)) { Title="My Profile", Icon="profile.png" });
 		}
 
 		protected override async void OnAppearing()
@@ -35,6 +35,14 @@ namespace AshtangaTeacher
 			if (navPage != null) {
 				ViewModel.UpdateRootNavigation (navPage);
 			}
+		}
+
+		public void Reset ()
+		{
+			ViewModel.IsLoading = true;
+			CurrentPage = Children [0];
+			App.Students.Students.Clear ();
+
 		}
 	}
 }

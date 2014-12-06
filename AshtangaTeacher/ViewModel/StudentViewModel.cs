@@ -93,7 +93,7 @@ namespace AshtangaTeacher
 			get {
 				return showProgressNotesCommand
 				?? (showProgressNotesCommand = new Command (
-					() => NavigationService.Instance.NavigateTo (ViewModelLocator.ProgressNotesPageKey, this)));
+					() => NavigationService.Instance.NavigateTo (PageLocator.ProgressNotesPageKey, this)));
 			}
 		}
 
@@ -101,7 +101,7 @@ namespace AshtangaTeacher
 			get {
 				return addProgressNoteCommand
 				?? (addProgressNoteCommand = new Command (
-					() => NavigationService.Instance.NavigateTo (ViewModelLocator.AddProgressNotePageKey, this)));
+						() => NavigationService.Instance.NavigateTo (PageLocator.AddProgressNotePageKey, this)));
 			}
 		}
 
@@ -161,7 +161,7 @@ namespace AshtangaTeacher
 						async () => {
 							IsLoading = true;
 							await Model.DeleteAsync ();
-							App.Locator.Main.Students.Remove (this);
+							App.Students.Students.Remove (this);
 							IsLoading = false;
 							NavigationService.Instance.GoBack ();
 						}));

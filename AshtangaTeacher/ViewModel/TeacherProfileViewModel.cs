@@ -53,7 +53,7 @@ namespace AshtangaTeacher
 
 		public bool IsAdministrator {
 			get {
-				return App.Locator.Profile.Model.Role == TeacherRole.Administrator;
+				return App.Profile.Model.Role == TeacherRole.Administrator;
 			}
 		}
 
@@ -66,13 +66,10 @@ namespace AshtangaTeacher
 							IsLoading = true;
 							await teacher.UpdateRoleAsync (TeacherRole.Moderator);
 							IsLoading = false;
-
-							App.Locator.ShalaTeachers.AcceptTeacher (Model);
 							NavigationService.Instance.GoBack ();
 						}));
 			}
 		}
-
 
 		public Command IgnoreTeacherRequestCommand {
 			get {

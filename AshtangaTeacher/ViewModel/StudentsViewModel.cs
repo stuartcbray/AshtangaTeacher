@@ -6,7 +6,7 @@ using Xamarin.Forms.Labs.Mvvm;
 
 namespace AshtangaTeacher
 {
-	public class MainViewModel : ViewModelBase
+	public class StudentsViewModel : ViewModelBase
 	{
 		readonly INavigator navigationService;
 
@@ -46,7 +46,7 @@ namespace AshtangaTeacher
 			get {
 				return addStudentCommand
 				?? (addStudentCommand = new Command (
-					() => navigationService.NavigateTo (ViewModelLocator.AddStudentPageKey, new AddStudentViewModel ())));
+						() => navigationService.NavigateTo (PageLocator.AddStudentPageKey, new AddStudentViewModel ())));
 			}
 		}
 
@@ -58,7 +58,7 @@ namespace AshtangaTeacher
 							Students.Clear ();
 							IsLoading = true;
 							try {
-								Students = await App.Locator.Profile.Model.GetStudentsAsync ();
+								Students = await App.Profile.Model.GetStudentsAsync ();
 							} catch (Exception ex) {
 								await DialogService.Instance.ShowError (ex, "Error when refreshing", "OK", null);
 							}
@@ -77,14 +77,14 @@ namespace AshtangaTeacher
 							return;
 						}
 
-						navigationService.NavigateTo (ViewModelLocator.StudentDetailsPageKey, student);
+							navigationService.NavigateTo (PageLocator.StudentDetailsPageKey, student);
 					},
 					student => student != null));
 
 			}
 		}
 
-		public MainViewModel ()
+		public StudentsViewModel ()
 		{
 			navigationService = NavigationService.Instance;
 			IsLoading = true;

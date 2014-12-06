@@ -107,6 +107,8 @@ namespace AshtangaTeacher.iOS
 
 		protected async Task GetImageAsync()
 		{
+			Image = null;
+
 			var cameraService = DependencyService.Get<ICameraService> ();
 			var imgPath = cameraService.GetImagePath (UID);
 

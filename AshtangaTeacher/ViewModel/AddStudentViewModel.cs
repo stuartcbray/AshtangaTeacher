@@ -127,7 +127,7 @@ namespace AshtangaTeacher
 							await student.SaveAsync ();
 							IsLoading = false;
 
-							App.Locator.Main.Students.Add (new StudentViewModel (student));
+							App.Students.Students.Add (new StudentViewModel (student));
 
 							navigationService.GoBack ();
 							

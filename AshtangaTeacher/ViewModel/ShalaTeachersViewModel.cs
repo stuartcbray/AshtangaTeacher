@@ -1,36 +1,39 @@
 ﻿using System.Collections.ObjectModel;
-using System.Collections.Generic;
-using Xamarin.Forms.Labs.Mvvm;
 using Xamarin.Forms;
+using System.Threading.Tasks;
 
 namespace AshtangaTeacher
 {
 	public class ShalaTeachersViewModel : ViewModelBase
 	{
+		bool isLoading, initialLoad;
+
 		Command<ITeacher> showTeacherCommand;
-		INavigator navigationService;
 
-		bool showPendingTeachers;
-		public bool ShowPendingTeachers {
-			get {
-				return showPendingTeachers;
-			}
-			set {
-				Set (() => ShowPendingTeachers, ref showPendingTeachers, value);
-			}
-		}
-
-		readonly ObservableCollection<ITeacher> shalaTeachers = new ObservableCollection<ITeacher> ();
-		public ObservableCollection<ITeacher> ShalaTeachers {
+		ObservableCollection<ITeacher> shalaTeachers = new ObservableCollection<ITeacher> ();
+		public ObservableCollection<ITeacher>  ShalaTeachers {
 			get {
 				return shalaTeachers;
 			}
+			set {
+				Set (() => ShalaTeachers, ref shalaTeachers, value);
+			}
 		}
 
-		readonly ObservableCollection<ITeacher> pendingTeachers = new ObservableCollection<ITeacher> ();
-		public ObservableCollection<ITeacher> PendingTeachers {
+		public bool IsLoading {
 			get {
-				return pendingTeachers;
+				return isLoading;
+			}
+			set {
+				if (Set (() => IsLoading, ref isLoading, value)) {
+					OnPropertyChanged ("IsReady");
+				}
+			}
+		}
+
+		public bool IsReady {
+			get {
+				return !isLoading;
 			}
 		}
 
@@ -42,39 +45,21 @@ namespace AshtangaTeacher
 							if (!ShowTeacherCommand.CanExecute (teacher)) {
 								return;
 							}
-							navigationService.NavigateTo(ViewModelLocator.TeacherProfilePageKey, new TeacherProfileViewModel(teacher));
+							NavigationService.Instance.NavigateTo(PageLocator.TeacherProfilePageKey, new TeacherProfileViewModel(teacher));
 						},
 						teacher => teacher != null));
 
 			}
 		}
 
-		public void AcceptTeacher (ITeacher teacher)
+		public async Task Init ()
 		{
-			PendingTeachers.Remove (teacher);
-			ShalaTeachers.Add (teacher);
-			ShowPendingTeachers = PendingTeachers.Count > 0;
-		}
-
-		public void Init(List<ITeacher> teachers) 
-		{
-			ShalaTeachers.Clear ();
-			PendingTeachers.Clear ();
-
-			foreach (var t in teachers) {
-				if (t.Role != TeacherRole.None)
-					ShalaTeachers.Add (t);
-				else
-					PendingTeachers.Add (t);
+			if (!initialLoad) {
+				IsLoading = true;
+				ShalaTeachers = await App.Profile.Model.GetTeachersAsync ();
+				IsLoading = false;
+				initialLoad = true;
 			}
-
-			ShowPendingTeachers = PendingTeachers.Count > 0;
-		}
-
-
-		public ShalaTeachersViewModel ()
-		{
-			navigationService = NavigationService.Instance;
 		}
 	}
 }
