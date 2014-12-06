@@ -8,6 +8,8 @@ namespace AshtangaTeacher
 	{
 		bool isLoading;
 
+		public bool InitialLoad { get; set; }
+
 		Command<ITeacher> showTeacherCommand;
 
 		ObservableCollection<ITeacher> shalaTeachers = new ObservableCollection<ITeacher> ();
@@ -54,9 +56,12 @@ namespace AshtangaTeacher
 
 		public async Task Init ()
 		{
-			IsLoading = true;
-			ShalaTeachers = await App.Profile.Model.GetTeachersAsync ();
-			IsLoading = false;
+			if (!InitialLoad) {
+				IsLoading = true;
+				ShalaTeachers = await App.Profile.Model.GetTeachersAsync ();
+				IsLoading = false;
+				InitialLoad = true;
+			}
 		}
 	}
 }

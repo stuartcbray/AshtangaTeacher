@@ -97,6 +97,7 @@ namespace AshtangaTeacher
 							await Model.SaveAsync ();
 							IsLoading = false;
 							ErrorMessage = "";
+							ShalaTeachersViewModel.InitialLoad = false;
 						}, 
 						() => Model.IsDirty && IsReady));
 			}
