@@ -118,6 +118,12 @@ namespace AshtangaTeacher
 								return;
 							}
 
+							var deviceService = DependencyService.Get<IDeviceService>();
+							if (!deviceService.IsValidEmail (Model.Email)) {
+								ErrorMessage = "Invalid Email";
+								return;
+							}
+
 							if (Model.Image == null) {
 								ErrorMessage = "Image is empty";
 								return;
