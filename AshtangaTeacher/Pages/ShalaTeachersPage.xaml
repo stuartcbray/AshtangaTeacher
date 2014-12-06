@@ -52,12 +52,18 @@
 
                                 <StackLayout Grid.Column="1"
                                              HorizontalOptions="FillAndExpand">
-                                    <Label Text="{Binding Name}"
-                                           TextColor="#fffa28d4"
-                                           Font="Large" />
+                                    <StackLayout Orientation="Horizontal">
+                                    	<Label Text="{Binding Name}"
+	                                           TextColor="#fffa28d4"
+	                                           Font="Medium" />
+                                    	<Label Text="{Binding RoleDisplay}"
+	                                           TextColor="#ff9e9e9e"
+	                                           Font="Small" />
+                                    </StackLayout>
+
 
                                     <Label Text="{Binding Email}"
-                                           Font="Medium"
+                                           Font="Small"
                                            LineBreakMode="TailTruncation" />
                                 </StackLayout>
                             </Grid>

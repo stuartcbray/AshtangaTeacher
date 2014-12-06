@@ -111,6 +111,9 @@ namespace AshtangaTeacher
 							await parseService.LogOutAsync ();
 							App.TabsPage.Reset ();
 
+							ShalaTeachersViewModel.ShalaTeachers.Clear ();
+							ShalaTeachersViewModel.InitialLoad = false;
+
 							navigationService.SetRootNavigation(App.RootNavPage);
 							navigationService.NavigateTo(PageLocator.LoginPageKey, new LoginViewModel ());
 						}));
@@ -158,6 +161,7 @@ namespace AshtangaTeacher
 		{
 			IsLoading = true;
 			await teacher.InitializeAsync (parseService.CurrentUser);
+
 			IsPhotoVisible = Model.Image != null;
 			IsLoading = false;
 		}

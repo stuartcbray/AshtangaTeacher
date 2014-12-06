@@ -51,12 +51,11 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public bool IsAdministrator {
+		public bool IsPendingTeacher {
 			get {
-				return App.Profile.Model.Role == TeacherRole.Administrator;
+				return Model.Role == TeacherRole.Pending && App.Profile.Model.Role == TeacherRole.Administrator;
 			}
 		}
-
 
 		public Command AcceptTeacherRequestCommand {
 			get {

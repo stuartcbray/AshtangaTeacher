@@ -44,7 +44,6 @@ namespace AshtangaTeacher.iOS
 			user ["shalaNameLC"] = shalaName.ToLower ();
 			user ["name"] = name;
 			user ["uid"] = Guid.NewGuid().ToString();
-			user ["role"] = shalaExists ? (long)TeacherRole.None : (long)TeacherRole.Administrator;
 
 			await user.SignUpAsync ();
 

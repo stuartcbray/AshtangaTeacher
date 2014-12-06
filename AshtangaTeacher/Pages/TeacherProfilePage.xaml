@@ -38,9 +38,10 @@
 		<Label Text="{Binding Model.ShalaName}" Grid.Row="2" />
 		<Label Text="{Binding ErrorMessage}" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="3" />
 		<ActivityIndicator Grid.Row="4" IsVisible="{Binding IsLoading}" IsRunning="true" Color="Black" VerticalOptions="Start" HorizontalOptions="CenterAndExpand" />
-		<StackLayout Grid.Row="5" Orientation="Horizontal" VerticalOptions="End">
-			<Button Text="Accept Teacher" IsVisible="{Binding IsAdministrator}" Command="{Binding AcceptTeacherRequestCommand}" />
-			<Button Text="Ignore Request" IsVisible="{Binding IsAdministrator}" Command="{Binding IgnoreTeacherRequestCommand}" />
+
+		<StackLayout Grid.Row="5" Orientation="Horizontal" VerticalOptions="End" IsVisible="{Binding IsPendingTeacher}">
+			<Button Text="Accept Teacher" Command="{Binding AcceptTeacherRequestCommand}" />
+			<Button Text="Ignore Request" Command="{Binding IgnoreTeacherRequestCommand}" />
 		</StackLayout>
 	</Grid>
 </ContentPage>

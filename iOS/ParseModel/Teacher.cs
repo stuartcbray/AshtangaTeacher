@@ -53,14 +53,21 @@ namespace AshtangaTeacher.iOS
 			}
 		}
 
+		public string RoleDisplay { 
+			get {
+				return Role.ToString ();
+			}
+		}
+
+		TeacherRole role = TeacherRole.None;
 		public TeacherRole Role {
 			get {
-				return ParseObj.ContainsKey (Field_Role) ? 
-					(TeacherRole)ParseObj.Get<long> (Field_Role) : TeacherRole.None;
+				return role;
 			}
 			set {
-				ParseObj [Field_Role] = (long) value;
+				role = value;
 				OnPropertyChanged ();
+				OnPropertyChanged ("RoleDisplay");
 			}
 		}
 
@@ -75,6 +82,20 @@ namespace AshtangaTeacher.iOS
 		{
 			await base.InitializeAsync (userObj);
 
+			var adminRole = await ParseRole.Query.Where (x => x.Name == TeacherRole.Administrator.ToString()).FirstOrDefaultAsync ();
+			var modsRole = await ParseRole.Query.Where (x => x.Name == TeacherRole.Moderator.ToString()).FirstOrDefaultAsync ();
+
+			var users = await adminRole.Users.Query.FindAsync ();
+			if (users != null && users.Any (x => x.ObjectId == ObjectId)) {
+				Role = TeacherRole.Administrator;
+			} else {
+				users = await modsRole.Users.Query.FindAsync ();
+				if (users != null && users.Any (x => x.ObjectId == ObjectId))
+					Role = TeacherRole.Moderator;
+				else
+					Role = TeacherRole.Pending;
+			}
+
 			// Raise a PropertyChanged for the visible properties so they show up in the UI
 			OnPropertyChanged ("ShalaName");
 			OnPropertyChanged ("Email");
@@ -84,13 +105,12 @@ namespace AshtangaTeacher.iOS
 		}
 			
 		public async Task UpdateRoleAsync(TeacherRole role)
-		{
-			ParseObj ["role"] = (long)role;
-			await SaveAsync ();
-				
+		{				
 			var parseRole = await ParseRole.Query.Where (x => x.Name == role.ToString()).FirstOrDefaultAsync ();
 			parseRole.Users.Add ((ParseUser)ParseObj);
 			await parseRole.SaveAsync ();
+
+			Role = role;
 		}
 
 		public async Task UpdatePropertyAsync<T> (string name, T value)
@@ -122,7 +142,7 @@ namespace AshtangaTeacher.iOS
 
 			var teachers = new ObservableCollection<ITeacher> ();
 			foreach (var o in results) {
-				var t = DependencyService.Get<ITeacher>(DependencyFetchTarget.NewInstance);
+				var t = DependencyService.Get<ITeacher> (DependencyFetchTarget.NewInstance);
 				await t.InitializeAsync (o);
 				teachers.Add (t);
 			}
