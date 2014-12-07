@@ -25,7 +25,7 @@ namespace AshtangaTeacher
 			{ ProgressNotesPageKey, typeof(ProgressNotesPage) },
 			{ AddStudentPageKey, typeof(AddStudentPage) },
 			{ StudentDetailsPageKey, typeof(StudentDetailsPage) },
-			{ MainPageKey, typeof(MainPage) },
+			{ MainPageKey, typeof(StudentsPage) },
 			{ LoginPageKey, typeof(LoginPage) },
 			{ SignUpPageKey, typeof(SignUpPage) },
 			{ FacebookSignInKey, typeof(FacebookLoginPage) },

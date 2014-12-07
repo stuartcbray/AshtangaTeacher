@@ -4,7 +4,7 @@ using Xamarin.Forms;
 
 namespace AshtangaTeacher
 {	
-	public partial class MainPage : ContentPage
+	public partial class StudentsPage : ContentPage
 	{	
 		public StudentsViewModel ViewModel
 		{
@@ -14,7 +14,7 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public MainPage(StudentsViewModel vm)
+		public StudentsPage(StudentsViewModel vm)
 		{
 			InitializeComponent();
 

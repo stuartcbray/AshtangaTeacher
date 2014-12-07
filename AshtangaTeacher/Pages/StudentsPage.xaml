@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="AshtangaTeacher.MainPage">
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="AshtangaTeacher.StudentsPage">
   	<ContentPage.Padding>
 	    <OnPlatform x:TypeArguments="Thickness" iOS="0, 20, 0, 0"/>
   	</ContentPage.Padding>
@@ -10,23 +10,17 @@
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-
-        <Label Text="All Students"
-               HorizontalOptions="Center"
-               Font="Large" />
-
-		<ActivityIndicator Grid.Row="1" IsVisible="{Binding IsLoading}"
+            
+		<ActivityIndicator IsVisible="{Binding IsLoading}"
                        IsRunning="true"
                        Color="Black"
                        VerticalOptions="CenterAndExpand"
                        HorizontalOptions="CenterAndExpand" />
 
-        <ListView Grid.Row="1"
-                  ItemsSource="{Binding Students}" IsVisible="{Binding IsReady}"
+        <ListView ItemsSource="{Binding Students}" IsVisible="{Binding IsReady}"
                   x:Name="StudentsList">
             <ListView.RowHeight>
                 <OnPlatform x:TypeArguments="x:Int32"
@@ -38,7 +32,7 @@
                 <DataTemplate>
                     <ViewCell>
                         <ViewCell.View>
-                            <Grid Padding="20,0,20,0"
+                            <Grid Padding="10,0,10,0"
                                   BackgroundColor="Transparent">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -78,7 +72,7 @@
             </ListView.ItemTemplate>
         </ListView>
             
-        <StackLayout Orientation="Horizontal" Grid.Row="2" HorizontalOptions="CenterAndExpand">
+        <StackLayout Orientation="Horizontal" Grid.Row="1" HorizontalOptions="CenterAndExpand">
 	        <Button Text="Refresh"
 	                Command="{Binding GetStudentsCommand}"
 	                HorizontalOptions="Start" />

@@ -1,9 +1,4 @@
-﻿using System;
-using Microsoft.Practices.ServiceLocation;
-using Xamarin.Forms.Labs.Services.Media;
-using Xamarin.Forms;
-using System.Threading.Tasks;
-using Xamarin.Forms.Labs.Mvvm;
+﻿using Xamarin.Forms;
 
 namespace AshtangaTeacher
 {
@@ -14,7 +9,6 @@ namespace AshtangaTeacher
 		ITeacher teacher;
 
 		Command acceptTeacherRequestCommand;
-		Command ignoreTeacherRequestCommand;
 
 		public ITeacher Model {
 			get {
@@ -65,20 +59,6 @@ namespace AshtangaTeacher
 							IsLoading = true;
 							await teacher.UpdateRoleAsync (TeacherRole.Moderator);
 							IsLoading = false;
-							NavigationService.Instance.GoBack ();
-						}));
-			}
-		}
-
-		public Command IgnoreTeacherRequestCommand {
-			get {
-				return ignoreTeacherRequestCommand
-					?? (ignoreTeacherRequestCommand = new Command (
-					 () => {
-							IsLoading = true;
-							//await parseService.IgnoreTeacher (teacher);
-							IsLoading = false;
-
 							NavigationService.Instance.GoBack ();
 						}));
 			}

@@ -22,7 +22,7 @@
 
             <Image Source="{Binding Model.Image}"
                 VerticalOptions="Center"
-                HorizontalOptions="Center" >
+                HorizontalOptions="StartAndExpand" >
 				<Image.GestureRecognizers>
 			        <TapGestureRecognizer Command="{Binding UpdatePhotoCommand}"/>
 			    </Image.GestureRecognizers>

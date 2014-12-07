@@ -25,8 +25,6 @@ namespace AshtangaTeacher
 
 		Task UpdateRoleAsync (TeacherRole role);
 
-		Task UpdatePropertyAsync<T> (string name, T value);
-
 		Task<ObservableCollection<StudentViewModel>> GetStudentsAsync ();
 
 		Task<ObservableCollection<ITeacher>> GetTeachersAsync ();

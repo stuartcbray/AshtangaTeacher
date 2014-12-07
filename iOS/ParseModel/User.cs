@@ -17,8 +17,8 @@ namespace AshtangaTeacher.iOS
 
 		const string Field_UID = "uid";
 		const string Field_Name = "name";
-		const string Field_ShalaName = "shalaName";
-		const string Field_ShalaNameLC = "shalaNameLC";
+		protected const string FieldShalaName = "shalaName";
+		protected const string FieldShalaNameLC = "shalaNameLC";
 
 		public bool IsDirty {
 			get {
@@ -27,6 +27,20 @@ namespace AshtangaTeacher.iOS
 			set {
 				isDirty = value;
 				OnPropertyChanged ();
+			}
+		}
+
+		public string ShalaName {
+			get {
+				return ParseObj.ContainsKey (FieldShalaName) ? ParseObj.Get<string> (FieldShalaName) : "";
+			}
+			set {
+				if (ShalaName != value) {
+					ParseObj [FieldShalaName] = value;
+					ParseObj [FieldShalaNameLC] = value.ToLower ();
+					IsDirty = true;
+					OnPropertyChanged ();
+				}
 			}
 		}
 
@@ -90,20 +104,6 @@ namespace AshtangaTeacher.iOS
 				}
 			}
 		}
-						
-		public string ShalaName {
-			get {
-				return ParseObj.ContainsKey (Field_ShalaName) ? ParseObj.Get<string> (Field_ShalaName) : "";
-			}
-			set {
-				if (ShalaName != value) {
-					ParseObj [Field_ShalaName] = value;
-					ParseObj [Field_ShalaNameLC] = value.ToLower ();
-					IsDirty = true;
-					OnPropertyChanged ();
-				}
-			}
-		}
 
 		protected async Task GetImageAsync()
 		{
@@ -137,7 +137,7 @@ namespace AshtangaTeacher.iOS
 			}
 		}
 
-		public async Task SaveAsync ()
+		public virtual async Task SaveAsync ()
 		{
 			if (ThumbIsDirty) {
 

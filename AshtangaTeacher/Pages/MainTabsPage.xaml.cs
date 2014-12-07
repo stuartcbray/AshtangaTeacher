@@ -14,7 +14,7 @@ namespace AshtangaTeacher
 			InitializeComponent();
 			BindingContext = vm;
 			NavigationPage.SetHasNavigationBar (this, false);
-			this.Children.Add(new NavigationPage(new MainPage(App.Students)) { Title="Students", Icon="students.png" });
+			this.Children.Add(new NavigationPage(new StudentsPage(App.Students)) { Title="Students", Icon="students.png" });
 			this.Children.Add(new NavigationPage(new ProfilePage(App.Profile)) { Title="My Profile", Icon="profile.png" });
 		}
 
@@ -42,6 +42,8 @@ namespace AshtangaTeacher
 			ViewModel.IsLoading = true;
 			CurrentPage = Children [0];
 			App.Students.Students.Clear ();
+			App.Profile.ShalaTeachersViewModel.ShalaTeachers.Clear ();
+			App.Profile.ShalaTeachersViewModel.InitialLoad = false;
 		}
 	}
 }

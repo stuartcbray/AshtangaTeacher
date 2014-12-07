@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="AshtangaTeacher.ShalaTeachersPage">
-	<ContentPage.Padding>
-	    <OnPlatform x:TypeArguments="Thickness" iOS="0, 20, 0, 0"/>
-  	</ContentPage.Padding>
 	<Grid>
 	    <Grid.RowDefinitions>
 			<RowDefinition Height="*" />
@@ -27,7 +24,7 @@
 				<DataTemplate>
                     <ViewCell>
                         <ViewCell.View>
-                            <Grid Padding="20,0,20,0"
+                            <Grid Padding="10,0,10,0"
                                   BackgroundColor="Transparent">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
@@ -56,7 +53,7 @@
                                     	<Label Text="{Binding Name}"
 	                                           TextColor="#fffa28d4"
 	                                           Font="Medium" />
-                                    	<Label Text="{Binding RoleDisplay}"
+                                    	<Label Text="{Binding RoleDisplay}" VerticalOptions="End"
 	                                           TextColor="#ff9e9e9e"
 	                                           Font="Small" />
                                     </StackLayout>

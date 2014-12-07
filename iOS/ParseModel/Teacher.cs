@@ -18,7 +18,7 @@ namespace AshtangaTeacher.iOS
 	{
 		const string Field_Role = "role";
 		const string Field_Name = "name";
-			
+
 		public string UserName {
 			get {
 				return ((ParseUser)ParseObj).Username ?? "";
@@ -78,6 +78,21 @@ namespace AshtangaTeacher.iOS
 			return results.Any ();
 		}
 
+		public override async Task SaveAsync ()
+		{
+			await base.SaveAsync ();
+
+			// See if we've updated the Shala Name
+			if (Role == TeacherRole.Administrator) {
+				foreach (StudentViewModel vm in App.Students.Students) {
+					if (vm.Model.ShalaName != ShalaName) {
+						vm.Model.ShalaName = ShalaName;
+						await vm.Model.SaveAsync ();
+					}
+				}
+			}
+		}
+
 		public override async Task InitializeAsync (object userObj)
 		{
 			await base.InitializeAsync (userObj);
@@ -102,6 +117,7 @@ namespace AshtangaTeacher.iOS
 			OnPropertyChanged ("Name");
 			OnPropertyChanged ("UserName");
 			OnPropertyChanged ("Role");
+			OnPropertyChanged ("IsAdministrator");
 		}
 			
 		public async Task UpdateRoleAsync(TeacherRole role)
@@ -111,12 +127,6 @@ namespace AshtangaTeacher.iOS
 			await parseRole.SaveAsync ();
 
 			Role = role;
-		}
-
-		public async Task UpdatePropertyAsync<T> (string name, T value)
-		{
-			ParseObj [name] = value;
-			await SaveAsync ();
 		}
 
 		public async Task<ObservableCollection<StudentViewModel>> GetStudentsAsync ()
