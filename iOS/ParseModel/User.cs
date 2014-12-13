@@ -25,22 +25,18 @@ namespace AshtangaTeacher.iOS
 				return isDirty;
 			}
 			set {
-				isDirty = value;
-				OnPropertyChanged ();
+				Set (() => IsDirty, ref isDirty, value);
 			}
 		}
 
+
+		string shalaName;
 		public string ShalaName {
 			get {
-				return ParseObj.ContainsKey (FieldShalaName) ? ParseObj.Get<string> (FieldShalaName) : "";
+				return shalaName;
 			}
 			set {
-				if (ShalaName != value) {
-					ParseObj [FieldShalaName] = value;
-					ParseObj [FieldShalaNameLC] = value.ToLower ();
-					IsDirty = true;
-					OnPropertyChanged ();
-				}
+				IsDirty |= Set (() => ShalaName, ref shalaName, value);
 			}
 		}
 
@@ -49,8 +45,7 @@ namespace AshtangaTeacher.iOS
 				return thumbIsDirty;
 			}
 			set {
-				thumbIsDirty = value;
-				OnPropertyChanged ();
+				Set (() => ThumbIsDirty, ref thumbIsDirty, value);
 			}
 		}
 
@@ -85,10 +80,7 @@ namespace AshtangaTeacher.iOS
 				return image;
 			}
 			set {
-				image = value;
-				ThumbIsDirty = true;
-				IsDirty = true;
-				OnPropertyChanged ("Image");
+				ThumbIsDirty = IsDirty |= Set (() => Image, ref image, value);
 			}
 		}
 
@@ -170,6 +162,10 @@ namespace AshtangaTeacher.iOS
 		public virtual async Task InitializeAsync (object userObj)
 		{
 			UserObj = userObj;
+
+			if (ParseObj.ContainsKey (FieldShalaName))
+				ShalaName = ParseObj.Get<string> (FieldShalaName);
+
 			await GetImageAsync ();
 			ThumbIsDirty = false;
 			IsDirty = false;

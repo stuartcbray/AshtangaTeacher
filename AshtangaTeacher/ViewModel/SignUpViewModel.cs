@@ -129,8 +129,7 @@ namespace AshtangaTeacher
 								if (exists) {
 									bool joinShala = await DialogService.Instance.ShowMessage ("Shala already exists. Would you like to request to join as a Teacher?", 
 										"Shala Exists", "Yes", "No", null);
-									if (!joinShala) 
-									{
+									if (!joinShala)  {
 										ErrorMessage = "Please enter a different Shala Name.";
 										return;
 									}

@@ -80,9 +80,39 @@ namespace AshtangaTeacher.iOS
 
 		public override async Task SaveAsync ()
 		{
+			if (ParseObj.ContainsKey (FieldShalaName)) {
+				var shalaNameParse = ParseObj.Get<string> (FieldShalaName);
+				if (shalaNameParse != ShalaName) {
+					bool exists = await ShalaExistsAsync (ShalaName);
+					if (exists) {
+						if (Role == TeacherRole.Administrator) {
+							await DialogService.Instance.ShowMessageBox ("This Shala name is already taken.", "Shala Exists");
+							ShalaName = shalaNameParse;
+							return;
+						} else {
+							bool joinShala = await DialogService.Instance.ShowMessage ("This Shala exists. Are you a teacher at " + ShalaName + "?", 
+								"Shala Exists", "Yes", "No", null);
+							if (!joinShala)  {
+								ShalaName = shalaNameParse;
+								return;
+							}
+							var mods = await ParseRole.Query.Where (x => x.Name == TeacherRole.Moderator.ToString()).FirstOrDefaultAsync ();
+							mods.Users.Remove ((ParseUser)ParseObj);
+							await mods.SaveAsync ();
+						}
+					} else {
+						await UpdateRoleAsync (TeacherRole.Administrator);
+					}
+				}
+			}
+				
+			// Now we can safely store ShalaName in the ParseObj before saving
+			ParseObj [FieldShalaName] = ShalaName;
+			ParseObj [FieldShalaNameLC] = ShalaName.ToLower ();
+
 			await base.SaveAsync ();
 
-			// See if we've updated the Shala Name
+			// Update all students if the Shala name changed
 			if (Role == TeacherRole.Administrator) {
 				foreach (StudentViewModel vm in App.Students.Students) {
 					if (vm.Model.ShalaName != ShalaName) {

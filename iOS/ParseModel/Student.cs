@@ -91,6 +91,14 @@ namespace AshtangaTeacher.iOS
 			}
 		}
 
+		public override async Task SaveAsync ()
+		{
+			ParseObj [FieldShalaName] = ShalaName;
+			ParseObj [FieldShalaNameLC] = ShalaName.ToLower ();
+
+			await base.SaveAsync ();
+		}
+
 		public async Task DeleteAsync ()
 		{
 			await ParseObj.DeleteAsync ();
