@@ -18,7 +18,7 @@ namespace AshtangaTeacher
 		{
 			InitializeComponent ();
 			BindingContext = vm;
-			Title = App.Profile.Model.ShalaName +  " Teachers";
+			//Title = App.Profile.Model.ShalaName +  " Teachers";
 
 			TeachersList.ItemTapped += (s, e) => ViewModel.ShowTeacherCommand.Execute (e.Item);
 		}

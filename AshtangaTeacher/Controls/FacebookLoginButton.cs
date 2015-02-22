@@ -3,11 +3,10 @@ using Xamarin.Forms;
 
 namespace AshtangaTeacher
 {
-	public class FacebookLoginPage : ContentPage
+	public class FacebookLoginButton : Button
 	{
-		public FacebookLoginPage () 
+		public FacebookLoginButton ()
 		{
 		}
 	}
 }
-

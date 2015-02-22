@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="AshtangaTeacher.ShalaPage">
+	<Grid Padding="20,0,20,0">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid VerticalOptions="Start">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="0.5*" />
+                <ColumnDefinition Width="0.5*" />
+            </Grid.ColumnDefinitions>
+
+            <Image Source="{Binding Model.Image}"
+                VerticalOptions="Center"
+                HorizontalOptions="StartAndExpand" >
+				<Image.GestureRecognizers>
+			        <TapGestureRecognizer Command="{Binding UpdatePhotoCommand}"/>
+			    </Image.GestureRecognizers>
+                <Image.WidthRequest>
+                    <OnPlatform x:TypeArguments="x:Double"
+                                iOS="100"
+                                Android="100" />
+                </Image.WidthRequest>
+                
+                <Image.HeightRequest>
+                    <OnPlatform x:TypeArguments="x:Double"
+                                iOS="100"
+                                Android="100" />
+                </Image.HeightRequest>
+			</Image>
+
+            <Button Text="Progress Notes"
+                    Grid.Column="1"
+                    Command="{Binding ShowStudentsCommand}"
+                    IsEnabled="{Binding IsReady}"
+                    HorizontalOptions="End"
+                    VerticalOptions="Center" />
+        </Grid>
+
+        <Entry Text="{Binding Model.Name}" Keyboard="Text" Grid.Row="1" />
+        <Entry Text="{Binding Model.Contact}" Keyboard="Text" Grid.Row="2"/>
+
+        <StackLayout Orientation="Horizontal" Grid.Row="3" HorizontalOptions="Fill">
+            <Label Text="Expires on " />
+        	<DatePicker Date="{Binding Model.ExpiryDate}" />
+        </StackLayout>
+
+        <Label Text="{Binding ErrorMessage}" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="4" />
+
+        <ActivityIndicator Grid.Row="5" IsVisible="{Binding IsLoading}"
+	       IsRunning="true"
+	       Color="Black"
+	       VerticalOptions="Start"
+	       HorizontalOptions="CenterAndExpand" />
+
+        <StackLayout Grid.Row="5" Orientation="Horizontal" VerticalOptions="End">
+        	<Button Text="Save" IsEnabled="{Binding IsReady}"
+			Command="{Binding SaveShalaCommand}"/>
+			<Button Text="Delete Student" IsEnabled="{Binding IsReady}"
+			Command="{Binding DeleteShalaCommand}"/>
+        </StackLayout>
+
+    </Grid>
+</ContentPage>

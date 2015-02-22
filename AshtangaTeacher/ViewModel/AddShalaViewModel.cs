@@ -1,27 +1,27 @@
-﻿using Xamarin.Forms;
-using Microsoft.Practices.ServiceLocation;
+﻿using System;
+using Xamarin.Forms;
 using XLabs.Platform.Services.Media;
 
 namespace AshtangaTeacher
 {
-	public class AddStudentViewModel : ViewModelBase
+	public class AddShalaViewModel : ViewModelBase
 	{
 		bool isLoading, isPhotoVisible;
 
-		StudentsViewModel studentsViewModel;
+		ShalasViewModel shalasViewModel;
 
-		readonly IStudent student;
+		readonly IShala shala;
 
 		ImageSource imageSource;
 		IMediaPicker mediaPicker;
 
-		Command addStudentCommand;
+		Command addShalaCommand;
 		Command cancelCommand;
-		Command addStudentPhotoCommand;
+		Command addShalaPhotoCommand;
 
 		string errorMessage;
 
-		public IStudent Model { get { return student; } }
+		public IShala Model { get { return shala; } }
 
 		public string ErrorMessage {
 			get {
@@ -57,7 +57,7 @@ namespace AshtangaTeacher
 				return !isLoading;
 			}
 		}
-			
+
 		public Command CancelCommand {
 			get {
 				return cancelCommand
@@ -65,10 +65,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public Command AddStudentPhotoCommand {
+		public Command AddShalaPhotoCommand {
 			get {
-				return addStudentPhotoCommand
-					?? (addStudentPhotoCommand = new Command (
+				return addShalaPhotoCommand
+					?? (addShalaPhotoCommand = new Command (
 						async () => 
 						{
 							mediaPicker = DependencyService.Get<IMediaPicker>();
@@ -88,10 +88,10 @@ namespace AshtangaTeacher
 								var cameraService = DependencyService.Get<ICameraService> ();
 
 								IsLoading = true;
-								var thumb = await cameraService.GetThumbAsync(imageSource, student.UID);
+								var thumb = await cameraService.GetThumbAsync(imageSource, shala.UID);
 								IsLoading = false;
 
-								student.Image = thumb;
+								shala.Image = thumb;
 							}
 							catch (System.Exception ex)
 							{
@@ -101,54 +101,42 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public Command AddStudentCommand {
+		public Command AddShalaCommand {
 			get {
-				return addStudentCommand
-					?? (addStudentCommand = new Command (
-					async () => {
-
+				return addShalaCommand
+					?? (addShalaCommand = new Command (
+						async () => {
 
 							// Perform some simple validation...
 							if (string.IsNullOrEmpty (Model.Name)) {
-								ErrorMessage = "User Name is empty";
+								ErrorMessage = "Shala Name is empty";
 								return;
 							}
 
-							if (string.IsNullOrEmpty (Model.Email)) {
-								ErrorMessage = "Email is empty";
-								return;
-							}
-
-							var deviceService = DependencyService.Get<IDeviceService>();
-							if (!deviceService.IsValidEmail (Model.Email)) {
-								ErrorMessage = "Invalid Email";
-								return;
-							}
+						
 
 							if (Model.Image == null) {
 								ErrorMessage = "Image is empty";
 								return;
 							}
 
-
 							IsLoading = true;
-							//await student.SaveAsync ();
+							await shala.SaveAsync ();
 							IsLoading = false;
 
-							studentsViewModel.Students.Add (new StudentViewModel (student, Navigator));
+							shalasViewModel.Shalas.Add (new ShalaViewModel (shala, Navigator));
 
 							Navigator.GoBack ();
 
-					}
-				));
+						}));
 			}
 		}
 
-		public AddStudentViewModel (StudentsViewModel studentsViewModel, NavigationService nav)
+		public AddShalaViewModel (ShalasViewModel shalasViewModel, NavigationService nav)
 		{
-			this.studentsViewModel = studentsViewModel;
+			this.shalasViewModel = shalasViewModel;
 			Navigator = nav;
-			student = DependencyService.Get<IStudent>(DependencyFetchTarget.NewInstance);
+			shala = DependencyService.Get<IShala>(DependencyFetchTarget.NewInstance);
 		}
 	}
 }

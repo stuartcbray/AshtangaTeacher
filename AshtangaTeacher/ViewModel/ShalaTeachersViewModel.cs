@@ -10,6 +10,8 @@ namespace AshtangaTeacher
 
 		public bool InitialLoad { get; set; }
 
+		public string ShalaName { get; private set; }
+
 		Command<ITeacher> showTeacherCommand;
 
 		ObservableCollection<ITeacher> shalaTeachers = new ObservableCollection<ITeacher> ();
@@ -47,7 +49,7 @@ namespace AshtangaTeacher
 							if (!ShowTeacherCommand.CanExecute (teacher)) {
 								return;
 							}
-							NavigationService.Instance.NavigateTo(PageLocator.TeacherProfilePageKey, new TeacherProfileViewModel(teacher));
+							Navigator.NavigateTo(PageLocator.TeacherProfilePageKey, new TeacherProfileViewModel(teacher, Navigator));
 						},
 						teacher => teacher != null));
 
@@ -58,10 +60,17 @@ namespace AshtangaTeacher
 		{
 			if (!InitialLoad) {
 				IsLoading = true;
-				ShalaTeachers = await App.Profile.Model.GetTeachersAsync ();
+				//ShalaTeachers = await App.Profile.Model.GetTeachersAsync (ShalaName);
 				IsLoading = false;
 				InitialLoad = true;
 			}
+		}
+
+		// This should wrap an IShala object
+		public ShalaTeachersViewModel (string shalaName, NavigationService nav)
+		{
+			ShalaName = shalaName;
+			Navigator = nav;
 		}
 	}
 }

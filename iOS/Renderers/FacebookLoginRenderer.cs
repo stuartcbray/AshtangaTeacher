@@ -1,82 +1,88 @@
-﻿using System;
-using System.Json;
-using Xamarin.Forms.Platform.iOS;
-using Xamarin.Auth;
+﻿using UIKit;
 using Xamarin.Forms;
-using AshtangaTeacher.iOS;
+using Xamarin.Forms.Platform.iOS;
 using AshtangaTeacher;
+using AshtangaTeacher.iOS;
+using MonoTouch.FacebookConnect;
 using Parse;
-using Facebook;
-using System.Collections.Generic;
+using System;
+using System.Threading.Tasks;
 
-
-[assembly: ExportRenderer (typeof (FacebookLoginPage), typeof (FacebookLoginRenderer))]
+[assembly: ExportRenderer(typeof(FacebookLoginButton), typeof(FacebookLoginRenderer))]
 
 namespace AshtangaTeacher.iOS
 {
-	// Inspired from https://github.com/jsauve/OAuthTwoDemo.XForms
-	public class FacebookLoginRenderer : PageRenderer
+	public class FacebookLoginRenderer : ButtonRenderer
 	{
-	
-		bool hasShown;
 
-		public override void ViewDidAppear (bool animated)
+		protected override void OnElementChanged(ElementChangedEventArgs<Button> e)
 		{
-			base.ViewDidAppear (animated);
+			base.OnElementChanged(e);
 
-			if (!hasShown)
+			if (Control != null)
 			{
-				hasShown = true;
-				var auth = new OAuth2Authenticator (
-					clientId: App.FacebookAppId,
-					scope: "email",
-					authorizeUrl: new Uri ("https://m.facebook.com/dialog/oauth/"),
-					redirectUrl: new Uri ("http://www.facebook.com/connect/login_success.html"));
+				UIButton button = Control;
 
-				auth.Completed += async (sender, e) => {
-
-					DismissViewController (true, null);
-
-					if (e.IsAuthenticated) {
-						var accessToken = e.Account.Properties["access_token"].ToString ();
-						var expiresIn = Convert.ToDouble(e.Account.Properties["expires_in"]);
-						var expiryDate = DateTime.Now + TimeSpan.FromSeconds (expiresIn);
-
-						// Now that we're logged in, make a OAuth2 request to get the user's id
-						var request = new OAuth2Request ("GET", new Uri ("https://graph.facebook.com/me"), null, e.Account);
-						var response = await request.GetResponseAsync();
-
-						var obj = JsonValue.Parse (response.GetResponseText());
-						var id = obj["id"].ToString().Replace("\"",""); 
-
-						var user = await ParseFacebookUtils.LogInAsync(id, accessToken, expiryDate);
-						var firstName = obj["first_name"].ToString().Replace("\"",""); 
-						var lastName = obj["last_name"].ToString().Replace("\"",""); 
-						var email = obj["email"].ToString().Replace("\"",""); 
-						var name = firstName + " " + lastName;
-						user["name"] = name.Trim ();
-						user.Email = email;
-						user["facebookImageUrl"] = string.Format("https://graph.facebook.com/{0}/picture?width=300&height=300", id);
-						user["uid"] = Guid.NewGuid().ToString();
-
-						try {
-							await user.SaveAsync ();
-						}
-						catch (Exception ex) {
-							await user.DeleteAsync ();
-							ParseUser.LogOut ();
-							await DialogService.Instance.ShowError (ex.Message, "Login Error", "OK", null);
-						}
-					} 
-
-					NavigationService.Instance.PopToRoot ();
+				button.TouchUpInside += delegate
+				{
+					HandleFacebookLoginClicked();
 				};
-
-				PresentViewController (auth.GetUI (), true, null);
-
 			}
 		}
+
+		async Task ParseLogin()
+		{
+			var me = await FBRequestConnection.GetMeAsync();
+
+			if (me == null || me.Result == null)
+				throw new Exception("Failed to connect to facebook");
+
+			var graphObject = (FBGraphObject) me.Result;
+
+			// Do some initial gathering of data we need
+			var name = graphObject.ObjectForKey ("name").ToString ();
+			var userId = graphObject.ObjectForKey ("id").ToString ();
+			var email = graphObject.ObjectForKey ("email").ToString ();
+			var accessToken = FBSession.ActiveSession.AccessTokenData.AccessToken;
+			var expiry = DeviceService.NSDateToDateTime (FBSession.ActiveSession.AccessTokenData.ExpirationDate);
+
+			var user = await ParseFacebookUtils.LogInAsync(userId, accessToken, expiry);
+
+			user["name"] = name.Trim ();
+			user.Email = email;
+			user["facebookImageUrl"] = string.Format("https://graph.facebook.com/{0}/picture?width=300&height=300", userId);
+			user["uid"] = Guid.NewGuid().ToString();
+
+			try {
+				await user.SaveAsync ();
+			}
+			catch (Exception ex) {
+				await user.DeleteAsync ();
+				ParseUser.LogOut ();
+				await DialogService.Instance.ShowError (ex.Message, "Login Error", "OK", null);
+			}
+		}
+
+		async void HandleFacebookLoginClicked()
+		{
+			if (FBSession.ActiveSession.IsOpen)
+			{
+				await ParseLogin ();
+
+				App.PostSuccessFacebookAction(FBSession.ActiveSession.AccessTokenData.AccessToken);
+			}
+			else
+			{
+				FBSession.ActiveSession.Open(FBSessionLoginBehavior.UseSystemAccountIfPresent, async (aSession, status, error) =>
+					{
+						if (error == null)
+						{
+							await ParseLogin ();
+							App.PostSuccessFacebookAction(aSession.AccessTokenData.AccessToken);
+						}
+					});
+			}
+
+		}
 	}
-
 }
-

@@ -16,10 +16,8 @@ namespace AshtangaTeacher
 
 		Task SignUpAsync (string name, 
 			string userName, 
-			string email, 
-			string shalaName, 
-			string password, 
-			bool shalaExists);
+			string email,
+			string password);
 
 		Task LogOutAsync ();
 

@@ -8,9 +8,12 @@ namespace AshtangaTeacher
 		bool isLoading;
 
 		readonly IParseService parseService;
-		readonly INavigator navigationService;
 
 		public IParseService ParseService { get { return parseService; } }
+
+		public ShalasViewModel ShalasVm { get; private set; }
+
+		public ProfileViewModel ProfileVm { get; private set; }
 
 		public bool IsLoading {
 			get {
@@ -29,35 +32,33 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public MainTabsViewModel ()
+		public void InitializeTabViewModels ()
 		{
-			parseService = DependencyService.Get<IParseService>();
-			navigationService = NavigationService.Instance;
-			isLoading = true;
+			ShalasVm = new ShalasViewModel ();
+			ProfileVm = new ProfileViewModel ();
 		}
 
-		public async Task Init ()
-		{
-			await parseService.InitializeRoles ();
+		static MainTabsViewModel instance;
+		static object instanceLock = new object();
 
-			if (parseService.ShowLogin ()) {
-				navigationService.NavigateTo (PageLocator.LoginPageKey, new LoginViewModel ());
-			} else if (IsLoading) {
-				await App.Profile.InitializeTeacher ();
-
-				if (string.IsNullOrEmpty (App.Profile.Model.ShalaName)) {
-					navigationService.NavigateTo (PageLocator.TeacherInfoPageKey, new SignUpViewModel ());
-				} else {
-					App.Students.GetStudentsCommand.Execute (null);
-					IsLoading = false;
+		public static MainTabsViewModel Instance {
+			get {
+				if (instance == null) {
+					lock (instanceLock) {
+						if (instance == null)
+							instance = new MainTabsViewModel ();
+					}
 				}
+				return instance;
 			}
 		}
 
-		public void UpdateRootNavigation (NavigationPage page)
+		MainTabsViewModel ()
 		{
-			navigationService.SetRootNavigation (page);
+			parseService = DependencyService.Get<IParseService>();
+			isLoading = true;
 		}
+
 	}
 }
 

@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.ObjectModel;
-using Microsoft.Practices.ServiceLocation;
 using Xamarin.Forms;
-using Xamarin.Forms.Labs.Mvvm;
 
 namespace AshtangaTeacher
 {
 	public class StudentsViewModel : ViewModelBase
 	{
-		readonly INavigator navigationService;
+		ShalaViewModel shalaViewModel;
 
 		bool isLoading;
 		Command getStudentsCommand;
@@ -46,7 +44,7 @@ namespace AshtangaTeacher
 			get {
 				return addStudentCommand
 				?? (addStudentCommand = new Command (
-						() => navigationService.NavigateTo (PageLocator.AddStudentPageKey, new AddStudentViewModel ())));
+						() => Navigator.NavigateTo (PageLocator.AddStudentPageKey, new AddStudentViewModel (this, Navigator))));
 			}
 		}
 
@@ -58,7 +56,7 @@ namespace AshtangaTeacher
 							Students.Clear ();
 							IsLoading = true;
 							try {
-								Students = await App.Profile.Model.GetStudentsAsync ();
+								Students = await shalaViewModel.Model.GetStudentsAsync ();
 							} catch (Exception ex) {
 								await DialogService.Instance.ShowError (ex, "Error when refreshing", "OK", null);
 							}
@@ -72,21 +70,22 @@ namespace AshtangaTeacher
 			get {
 				return showDetailsCommand
 				?? (showDetailsCommand = new Command<StudentViewModel> (
-					student => {
-						if (!ShowDetailsCommand.CanExecute (student)) {
-							return;
-						}
-
-							navigationService.NavigateTo (PageLocator.StudentDetailsPageKey, student);
-					},
-					student => student != null));
+						student => {
+							if (!ShowDetailsCommand.CanExecute (student)) {
+								return;
+							}
+							student.OnDeleted += () => Students.Remove (student);
+							Navigator.NavigateTo (PageLocator.StudentDetailsPageKey, student);
+						},
+						student => student != null));
 
 			}
 		}
 
-		public StudentsViewModel ()
+		public StudentsViewModel (ShalaViewModel shalaViewModel, NavigationService nav)
 		{
-			navigationService = NavigationService.Instance;
+			this.shalaViewModel = shalaViewModel;
+			Navigator = nav;
 			IsLoading = true;
 		}
 	}

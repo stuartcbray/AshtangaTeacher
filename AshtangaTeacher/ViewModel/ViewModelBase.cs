@@ -9,7 +9,9 @@ namespace AshtangaTeacher
 {
 	public abstract class ViewModelBase : INotifyPropertyChanged
 	{
-		public event PropertyChangedEventHandler PropertyChanged = delegate {};
+		public virtual event PropertyChangedEventHandler PropertyChanged;
+
+		public NavigationService Navigator { get; protected set; }
 
 		protected void OnPropertyChanged([CallerMemberName] string property = null)
 		{

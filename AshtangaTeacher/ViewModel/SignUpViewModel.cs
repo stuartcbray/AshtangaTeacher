@@ -1,7 +1,5 @@
 ﻿using System;
-using Microsoft.Practices.ServiceLocation;
 using Xamarin.Forms;
-using Xamarin.Forms.Labs.Mvvm;
 
 namespace AshtangaTeacher
 {
@@ -14,16 +12,13 @@ namespace AshtangaTeacher
 		string email;
 		string passWord;
 		string passWordDupe;
-		string shalaName;
 		string errorMessage;
 
 		Command signUpCommand;
 		Command cancelCommand;
-		Command saveShalaCommand;
 		Command resetPasswordCommand;
 
 		readonly IParseService parseService;
-		readonly INavigator navigationService;
 		readonly IDeviceService deviceService;
 
 		public IParseService ParseService { get { return parseService; } }
@@ -74,15 +69,6 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public string ShalaName {
-			get {
-				return shalaName;
-			}
-			set {
-				Set (() => ShalaName, ref shalaName, value);
-			}
-		}
-
 		public string ErrorMessage {
 			get {
 				return errorMessage;
@@ -109,55 +95,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public Command SaveShalaCommand {
-			get {
-				return saveShalaCommand
-					?? (saveShalaCommand = new Command (
-						async () => {
-							if (string.IsNullOrEmpty(ShalaName)) {
-								ErrorMessage = "Shala Name cannot be empty";
-								return;
-							}
-
-							IsLoading = true;
-							try {
-
-								var teacher = DependencyService.Get<ITeacher> (DependencyFetchTarget.NewInstance);
-								teacher.UserObj = parseService.CurrentUser;
-
-								var exists = await teacher.ShalaExistsAsync(ShalaName);
-								if (exists) {
-									bool joinShala = await DialogService.Instance.ShowMessage ("Shala already exists. Would you like to request to join as a Teacher?", 
-										"Shala Exists", "Yes", "No", null);
-									if (!joinShala)  {
-										ErrorMessage = "Please enter a different Shala Name.";
-										return;
-									}
-								}
-									
-								teacher.ShalaName = ShalaName;
-								await teacher.SaveAsync ();
-
-								if (!exists) {
-									await teacher.UpdateRoleAsync (TeacherRole.Administrator);
-								}
-
-								navigationService.GoBack ();
-							} finally {
-								IsLoading = false;
-							}
-						}));
-			}
-		}
-
 		public Command CancelCommand {
 			get {
 				return cancelCommand
-				?? (cancelCommand = new Command (
-					() => {
-						UserName = Email = Password = PasswordDupe = ShalaName = "";
-						navigationService.GoBack ();
-					}));
+					?? (cancelCommand = new Command (Navigator.GoBack));
 			}
 		}
 
@@ -177,7 +118,7 @@ namespace AshtangaTeacher
 							IsLoading = false;
 
 							await DialogService.Instance.ShowMessage ("You have been sent a password reset email.", "Password Reset");
-							navigationService.GoBack ();
+							Navigator.GoBack ();
 						}));
 			}
 		}
@@ -209,28 +150,10 @@ namespace AshtangaTeacher
 								return;
 							}
 
-							if (string.IsNullOrEmpty (ShalaName)) {
-								ErrorMessage = "Shala Name is empty";
-								return;
-							}
-
 							IsLoading = true;
 							try {
-
-								var teacher = DependencyService.Get<ITeacher> (DependencyFetchTarget.NewInstance);
-								teacher.UserObj = parseService.CurrentUser;
-								var shalaExists = await teacher.ShalaExistsAsync(ShalaName);
-								if (shalaExists) {
-									bool joinShala = await DialogService.Instance.ShowMessage ("Shala already exists. Would you like to request to join as a Teacher?", 
-										"Shala Exists", "Yes", "No", null);
-									if (!joinShala) {
-										ShalaName = "";
-										ErrorMessage = "Please enter a new Shala Name";
-										return;
-									}
-								}
-								await parseService.SignUpAsync (name, userName, email, shalaName, passWord, shalaExists);
-								navigationService.PopToRoot ();
+								await parseService.SignUpAsync (name, userName, email, passWord);
+								Navigator.NavigateTo (PageLocator.MainTabsPageKey, MainTabsViewModel.Instance);
 							}
 							catch (Exception e) {
 								ErrorMessage = e.Message;
@@ -243,10 +166,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public SignUpViewModel ()
+		public SignUpViewModel (NavigationService nav)
 		{
 			parseService = DependencyService.Get<IParseService>();
-			navigationService = NavigationService.Instance;
+			Navigator = nav;
 			deviceService = DependencyService.Get<IDeviceService>();
 		}
 	}

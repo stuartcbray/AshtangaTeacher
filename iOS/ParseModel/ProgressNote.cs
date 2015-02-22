@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using AshtangaTeacher.iOS;
 
 [assembly: Xamarin.Forms.Dependency (typeof (ProgressNote))]

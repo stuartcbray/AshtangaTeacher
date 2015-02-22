@@ -14,36 +14,19 @@ namespace AshtangaTeacher
 			InitializeComponent();
 			BindingContext = vm;
 			NavigationPage.SetHasNavigationBar (this, false);
-			this.Children.Add(new NavigationPage(new StudentsPage(App.Students)) { Title="Students", Icon="students.png" });
-			this.Children.Add(new NavigationPage(new ProfilePage(App.Profile)) { Title="My Profile", Icon="profile.png" });
-		}
 
-		protected override async void OnAppearing()
-		{
-			base.OnAppearing ();
-			await ViewModel.Init ();
+			ViewModel.InitializeTabViewModels ();
 
-			if (ViewModel.IsReady) {
-				ViewModel.UpdateRootNavigation (CurrentPage as NavigationPage);
-			}
-		}
+			var shalasNavPage = new NavigationPage (new ShalasPage (ViewModel.ShalasVm)) { Title = "Shalas", Icon = "shalas.png" };
+			ViewModel.ShalasVm.Navigator.Initialize(shalasNavPage, PageLocator.PagesByKey);
 
-		protected override void OnCurrentPageChanged()
-		{
-			base.OnCurrentPageChanged ();
-			var navPage = CurrentPage as NavigationPage;
-			if (navPage != null) {
-				ViewModel.UpdateRootNavigation (navPage);
-			}
-		}
+			var profileNavPage = new NavigationPage (new ProfilePage (ViewModel.ProfileVm)) { Title = "My Profile", Icon = "profile.png" };
+			ViewModel.ProfileVm.Navigator.Initialize(profileNavPage, PageLocator.PagesByKey);
 
-		public void Reset ()
-		{
-			ViewModel.IsLoading = true;
-			CurrentPage = Children [0];
-			App.Students.Students.Clear ();
-			App.Profile.ShalaTeachersViewModel.ShalaTeachers.Clear ();
-			App.Profile.ShalaTeachersViewModel.InitialLoad = false;
+			Children.Add(shalasNavPage);	
+			Children.Add(profileNavPage);
+
+			CurrentPage = profileNavPage;
 		}
 	}
 }

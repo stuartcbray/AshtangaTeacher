@@ -2,9 +2,9 @@
 using Microsoft.Practices.ServiceLocation;
 using System.Collections.ObjectModel;
 using Xamarin.Forms;
-using Xamarin.Forms.Labs.Services.Media;
 using System.Threading.Tasks;
-using Xamarin.Forms.Labs.Mvvm;
+using XLabs.Platform.Services.Media;
+using XLabs.Platform.Device;
 
 namespace AshtangaTeacher
 {
@@ -22,6 +22,8 @@ namespace AshtangaTeacher
 
 		ImageSource imageSource;
 		IMediaPicker mediaPicker;
+
+		public event Action OnDeleted = () => {};
 
 		public string ErrorMessage {
 			get {
@@ -61,7 +63,9 @@ namespace AshtangaTeacher
 					?? (updatePhotoCommand = new Command (
 						async () => 
 						{
-							mediaPicker = DependencyService.Get<IMediaPicker>();
+							var device = XLabs.Ioc.Resolver.Resolve<IDevice>();
+							mediaPicker = DependencyService.Get<IMediaPicker> () ?? device.MediaPicker;
+
 							imageSource = null;
 
 							try
@@ -76,7 +80,7 @@ namespace AshtangaTeacher
 								var cameraService = DependencyService.Get<ICameraService> ();
 
 								IsLoading = true;
-								var imageUrl = await cameraService.GetThumbAsync(imageSource, Model.UID);
+								var imageUrl = await cameraService.GetThumbAsync (imageSource, Model.UID);
 								IsLoading = false;
 
 								Model.Image = imageUrl;
@@ -93,7 +97,7 @@ namespace AshtangaTeacher
 			get {
 				return showProgressNotesCommand
 				?? (showProgressNotesCommand = new Command (
-					() => NavigationService.Instance.NavigateTo (PageLocator.ProgressNotesPageKey, this)));
+						() => Navigator.NavigateTo (PageLocator.ProgressNotesPageKey, this)));
 			}
 		}
 
@@ -101,7 +105,7 @@ namespace AshtangaTeacher
 			get {
 				return addProgressNoteCommand
 				?? (addProgressNoteCommand = new Command (
-						() => NavigationService.Instance.NavigateTo (PageLocator.AddProgressNotePageKey, this)));
+						() => Navigator.NavigateTo (PageLocator.AddProgressNotePageKey, this)));
 			}
 		}
 
@@ -127,7 +131,7 @@ namespace AshtangaTeacher
 								null);
 						}
 								
-						NavigationService.Instance.GoBack ();
+						Navigator.GoBack ();
 					},
 					text => !string.IsNullOrEmpty (text) && !IsLoading));
 			}
@@ -148,7 +152,7 @@ namespace AshtangaTeacher
 							IsLoading = true;
 							await Model.SaveAsync ();
 							IsLoading = false;
-							NavigationService.Instance.GoBack ();
+							Navigator.GoBack ();
 						}, 
 					() => Model.IsDirty));
 			}
@@ -161,20 +165,19 @@ namespace AshtangaTeacher
 						async () => {
 							IsLoading = true;
 							await Model.DeleteAsync ();
-							App.Students.Students.Remove (this);
+							OnDeleted ();
 							IsLoading = false;
-							NavigationService.Instance.GoBack ();
+							Navigator.GoBack ();
 						}));
 			}
 		}
 
-		public StudentViewModel (IStudent model)
+		public StudentViewModel (IStudent model, NavigationService nav)
 		{
+			Navigator = nav;
 			Model = model;
-			Model.PropertyChanged += (sender, e) => { 
-				if (e.PropertyName == "IsDirty") {
-					SaveStudentCommand.ChangeCanExecute();
-				}
+			Model.IsDirtyChanged += () => { 
+				SaveStudentCommand.ChangeCanExecute();
 			};
 		}
 	}

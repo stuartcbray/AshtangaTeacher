@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using MonoTouch.Foundation;
+using Foundation;
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.iOS;
 using AshtangaTeacher.iOS;
+using UIKit;
 
 [assembly: Xamarin.Forms.Dependency (typeof (DeviceService))]
 
@@ -82,6 +83,21 @@ namespace AshtangaTeacher.iOS
 
 			Console.WriteLine ("NOT saved as " + filePath + " because" + err.LocalizedDescription);
 			return false;
+		}
+
+		public static DateTime NSDateToDateTime(NSDate date)
+		{
+			DateTime reference = TimeZone.CurrentTimeZone.ToLocalTime( 
+				new DateTime(2001, 1, 1, 0, 0, 0) );
+			return reference.AddSeconds(date.SecondsSinceReferenceDate);
+		}
+
+		public static NSDate DateTimeToNSDate(DateTime date)
+		{
+			DateTime reference = TimeZone.CurrentTimeZone.ToLocalTime(
+				new DateTime(2001, 1, 1, 0, 0, 0) );
+			return NSDate.FromTimeIntervalSinceReferenceDate(
+				(date - reference).TotalSeconds);
 		}
 
 	}

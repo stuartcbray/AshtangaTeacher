@@ -1,6 +1,5 @@
 ﻿using System;
 using Xamarin.Forms;
-using Xamarin.Forms.Labs.Mvvm;
 
 namespace AshtangaTeacher
 {
@@ -13,11 +12,10 @@ namespace AshtangaTeacher
 
 		Command signUpCommand;
 		Command signInCommand;
-		Command facebookSignInCommand;
 		Command resetPasswordCommand;
+		Command facebookSignInCommand;
 
 		readonly IParseService parseService;
-		readonly INavigator navigationService;
 
 		public IParseService ParseService { get { return parseService; } }
 
@@ -78,21 +76,9 @@ namespace AshtangaTeacher
 				return resetPasswordCommand
 					?? (resetPasswordCommand = new Command (
 						() => {
-							navigationService.NavigateTo (PageLocator.ResetPasswordPageKey, new SignUpViewModel ());
+							Navigator.NavigateTo (PageLocator.ResetPasswordPageKey, new SignUpViewModel (Navigator));
 						}
 					));
-			}
-		}
-
-		public Command FacebookSignInCommand {
-			get {
-				return facebookSignInCommand
-					?? (facebookSignInCommand = new Command (
-						() => {
-							navigationService.NavigateTo (PageLocator.FacebookSignInKey, null);
-						}
-					));
-
 			}
 		}
 
@@ -105,7 +91,7 @@ namespace AshtangaTeacher
 								IsLoading = true;
 								try {
 									await parseService.SignInAsync (Email, Password);
-									navigationService.GoBack (); 
+									Navigator.GoBack (); 
 								} catch (Exception e) {
 									ErrorMessage = e.Message;
 								}
@@ -116,18 +102,42 @@ namespace AshtangaTeacher
 			}
 		}
 
+		public Command FacebookSignInCommand {
+			get {
+				return facebookSignInCommand
+					?? (facebookSignInCommand = new Command (
+						() => {
+							IsLoading = true;
+						}));
+			}
+		}
+
 		public Command SignUpCommand {
 			get {
 				return signUpCommand
 				?? (signUpCommand = new Command (
-						() => navigationService.NavigateTo (PageLocator.SignUpPageKey, new SignUpViewModel ())));
+						() => Navigator.NavigateTo (PageLocator.SignUpPageKey, new SignUpViewModel (Navigator))));
 			}
 		}
 
-		public LoginViewModel ()
+		public void Init()
+		{
+			if (!parseService.ShowLogin ())
+				Authenticated ();
+		}
+
+		public LoginViewModel (NavigationService navService)
 		{
 			parseService = DependencyService.Get<IParseService>();
-			navigationService = NavigationService.Instance;
+			Navigator = navService;
+		
+			App.PostSuccessFacebookAction = token => Authenticated ();
+		}
+
+		public void Authenticated ()
+		{
+			IsLoading = false;
+			Navigator.NavigateTo (PageLocator.MainTabsPageKey, MainTabsViewModel.Instance);
 		}
 	}
 }

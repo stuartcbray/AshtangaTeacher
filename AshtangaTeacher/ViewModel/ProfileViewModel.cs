@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.Practices.ServiceLocation;
-using Xamarin.Forms.Labs.Services.Media;
 using Xamarin.Forms;
 using System.Threading.Tasks;
-using Xamarin.Forms.Labs.Mvvm;
+using XLabs.Platform.Services.Media;
+using XLabs.Platform.Device;
 
 namespace AshtangaTeacher
 {
@@ -16,22 +16,14 @@ namespace AshtangaTeacher
 
 		ITeacher teacher;
 		readonly IParseService parseService;
-		readonly INavigator navigationService;
 
 		ImageSource imageSource;
 		IMediaPicker mediaPicker;
 
-		Command shalaTeachersCommand;
 		Command addTeacherPhotoCommand;
 		Command saveTeacherCommand;
 		Command logOutCommand;
-
-		ShalaTeachersViewModel shalaTeachersViewModel;
-		public ShalaTeachersViewModel ShalaTeachersViewModel {
-			get {
-				return shalaTeachersViewModel ?? (shalaTeachersViewModel = new ShalaTeachersViewModel ());
-			}
-		}
+		Command addShalaCommand;
 
 		public ITeacher Model {
 			get {
@@ -39,16 +31,6 @@ namespace AshtangaTeacher
 			}
 			set {
 				Set (() => Model, ref teacher, value);
-			}
-		}
-
-		public Command ShalaTeachersCommand {
-			get {
-				return shalaTeachersCommand
-					?? (shalaTeachersCommand = new Command (
-						() => {
-							navigationService.NavigateTo (PageLocator.ShalaTeachersPageKey, ShalaTeachersViewModel);
-						}));
 			}
 		}
 
@@ -79,12 +61,11 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public bool IsPhotoVisible {
+		public Command AddShalaCommand {
 			get {
-				return isPhotoVisible;
-			}
-			set {
-				Set (() => IsPhotoVisible, ref isPhotoVisible, value);
+				return addShalaCommand
+					?? (addShalaCommand = new Command (
+						() => Navigator.NavigateTo (PageLocator.AddShalaPageKey, new AddShalaViewModel (MainTabsViewModel.Instance.ShalasVm, Navigator))));
 			}
 		}
 
@@ -97,9 +78,8 @@ namespace AshtangaTeacher
 							await Model.SaveAsync ();
 							IsLoading = false;
 							ErrorMessage = "";
-							ShalaTeachersViewModel.InitialLoad = false;
 						}, 
-						() => Model.IsDirty && IsReady));
+						() => Model != null && Model.IsDirty && IsReady));
 			}
 		}
 
@@ -109,9 +89,8 @@ namespace AshtangaTeacher
 					?? (logOutCommand = new Command (
 						async () => {
 							await parseService.LogOutAsync ();
-							App.TabsPage.Reset ();
-							navigationService.SetRootNavigation(App.RootNavPage);
-							navigationService.NavigateTo(PageLocator.LoginPageKey, new LoginViewModel ());
+							Navigator.PopToRoot();
+							App.Instance.RootNavigator.PopToRoot ();
 						}));
 			}
 		}
@@ -123,7 +102,8 @@ namespace AshtangaTeacher
 					?? (addTeacherPhotoCommand = new Command (
 						async () => 
 						{
-							mediaPicker = DependencyService.Get<IMediaPicker>();
+							var device = XLabs.Ioc.Resolver.Resolve<IDevice>();
+							mediaPicker = DependencyService.Get<IMediaPicker> () ?? device.MediaPicker;
 
 							imageSource = null;
 
@@ -135,7 +115,6 @@ namespace AshtangaTeacher
 										MaxPixelDimension = 400
 									});
 								imageSource = ImageSource.FromStream(() => mediaFile.Source);
-								IsPhotoVisible = true;
 
 								var cameraService = DependencyService.Get<ICameraService> ();
 
@@ -153,26 +132,26 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public async Task InitializeTeacher ()
+		public async Task Init ()
 		{
-			IsLoading = true;
+			await parseService.InitializeRoles ();
 			await teacher.InitializeAsync (parseService.CurrentUser);
 
-			IsPhotoVisible = Model.Image != null;
+			OnPropertyChanged ("Model");
+
 			IsLoading = false;
 		}
 
 		public ProfileViewModel ()
 		{
+			IsLoading = true;
+
 			parseService = DependencyService.Get<IParseService>();
-			navigationService = NavigationService.Instance;
+			Navigator = new NavigationService ();
+
 			teacher = DependencyService.Get<ITeacher> (DependencyFetchTarget.NewInstance);
 
-			teacher.PropertyChanged += (sender, e) => { 
-				if (e.PropertyName == "IsDirty") {
-					SaveTeacherCommand.ChangeCanExecute();
-				}
-			};
+			teacher.IsDirtyChanged += SaveTeacherCommand.ChangeCanExecute;
 		}
 	}
 }

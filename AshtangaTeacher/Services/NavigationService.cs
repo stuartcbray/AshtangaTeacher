@@ -7,29 +7,10 @@ using Xamarin.Forms;
 namespace AshtangaTeacher
 {
 	// Inspired from MVVM Light INavigationService
-	public class NavigationService : INavigator
+	public class NavigationService
 	{
 		Dictionary<string, Type> pagesByKey;
-		NavigationPage navigation;
-
-		static NavigationService instance;
-		static object instanceLock = new object();
-
-		public static NavigationService Instance {
-			get {
-				if (instance == null) {
-					lock (instanceLock) {
-						if (instance == null)
-							instance = new NavigationService ();
-					}
-				}
-				return instance;
-			}
-		}
-
-		NavigationService ()
-		{
-		}
+		NavigationPage rootPage;
 
 		public string CurrentPageKey
 		{
@@ -37,12 +18,12 @@ namespace AshtangaTeacher
 			{
 				lock (pagesByKey)
 				{
-					if (navigation.CurrentPage == null)
+					if (rootPage.CurrentPage == null)
 					{
 						return null;
 					}
 
-					var pageType = navigation.CurrentPage.GetType();
+					var pageType = rootPage.CurrentPage.GetType();
 
 					return pagesByKey.ContainsValue(pageType)
 						? pagesByKey.First(p => p.Value == pageType).Key
@@ -53,12 +34,12 @@ namespace AshtangaTeacher
 
 		public void GoBack()
 		{
-			navigation.PopAsync();
+			rootPage.PopAsync();
 		}
 
 		public void PopToRoot ()
 		{
-			navigation.PopToRootAsync ();
+			rootPage.PopToRootAsync ();
 		}
 
 		public void NavigateTo(string pageKey)
@@ -111,7 +92,7 @@ namespace AshtangaTeacher
 					}
 
 					var page = constructor.Invoke(parameters) as Page;
-					navigation.PushAsync(page);
+					rootPage.PushAsync(page);
 				}
 				else
 				{
@@ -124,14 +105,10 @@ namespace AshtangaTeacher
 			}
 		}
 
-		public void Initialize (Dictionary<string, Type> pages)
+		public void Initialize (NavigationPage root, Dictionary<string, Type> pages)
 		{
 			pagesByKey = pages;
-		}
-
-		public void SetRootNavigation(NavigationPage navigation)
-		{
-			this.navigation = navigation;
+			rootPage = root;
 		}
 	}
 }

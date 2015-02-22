@@ -25,7 +25,6 @@
 			<Entry Text="{Binding Email}" Keyboard="Email" Placeholder="Email Address" Grid.Row="2" HorizontalOptions="Fill" />
 			<Entry Text="{Binding Password}" Placeholder="Password" IsPassword="true" Grid.Row="3" HorizontalOptions="Fill" />
 			<Entry Text="{Binding PasswordDupe}" Placeholder="Re-enter Password" IsPassword="true" Grid.Row="4" HorizontalOptions="Fill" />
-			<Entry Text="{Binding ShalaName}" Keyboard="Text" Placeholder="Shala Name" Grid.Row="5" HorizontalOptions="Fill" />
 			<Label Text="{Binding ErrorMessage}" Font="16" TextColor="Maroon" VerticalOptions="Center" HorizontalOptions="Center" Grid.Row="6" />
 
 			<ActivityIndicator Grid.Row="7" IsVisible="{Binding IsLoading}"

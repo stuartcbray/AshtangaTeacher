@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
+using System;
 using System.Threading.Tasks;
-using Microsoft.Practices.ServiceLocation;
 using Parse;
-using Xamarin.Forms;
 using AshtangaTeacher.iOS;
 
 [assembly: Xamarin.Forms.Dependency (typeof (ParseService))]
@@ -30,9 +24,7 @@ namespace AshtangaTeacher.iOS
 			string name, 
 			string userName, 
 			string email, 
-			string shalaName, 
-			string password, 
-			bool shalaExists) 
+			string password) 
 		{
 			var user = new ParseUser () {
 				Username = userName,
@@ -40,18 +32,10 @@ namespace AshtangaTeacher.iOS
 				Email = email
 			};
 
-			user ["shalaName"] = shalaName;
-			user ["shalaNameLC"] = shalaName.ToLower ();
 			user ["name"] = name;
 			user ["uid"] = Guid.NewGuid().ToString();
 
 			await user.SignUpAsync ();
-
-			if (!shalaExists) {
-				var adminRole = await GetRoleAsync(AdminRole);
-				adminRole.Users.Add (user);
-				await adminRole.SaveAsync ();
-			} 
 		}
 
 		public void Initialize (string appId, string key, string facebookAppId)
@@ -74,7 +58,7 @@ namespace AshtangaTeacher.iOS
 		{
 			await ParseUser.LogInAsync (username, password);
 		}
-
+			
 		public async Task InitializeRoles ()
 		{
 			if (!rolesInitialized) {

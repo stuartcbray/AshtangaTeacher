@@ -1,7 +1,4 @@
-﻿using System;
-using Xamarin.Forms;
-using System.ComponentModel;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 
 namespace AshtangaTeacher
@@ -20,14 +17,8 @@ namespace AshtangaTeacher
 		string RoleDisplay { get; }
 
 		string UserName { get; set; }
-	
-		Task<bool> ShalaExistsAsync (string name);
 
-		Task UpdateRoleAsync (TeacherRole role);
-
-		Task<ObservableCollection<StudentViewModel>> GetStudentsAsync ();
-
-		Task<ObservableCollection<ITeacher>> GetTeachersAsync ();
+		Task<ObservableCollection<ShalaViewModel>> GetShalasAsync ();
 	}
 }
 

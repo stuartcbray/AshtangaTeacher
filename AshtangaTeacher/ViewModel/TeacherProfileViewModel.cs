@@ -47,7 +47,7 @@ namespace AshtangaTeacher
 
 		public bool IsPendingTeacher {
 			get {
-				return Model.Role == TeacherRole.Pending && App.Profile.Model.Role == TeacherRole.Administrator;
+				return Model.Role == TeacherRole.Pending && MainTabsViewModel.Instance.ProfileVm.Model.Role == TeacherRole.Administrator;
 			}
 		}
 
@@ -57,16 +57,16 @@ namespace AshtangaTeacher
 					?? (acceptTeacherRequestCommand = new Command (
 						async () => {
 							IsLoading = true;
-							await teacher.UpdateRoleAsync (TeacherRole.Moderator);
 							IsLoading = false;
-							NavigationService.Instance.GoBack ();
+							Navigator.GoBack ();
 						}));
 			}
 		}
 			
-		public TeacherProfileViewModel (ITeacher teacher)
+		public TeacherProfileViewModel (ITeacher teacher, NavigationService nav)
 		{
 			this.teacher = teacher;
+			Navigator = nav;
 		}
 	}
 }

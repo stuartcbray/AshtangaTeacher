@@ -17,6 +17,12 @@ namespace AshtangaTeacher
 			BindingContext = vm;
 			NavigationPage.SetHasNavigationBar (this, false);
 		}
+
+		protected override async void OnAppearing()
+		{
+			base.OnAppearing ();
+			ViewModel.Init ();
+		}
 	}
 }
 

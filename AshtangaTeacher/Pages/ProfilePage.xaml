@@ -25,7 +25,7 @@
 				<RowDefinition Height="100" />
 			</Grid.RowDefinitions>
 			<Button WidthRequest="100" HeightRequest="100" BackgroundColor="Blue" Command="{Binding AddTeacherPhotoCommand}" Text="Photo" TextColor="White" VerticalOptions="Center" HorizontalOptions="Center" />
-			<Image Source="{Binding Model.Image}" BackgroundColor="White" IsVisible="{Binding IsPhotoVisible}" VerticalOptions="Start" HorizontalOptions="StartAndExpand">
+			<Image Source="{Binding Model.Image}" BackgroundColor="Transparent" VerticalOptions="Start" HorizontalOptions="StartAndExpand">
 				<Image.GestureRecognizers>
 					<TapGestureRecognizer Command="{Binding AddTeacherPhotoCommand}" />
 				</Image.GestureRecognizers>
@@ -36,7 +36,7 @@
 					<OnPlatform x:TypeArguments="x:Double" iOS="100" Android="100" />
 				</Image.HeightRequest>
 			</Image>
-			<Button Text="Shala Teachers" Grid.Column="1" Command="{Binding ShalaTeachersCommand}" IsEnabled="{Binding IsReady}" HorizontalOptions="Center" VerticalOptions="Center" />
+			<Button Text="Add Shala" Grid.Column="1" Command="{Binding AddShalaCommand}" IsEnabled="{Binding IsReady}" HorizontalOptions="Center" VerticalOptions="Center" />
 		</Grid>
 
 		<Entry Text="{Binding Model.Name}" Keyboard="Text" Grid.Row="1" />
