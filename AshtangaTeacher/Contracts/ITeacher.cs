@@ -18,6 +18,8 @@ namespace AshtangaTeacher
 
 		string UserName { get; set; }
 
+		bool IsAvailableForSub { get; set; }
+
 		Task<ObservableCollection<ShalaViewModel>> GetShalasAsync ();
 	}
 }

@@ -63,11 +63,14 @@ namespace AshtangaTeacher.iOS
 		{
 			if (!rolesInitialized) {
 				// If there is no Admin role, then assume they both need to be created.
-				var adminRole = await ParseRole.Query.Where (x => x.Name == AdminRole).FirstOrDefaultAsync ();
+				var adminRoleName = AdminRole + "-" + ParseUser.CurrentUser.Username;
+				var adminRole = await ParseRole.Query.Where (x => x.Name == adminRoleName).FirstOrDefaultAsync ();
 				if (adminRole == null) {
-					adminRole = new ParseRole (AdminRole, new ParseACL { PublicReadAccess = true, PublicWriteAccess = true });
+					adminRole = new ParseRole (adminRoleName, new ParseACL { PublicReadAccess = true });
 					await adminRole.SaveAsync ();
-					var moderatorRole = new ParseRole (ModeratorRole, new ParseACL { PublicReadAccess = true, PublicWriteAccess = true });
+
+					var moderatorRoleName = ModeratorRole + "-" + ParseUser.CurrentUser.Username;
+					var moderatorRole = new ParseRole (moderatorRoleName, new ParseACL { PublicReadAccess = true });
 					moderatorRole.Roles.Add (adminRole);
 					await moderatorRole.SaveAsync ();
 				}

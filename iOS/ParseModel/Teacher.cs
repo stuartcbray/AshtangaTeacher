@@ -14,6 +14,10 @@ namespace AshtangaTeacher.iOS
 	public class Teacher : User, ITeacher
 	{
 		const string FieldRole = "role";
+		const string FieldCredentials = "credentials";
+		const string FieldBio = "bio";
+		const string FieldIsAvailableForSub = "sub";
+		const string FieldIsAvailableMessage = "isAvailableMessage";
 
 		public string UserName {
 			get {
@@ -35,6 +39,66 @@ namespace AshtangaTeacher.iOS
 			set {
 				if (((ParseUser)ParseObj).Email != value) {
 					((ParseUser)ParseObj).Email = value;
+					IsDirty = true;
+					OnPropertyChanged ();
+				}
+			}
+		}
+
+		public string Credentials {
+			get {
+				return ParseObj.ContainsKey (FieldCredentials) ? ParseObj.Get<string> (FieldCredentials) : "";
+			}
+			set {
+				if (Credentials != value) {
+					ParseObj [FieldCredentials] = value;
+					IsDirty = true;
+					OnPropertyChanged ();
+				}
+			}
+		}
+
+		public string Bio {
+			get {
+				return ParseObj.ContainsKey (FieldBio) ? ParseObj.Get<string> (FieldBio) : "";
+			}
+			set {
+				if (Bio != value) {
+					ParseObj [FieldBio] = value;
+					IsDirty = true;
+					OnPropertyChanged ();
+				}
+			}
+		}
+
+		public string IsAvailableToggleMessage
+		{
+			get {
+				return IsAvailableForSub ? "Available for Sub" : "Not Availble for Sub";
+			}
+		}
+
+		public bool IsAvailableForSub {
+			get {
+				return ParseObj.ContainsKey (FieldIsAvailableForSub) && ParseObj.Get<bool> (FieldIsAvailableForSub);
+			}
+			set {
+				if (IsAvailableForSub != value) {
+					ParseObj [FieldIsAvailableForSub] = value;
+					IsDirty = true;
+					OnPropertyChanged ();
+					OnPropertyChanged ("IsAvailableToggleMessage");
+				}
+			}
+		}
+
+		public string IsAvailableMessage {
+			get {
+				return ParseObj.ContainsKey (FieldIsAvailableMessage) ? ParseObj.Get<string> (FieldIsAvailableMessage) : "";
+			}
+			set {
+				if (IsAvailableMessage != value) {
+					ParseObj [FieldIsAvailableMessage] = value;
 					IsDirty = true;
 					OnPropertyChanged ();
 				}

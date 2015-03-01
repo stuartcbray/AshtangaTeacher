@@ -21,16 +21,6 @@ namespace AshtangaTeacher.iOS
 
 		public ObservableCollection<DateTime> AttendanceRecord { get; set; }
 
-		string shalaName;
-		public string ShalaName {
-			get {
-				return shalaName;
-			}
-			set {
-				IsDirty |= Set (() => ShalaName, ref shalaName, value);
-			}
-		}
-
 		public override string Email {
 			get {
 				return ParseObj.ContainsKey (FieldEmail) ? ParseObj.Get<string> (FieldEmail) : "";

@@ -13,6 +13,37 @@ namespace AshtangaTeacher
 
 		public NavigationService Navigator { get; protected set; }
 
+		string errorMessage;
+		public string ErrorMessage {
+			get {
+				return errorMessage;
+			}
+			set {
+				Set (() => ErrorMessage, ref errorMessage, value);
+			}
+		}
+
+		public event Action IsLoadingChanged = delegate {};
+
+		bool isLoading;
+		public bool IsLoading {
+			get {
+				return isLoading;
+			}
+			set {
+				if (Set (() => IsLoading, ref isLoading, value)) {
+					OnPropertyChanged ("IsReady");
+					IsLoadingChanged ();
+				}
+			}
+		}
+
+		public bool IsReady {
+			get {
+				return !isLoading;
+			}
+		}
+
 		protected void OnPropertyChanged([CallerMemberName] string property = null)
 		{
 			var handler = PropertyChanged;

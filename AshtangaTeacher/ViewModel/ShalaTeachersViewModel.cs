@@ -6,8 +6,6 @@ namespace AshtangaTeacher
 {
 	public class ShalaTeachersViewModel : ViewModelBase
 	{
-		bool isLoading;
-
 		public bool InitialLoad { get; set; }
 
 		public string ShalaName { get; private set; }
@@ -21,23 +19,6 @@ namespace AshtangaTeacher
 			}
 			set {
 				Set (() => ShalaTeachers, ref shalaTeachers, value);
-			}
-		}
-
-		public bool IsLoading {
-			get {
-				return isLoading;
-			}
-			set {
-				if (Set (() => IsLoading, ref isLoading, value)) {
-					OnPropertyChanged ("IsReady");
-				}
-			}
-		}
-
-		public bool IsReady {
-			get {
-				return !isLoading;
 			}
 		}
 
@@ -64,6 +45,7 @@ namespace AshtangaTeacher
 				IsLoading = false;
 				InitialLoad = true;
 			}
+
 		}
 
 		// This should wrap an IShala object

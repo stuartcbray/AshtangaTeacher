@@ -10,9 +10,6 @@ namespace AshtangaTeacher
 {
 	public class StudentViewModel : ViewModelBase
 	{
-		bool isLoading;
-		string errorMessage;
-
 		Command addProgressNoteCommand;
 		Command showProgressNotesCommand;
 		Command saveStudentCommand;
@@ -24,33 +21,6 @@ namespace AshtangaTeacher
 		IMediaPicker mediaPicker;
 
 		public event Action OnDeleted = () => {};
-
-		public string ErrorMessage {
-			get {
-				return errorMessage;
-			}
-			set {
-				Set (() => ErrorMessage, ref errorMessage, value);
-			}
-		}
-
-		public bool IsLoading {
-			get {
-				return isLoading;
-			}
-			set {
-				if (Set (() => IsLoading, ref isLoading, value)) {
-					SaveProgressNoteCommand.ChangeCanExecute ();
-					OnPropertyChanged ("IsReady");
-				}
-			}
-		}
-
-		public bool IsReady {
-			get {
-				return !isLoading;
-			}
-		}
 
 		public IStudent Model {
 			get;
@@ -178,6 +148,11 @@ namespace AshtangaTeacher
 			Model = model;
 			Model.IsDirtyChanged += () => { 
 				SaveStudentCommand.ChangeCanExecute();
+			};
+
+			IsLoadingChanged += () => {
+				SaveProgressNoteCommand.ChangeCanExecute ();
+				OnPropertyChanged ("IsReady");
 			};
 		}
 	}

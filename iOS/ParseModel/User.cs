@@ -8,6 +8,8 @@ namespace AshtangaTeacher.iOS
 		protected const string FieldName = "name";
 		protected const string FieldSex = "sex";
 		protected const string FieldDoB = "dob";
+		protected const string FieldShalaName = "shalaName";
+		protected const string FieldShalaNameLC = "shalaNameLC";
 
 		public abstract string Email { get; set; }
 
@@ -18,6 +20,20 @@ namespace AshtangaTeacher.iOS
 			set {
 				if (Name != value) {
 					ParseObj [FieldName] = value;
+					IsDirty = true;
+					OnPropertyChanged ();
+				}
+			}
+		}
+
+		public string ShalaName {
+			get {
+				return ParseObj.ContainsKey (FieldShalaName) ? ParseObj.Get<string> (FieldShalaName) : "";
+			}
+			set {
+				if (ShalaName != value) {
+					ParseObj [FieldShalaName] = value;
+					ParseObj [FieldShalaNameLC] = value.ToLower ();
 					IsDirty = true;
 					OnPropertyChanged ();
 				}

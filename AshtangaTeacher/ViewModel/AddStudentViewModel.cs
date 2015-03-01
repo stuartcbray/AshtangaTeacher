@@ -6,7 +6,7 @@ namespace AshtangaTeacher
 {
 	public class AddStudentViewModel : ViewModelBase
 	{
-		bool isLoading, isPhotoVisible;
+		bool isPhotoVisible;
 
 		StudentsViewModel studentsViewModel;
 
@@ -19,18 +19,7 @@ namespace AshtangaTeacher
 		Command cancelCommand;
 		Command addStudentPhotoCommand;
 
-		string errorMessage;
-
 		public IStudent Model { get { return student; } }
-
-		public string ErrorMessage {
-			get {
-				return errorMessage;
-			}
-			set {
-				Set (() => ErrorMessage, ref errorMessage, value);
-			}
-		}
 
 		public bool IsPhotoVisible {
 			get {
@@ -38,23 +27,6 @@ namespace AshtangaTeacher
 			}
 			set {
 				Set (() => IsPhotoVisible, ref isPhotoVisible, value);
-			}
-		}
-
-		public bool IsLoading {
-			get {
-				return isLoading;
-			}
-			set {
-				if (Set (() => IsLoading, ref isLoading, value)) {
-					OnPropertyChanged ("IsReady");
-				}
-			}
-		}
-
-		public bool IsReady {
-			get {
-				return !isLoading;
 			}
 		}
 			

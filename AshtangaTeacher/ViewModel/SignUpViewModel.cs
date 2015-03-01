@@ -5,14 +5,11 @@ namespace AshtangaTeacher
 {
 	public class SignUpViewModel : ViewModelBase
 	{
-		bool isLoading;
-
 		string userName;
 		string name;
 		string email;
 		string passWord;
 		string passWordDupe;
-		string errorMessage;
 
 		Command signUpCommand;
 		Command cancelCommand;
@@ -66,32 +63,6 @@ namespace AshtangaTeacher
 			}
 			set {
 				Set (() => PasswordDupe, ref passWordDupe, value);
-			}
-		}
-
-		public string ErrorMessage {
-			get {
-				return errorMessage;
-			}
-			set {
-				Set (() => ErrorMessage, ref errorMessage, value);
-			}
-		}
-
-		public bool IsLoading {
-			get {
-				return isLoading;
-			}
-			set {
-				if (Set (() => IsLoading, ref isLoading, value)) {
-					OnPropertyChanged ("IsReady");
-				}
-			}
-		}
-
-		public bool IsReady {
-			get {
-				return !isLoading;
 			}
 		}
 

@@ -4,8 +4,6 @@ namespace AshtangaTeacher
 {
 	public class TeacherProfileViewModel : ViewModelBase
 	{
-		bool isLoading;
-		string errorMessage;
 		ITeacher teacher;
 
 		Command acceptTeacherRequestCommand;
@@ -16,32 +14,6 @@ namespace AshtangaTeacher
 			}
 			set {
 				Set (() => Model, ref teacher, value);
-			}
-		}
-
-		public string ErrorMessage {
-			get {
-				return errorMessage;
-			}
-			set {
-				Set (() => ErrorMessage, ref errorMessage, value);
-			}
-		}
-
-		public bool IsLoading {
-			get {
-				return isLoading;
-			}
-			set {
-				if (Set (() => IsLoading, ref isLoading, value)) {
-					OnPropertyChanged ("IsReady");
-				}
-			}
-		}
-
-		public bool IsReady {
-			get {
-				return !isLoading;
 			}
 		}
 

@@ -5,8 +5,6 @@ namespace AshtangaTeacher
 {
 	public class MainTabsViewModel : ViewModelBase
 	{
-		bool isLoading;
-
 		readonly IParseService parseService;
 
 		public IParseService ParseService { get { return parseService; } }
@@ -15,23 +13,6 @@ namespace AshtangaTeacher
 
 		public ProfileViewModel ProfileVm { get; private set; }
 
-		public bool IsLoading {
-			get {
-				return isLoading;
-			}
-			set {
-				if (Set (() => IsLoading, ref isLoading, value)) {
-					OnPropertyChanged ("IsReady");
-				}
-			}
-		}
-
-		public bool IsReady {
-			get {
-				return !isLoading;
-			}
-		}
-
 		public void InitializeTabViewModels ()
 		{
 			ShalasVm = new ShalasViewModel ();
@@ -39,7 +20,7 @@ namespace AshtangaTeacher
 		}
 
 		static MainTabsViewModel instance;
-		static object instanceLock = new object();
+		static readonly object instanceLock = new object();
 
 		public static MainTabsViewModel Instance {
 			get {
@@ -56,7 +37,7 @@ namespace AshtangaTeacher
 		MainTabsViewModel ()
 		{
 			parseService = DependencyService.Get<IParseService>();
-			isLoading = true;
+			IsLoading = true;
 		}
 
 	}

@@ -7,9 +7,6 @@ namespace AshtangaTeacher
 {
 	public class ShalaViewModel : ViewModelBase
 	{
-		bool isLoading;
-		string errorMessage;
-
 		Command saveShalaCommand;
 		Command deleteShalaCommand;
 		Command updatePhotoCommand;
@@ -17,33 +14,6 @@ namespace AshtangaTeacher
 
 		ImageSource imageSource;
 		IMediaPicker mediaPicker;
-
-		public string ErrorMessage {
-			get {
-				return errorMessage;
-			}
-			set {
-				Set (() => ErrorMessage, ref errorMessage, value);
-			}
-		}
-
-		public bool IsLoading {
-			get {
-				return isLoading;
-			}
-			set {
-				if (Set (() => IsLoading, ref isLoading, value)) {
-					saveShalaCommand.ChangeCanExecute ();
-					OnPropertyChanged ("IsReady");
-				}
-			}
-		}
-
-		public bool IsReady {
-			get {
-				return !isLoading;
-			}
-		}
 
 		public IShala Model {
 			get;
@@ -125,9 +95,9 @@ namespace AshtangaTeacher
 		{
 			Navigator = nav;
 			Model = model;
-			Model.IsDirtyChanged += () => { 
-				SaveShalaCommand.ChangeCanExecute();
-			};
+			Model.IsDirtyChanged += SaveShalaCommand.ChangeCanExecute;
+
+			IsLoadingChanged += saveShalaCommand.ChangeCanExecute;
 		}
 	}
 }

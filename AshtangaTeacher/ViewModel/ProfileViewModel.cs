@@ -4,18 +4,17 @@ using Xamarin.Forms;
 using System.Threading.Tasks;
 using XLabs.Platform.Services.Media;
 using XLabs.Platform.Device;
+using System.Diagnostics;
+using XLabs.Ioc;
 
 namespace AshtangaTeacher
 {
 	public class ProfileViewModel : ViewModelBase
 	{
-		bool isLoading;
-		bool isPhotoVisible;
-
-		string errorMessage;
-
 		ITeacher teacher;
 		readonly IParseService parseService;
+		readonly IDisplay display;
+		bool initialized;
 
 		ImageSource imageSource;
 		IMediaPicker mediaPicker;
@@ -24,6 +23,40 @@ namespace AshtangaTeacher
 		Command saveTeacherCommand;
 		Command logOutCommand;
 		Command addShalaCommand;
+		Command editProfileCommand;
+		Command cancelEditCommand;
+
+		bool isEditMode;
+		public bool IsEditMode {
+			get {
+				return isEditMode;
+			}
+			set {
+				Set (() => IsEditMode, ref isEditMode, value);
+			}
+		}
+
+		public Double ScreenWidth {
+			get {
+				return display.WidthRequestInInches (display.ScreenWidthInches ());
+			}
+		}
+
+		public Double ScreenHeight {
+			get {
+				return display.HeightRequestInInches (display.ScreenHeightInches ());
+			}
+		}
+
+		string statusMessage;
+		public string StatusMessage {
+			get {
+				return statusMessage;
+			}
+			set {
+				Set (() => StatusMessage, ref statusMessage, value);
+			}
+		}
 
 		public ITeacher Model {
 			get {
@@ -33,34 +66,7 @@ namespace AshtangaTeacher
 				Set (() => Model, ref teacher, value);
 			}
 		}
-
-		public string ErrorMessage {
-			get {
-				return errorMessage;
-			}
-			set {
-				Set (() => ErrorMessage, ref errorMessage, value);
-			}
-		}
-
-		public bool IsLoading {
-			get {
-				return isLoading;
-			}
-			set {
-				if (Set (() => IsLoading, ref isLoading, value)) {
-					OnPropertyChanged ("IsReady");
-					SaveTeacherCommand.ChangeCanExecute();
-				}
-			}
-		}
-
-		public bool IsReady {
-			get {
-				return !isLoading;
-			}
-		}
-
+			
 		public Command AddShalaCommand {
 			get {
 				return addShalaCommand
@@ -69,11 +75,29 @@ namespace AshtangaTeacher
 			}
 		}
 
+		public Command EditProfileCommand {
+			get {
+				return editProfileCommand
+					?? (editProfileCommand = new Command (
+						() => IsEditMode = true));
+			}
+		}
+
+		public Command CancelEditCommand {
+			get {
+				return cancelEditCommand
+					?? (cancelEditCommand = new Command (
+						() => IsEditMode = false));
+			}
+		}
+			
 		public Command SaveTeacherCommand {
 			get {
 				return saveTeacherCommand
 					?? (saveTeacherCommand = new Command (
 						async () => {
+							StatusMessage = "Saving ...";
+							IsEditMode = false;
 							IsLoading = true;
 							await Model.SaveAsync ();
 							IsLoading = false;
@@ -94,8 +118,7 @@ namespace AshtangaTeacher
 						}));
 			}
 		}
-
-
+			
 		public Command AddTeacherPhotoCommand {
 			get {
 				return addTeacherPhotoCommand
@@ -126,7 +149,7 @@ namespace AshtangaTeacher
 							}
 							catch (Exception ex)
 							{
-								ErrorMessage = ex.Message;
+								Debug.WriteLine(ex.Message);
 							}
 						}));
 			}
@@ -134,24 +157,34 @@ namespace AshtangaTeacher
 
 		public async Task Init ()
 		{
-			await parseService.InitializeRoles ();
-			await teacher.InitializeAsync (parseService.CurrentUser);
-
-			OnPropertyChanged ("Model");
-
-			IsLoading = false;
+			if (!initialized) {
+				await parseService.InitializeRoles ();
+				await teacher.InitializeAsync (parseService.CurrentUser);
+				OnPropertyChanged ("Model");
+				IsLoading = false;
+				initialized = true;
+			}
 		}
 
 		public ProfileViewModel ()
 		{
+
 			IsLoading = true;
+			StatusMessage = "Loading ...";
 
 			parseService = DependencyService.Get<IParseService>();
+			display = Resolver.Resolve<IDevice>().Display;
+
 			Navigator = new NavigationService ();
 
 			teacher = DependencyService.Get<ITeacher> (DependencyFetchTarget.NewInstance);
 
 			teacher.IsDirtyChanged += SaveTeacherCommand.ChangeCanExecute;
+
+			IsLoadingChanged += () =>  {
+				OnPropertyChanged ("IsReady");
+				SaveTeacherCommand.ChangeCanExecute();
+			};
 		}
 	}
 }

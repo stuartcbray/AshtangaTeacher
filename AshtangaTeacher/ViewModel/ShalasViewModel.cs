@@ -6,31 +6,12 @@ namespace AshtangaTeacher
 {
 	public class ShalasViewModel : ViewModelBase
 	{
-		bool isLoading;
-
 		Command getShalasCommand;
 		Command<ShalaViewModel> shalaDetailsCommand;
 
 		public ShalaViewModel CurrentShala {
 			get;
 			private set;
-		}
-
-		public bool IsLoading {
-			get {
-				return isLoading;
-			}
-			set {
-				if (Set ("IsLoading", ref isLoading, value)) {
-					OnPropertyChanged ("IsReady");
-				}
-			}
-		}
-
-		public bool IsReady { 
-			get { 
-				return !isLoading; 
-			} 
 		}
 
 		ObservableCollection<ShalaViewModel> shalas = new ObservableCollection<ShalaViewModel> ();

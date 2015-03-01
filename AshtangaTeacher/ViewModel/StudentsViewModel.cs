@@ -8,27 +8,9 @@ namespace AshtangaTeacher
 	{
 		ShalaViewModel shalaViewModel;
 
-		bool isLoading;
 		Command getStudentsCommand;
 		Command addStudentCommand;
 		Command<StudentViewModel> showDetailsCommand;
-
-		public bool IsLoading {
-			get {
-				return isLoading;
-			}
-			set {
-				if (Set ("IsLoading", ref isLoading, value)) {
-					OnPropertyChanged ("IsReady");
-				}
-			}
-		}
-
-		public bool IsReady { 
-			get { 
-				return !isLoading; 
-			} 
-		}
 			
 		ObservableCollection<StudentViewModel> students = new ObservableCollection<StudentViewModel> ();
 		public ObservableCollection<StudentViewModel>  Students {

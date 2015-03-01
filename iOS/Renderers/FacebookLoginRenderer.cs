@@ -48,18 +48,20 @@ namespace AshtangaTeacher.iOS
 
 			var user = await ParseFacebookUtils.LogInAsync(userId, accessToken, expiry);
 
-			user["name"] = name.Trim ();
-			user.Email = email;
-			user["facebookImageUrl"] = string.Format("https://graph.facebook.com/{0}/picture?width=300&height=300", userId);
-			user["uid"] = Guid.NewGuid().ToString();
+			if (user.IsNew) {
+				user["uid"] = Guid.NewGuid().ToString();
+				user["name"] = name.Trim ();
+				user.Email = email;
+				user["facebookImageUrl"] = string.Format("https://graph.facebook.com/{0}/picture?width=300&height=300", userId);
 
-			try {
-				await user.SaveAsync ();
-			}
-			catch (Exception ex) {
-				await user.DeleteAsync ();
-				ParseUser.LogOut ();
-				await DialogService.Instance.ShowError (ex.Message, "Login Error", "OK", null);
+				try {
+					await user.SaveAsync ();
+				}
+				catch (Exception ex) {
+					await user.DeleteAsync ();
+					ParseUser.LogOut ();
+					await DialogService.Instance.ShowError (ex.Message, "Login Error", "OK", null);
+				}
 			}
 		}
 

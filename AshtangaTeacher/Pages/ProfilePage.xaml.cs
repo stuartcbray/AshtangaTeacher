@@ -18,7 +18,7 @@ namespace AshtangaTeacher
 			NavigationPage.SetHasNavigationBar (this, false);
 		}
 
-		protected override async void OnAppearing()
+		protected override void OnAppearing()
 		{
 			base.OnAppearing ();
 			ViewModel.Init ();

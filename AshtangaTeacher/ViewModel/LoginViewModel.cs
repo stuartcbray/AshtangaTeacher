@@ -5,11 +5,9 @@ namespace AshtangaTeacher
 {
 	public class LoginViewModel : ViewModelBase
 	{
-		bool isLoading;
 		string email;
 		string passWord;
-		string errorMessage;
-
+	
 		Command signUpCommand;
 		Command signInCommand;
 		Command resetPasswordCommand;
@@ -20,23 +18,6 @@ namespace AshtangaTeacher
 		public IParseService ParseService { get { return parseService; } }
 
 		public string ApplicationName { get { return "Ashtanga Teacher"; } }
-
-		public bool IsLoading {
-			get {
-				return isLoading;
-			}
-			set {
-				if (Set (() => IsLoading, ref isLoading, value)) {
-					OnPropertyChanged ("IsReady");
-				}
-			}
-		}
-
-		public bool IsReady {
-			get {
-				return !isLoading;
-			}
-		}
 
 		public bool SignInVisible {
 			get {
@@ -62,15 +43,6 @@ namespace AshtangaTeacher
 			}
 		}
 			
-		public string ErrorMessage {
-			get {
-				return errorMessage;
-			}
-			set {
-				Set (() => ErrorMessage, ref errorMessage, value);
-			}
-		}
-
 		public Command ResetPasswordCommand {
 			get {
 				return resetPasswordCommand

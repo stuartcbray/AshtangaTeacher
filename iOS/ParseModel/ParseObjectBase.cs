@@ -12,7 +12,7 @@ namespace AshtangaTeacher.iOS
 	{
 		public event Action IsDirtyChanged = delegate {};
 
-		bool isDirty, thumbIsDirty, hasImage;
+		bool isDirty, thumbIsDirty;
 		ImageSource image;
 
 		protected ParseObject ParseObj;
@@ -71,7 +71,7 @@ namespace AshtangaTeacher.iOS
 				var deviceService = DependencyService.Get<IDeviceService> ();
 				Byte[] data = await deviceService.GetBytesAsync (Image);
 
-				ParseFile parseImg = new ParseFile(UID + ".PNG", data);
+				ParseFile parseImg = new ParseFile (UID + ".PNG", data);
 
 				try {
 					await parseImg.SaveAsync ();
@@ -79,18 +79,29 @@ namespace AshtangaTeacher.iOS
 				} catch {
 					// https://developers.facebook.com/bugs/789062014466095/
 				}
+
+				try {
+					await ParseObj.SaveAsync ();
+				} catch {
+					// https://developers.facebook.com/bugs/789062014466095/
+				}
+
+
+				// Server time might be newer than the time we actually save this object
+				// so sleep a couple of seconds to make sure we don't reload this again.
+				System.Threading.Thread.Sleep (2000);
 				var cameraService = DependencyService.Get<ICameraService> ();
-				deviceService.SaveToFile (data, cameraService.GetImagePath(UID));
+				deviceService.SaveToFile (data, cameraService.GetImagePath (UID));
 
 				ThumbIsDirty = false;
-			}
 
-			try {
-				await ParseObj.SaveAsync ();
-			} catch {
-				// https://developers.facebook.com/bugs/789062014466095/
+			} else {
+				try {
+					await ParseObj.SaveAsync ();
+				} catch {
+					// https://developers.facebook.com/bugs/789062014466095/
+				}
 			}
-
 			IsDirty = false;
 		}
 
