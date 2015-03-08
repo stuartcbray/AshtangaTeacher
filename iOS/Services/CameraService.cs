@@ -23,7 +23,7 @@ namespace AshtangaTeacher.iOS
 		{
 			var renderer = new StreamImagesourceHandler ();
 			var image = await renderer.LoadImageAsync (img);
-			var thumb = CreateThumb (image, 100, 100);
+			var thumb = CreateThumb (image, 400, 400);
 			return ImageSource.FromStream(() => thumb.AsPNG().AsStream());
 		}
 

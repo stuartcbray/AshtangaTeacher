@@ -30,43 +30,54 @@
 				<Grid>
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="*" />
-						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
 					<Grid.RowDefinitions>
 						<RowDefinition Height="*" />
 						<RowDefinition Height="Auto" />
 					</Grid.RowDefinitions>
 
-					<BoxView Grid.ColumnSpan="2" Grid.RowSpan="2" WidthRequest="{Binding ScreenWidth}" 
+					<BoxView Grid.RowSpan="2" WidthRequest="{Binding ScreenWidth}" 
 					HeightRequest="{Binding ScreenWidth}" BackgroundColor="#222222"/>
 
-					<Label Text="No Photo" TextColor="White"  Grid.ColumnSpan="2" Grid.RowSpan="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+					<Label Text="No Photo" IsVisible="{Binding IsReady}" TextColor="White" Grid.RowSpan="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
 				
-					<Image Grid.ColumnSpan="2" Grid.RowSpan="2"  Source="{Binding Model.Image}" 
+					<Image Grid.RowSpan="2"  Source="{Binding Model.Image}" 
 						WidthRequest="{Binding ScreenWidth}"  
 						HeightRequest="{Binding ScreenWidth}" 
 						BackgroundColor="Transparent" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
 					</Image>
 
-					<Button Grid.ColumnSpan="2" Grid.RowSpan="2" 
+					<Button Grid.RowSpan="2" 
 						WidthRequest="{Binding ScreenWidth}" 
 						HeightRequest="{Binding ScreenWidth}" 
 						BackgroundColor="#AA47BA80" IsVisible="{Binding IsEditMode}" Command="{Binding AddTeacherPhotoCommand}" 
 						Text="Choose Photo" TextColor="White" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand" />
 
-					<BoxView Grid.Row="1" Grid.ColumnSpan="2" HeightRequest="30" 
+					<BoxView Grid.Row="1" HeightRequest="30" 
 						WidthRequest="{Binding ScreenWidth}" 
 						BackgroundColor="#99FAFAFA"/>
 				
-					<Button Grid.Row="1" Text="Add Shala" Command="{Binding AddShalaCommand}" IsEnabled="{Binding IsReady}" 
-						HorizontalOptions="Center" VerticalOptions="Center" />
-					<Button Grid.Row="1" Grid.Column="1" Text="Edit Profile" Command="{Binding EditProfileCommand}" IsEnabled="{Binding IsReady}" 
-						HorizontalOptions="Center" VerticalOptions="Center" />
+					<Grid Padding="10,0,10,0" Grid.Row="1">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+						<Label Text="{Binding Model.Name}" Font="24" TextColor="Black" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
+						<Entry Text="{Binding Model.Name}" Keyboard="Text" IsVisible="{Binding IsEditMode}" />
+						<Button Grid.Column="1" Text="Edit" Command="{Binding EditProfileCommand}" IsEnabled="{Binding IsReady}" 
+						HorizontalOptions="EndAndExpand" VerticalOptions="Center" />
+					</Grid>
+				
+					<!---<Button Grid.Row="1" Text="Add Shala" Command="{Binding AddShalaCommand}" IsEnabled="{Binding IsReady}" 
+						HorizontalOptions="Center" VerticalOptions="Center" />-->
+
 				</Grid>
 
 				<Grid Grid.Row="1" Padding="5,5,5,5">
 					<Grid.RowDefinitions>
-						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
 						<RowDefinition Height="Auto" />
@@ -78,21 +89,19 @@
 					<Grid.ColumnDefinitions>
 						<ColumnDefinition Width="*" />
 					</Grid.ColumnDefinitions>
-					<Label Text="{Binding Model.Name}" Font="24" TextColor="#333333" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
-					<Entry Text="{Binding Model.Name}" Keyboard="Text" IsVisible="{Binding IsEditMode}" />
+			
+					<Label Text="{Binding Model.Email}" Font="14" TextColor="#636363" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
 
-					<Label Text="{Binding Model.Email}" Font="14" TextColor="#636363" Grid.Row="1" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
+					<Label Text="{Binding Model.Credentials}" Font="14" TextColor="#636363" Grid.Row="1" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
+					<Entry Text="{Binding Model.Credentials}" Keyboard="Text" Grid.Row="1" IsVisible="{Binding IsEditMode}"  />
 
-					<Label Text="{Binding Model.Credentials}" Font="14" TextColor="#636363" Grid.Row="2" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
-					<Entry Text="{Binding Model.Credentials}" Keyboard="Text" Grid.Row="2" IsVisible="{Binding IsEditMode}"  />
+					<Label Text="{Binding Model.Bio}" HeightRequest="100" Font="12" TextColor="#333333" Grid.Row="2" HorizontalOptions="StartAndExpand" VerticalOptions="Center" LineBreakMode="WordWrap" />
+					<Editor BackgroundColor="#FAFAFA" Text="{Binding Model.Bio}" Keyboard="Text" Grid.Row="2" HeightRequest="100" IsVisible="{Binding IsEditMode}"  />
 
-					<Label Text="{Binding Model.Bio}" HeightRequest="100" Font="12" TextColor="#333333" Grid.Row="3" HorizontalOptions="StartAndExpand" VerticalOptions="Center" LineBreakMode="WordWrap" />
-					<Editor BackgroundColor="#FAFAFA" Text="{Binding Model.Bio}" Keyboard="Text" Grid.Row="3" HeightRequest="100" IsVisible="{Binding IsEditMode}"  />
+					<Label Text="{Binding Model.ShalaName}" Font="14" TextColor="#636363" Grid.Row="3" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
+					<Entry Text="{Binding Model.ShalaName}" Keyboard="Text" Grid.Row="3" IsVisible="{Binding IsEditMode}"  />
 
-					<Label Text="{Binding Model.ShalaName}" Font="14" TextColor="#636363" Grid.Row="4" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
-					<Entry Text="{Binding Model.ShalaName}" Keyboard="Text" Grid.Row="4" IsVisible="{Binding IsEditMode}"  />
-
-					<Grid Grid.Row="5" HeightRequest="30">
+					<Grid Grid.Row="4" HeightRequest="30">
 						<Grid.ColumnDefinitions>
 							<ColumnDefinition Width="*" />
 							<ColumnDefinition Width="*" />
@@ -101,10 +110,10 @@
 						<Switch IsToggled="{Binding Model.IsAvailableForSub}" Grid.Column="1" HorizontalOptions="StartAndExpand" VerticalOptions="Center" IsVisible="{Binding IsEditMode}" />
 					</Grid>
 
-					<Label Text="{Binding Model.IsAvailableMessage}" Grid.Row="6" Font="12" TextColor="Green" VerticalOptions="StartAndExpand" HorizontalOptions="StartAndExpand" LineBreakMode="WordWrap" />
-					<Editor BackgroundColor="#FAFAFA" Text="{Binding Model.IsAvailableMessage}" Grid.Row="6" Keyboard="Text" IsVisible="{Binding IsEditMode}" />
+					<Label Text="{Binding Model.IsAvailableMessage}" Grid.Row="5" Font="12" TextColor="Green" VerticalOptions="StartAndExpand" HorizontalOptions="StartAndExpand" LineBreakMode="WordWrap" />
+					<Editor BackgroundColor="#FAFAFA" Text="{Binding Model.IsAvailableMessage}" Grid.Row="5" Keyboard="Text" IsVisible="{Binding IsEditMode}" />
 
-					<Button Text="LogOut" Grid.Row="7" Command="{Binding LogOutCommand}" HorizontalOptions="Center" VerticalOptions="Center"/>	
+					<Button Text="LogOut" Grid.Row="6" Command="{Binding LogOutCommand}" HorizontalOptions="Center" VerticalOptions="Center"/>	
 			
 
 				</Grid>
@@ -112,7 +121,7 @@
 
 		</ScrollView>
 
-		<Grid IsVisible="{Binding IsEditMode}" BackgroundColor="#AAFAFAFA" VerticalOptions="Start">
+		<Grid IsVisible="{Binding IsEditMode}" BackgroundColor="#CCFAFAFA" VerticalOptions="Start">
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*" />
 				<ColumnDefinition Width="*" />
