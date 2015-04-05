@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage 
+	xmlns="http://xamarin.com/schemas/2014/forms" 
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+	xmlns:local="clr-namespace:AshtangaTeacher;assembly=AshtangaTeacher"
+	x:Class="AshtangaTeacher.EditProfilePage">
+
+	<ContentPage.Padding>
+		<OnPlatform x:TypeArguments="Thickness" iOS="0, 20, 0, 0" />
+	</ContentPage.Padding>
+
+	<Grid>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*" />
+		</Grid.RowDefinitions>
+			
+		<ScrollView>
+
+			<Grid Padding="0,0,0,0">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto" />
+					<RowDefinition Height="*" />
+				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*" />
+				</Grid.ColumnDefinitions>
+
+				<Grid>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+
+					<BoxView Grid.RowSpan="2" WidthRequest="100" HeightRequest="100" BackgroundColor="#222222"/>
+
+					<Label Text="No Photo" IsVisible="{Binding IsReady}" TextColor="White" Grid.RowSpan="2" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand"/>
+				
+					<Image Grid.RowSpan="2"  Source="{Binding Model.Image}" 
+						WidthRequest="100"  
+						HeightRequest="100" 
+						BackgroundColor="Transparent" VerticalOptions="CenterAndExpand" HorizontalOptions="CenterAndExpand">
+					</Image>
+
+				</Grid>
+
+				<Grid Grid.Row="1" Padding="5,5,5,5">
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="Auto" />
+						<RowDefinition Height="*" />
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="*" />
+					</Grid.ColumnDefinitions>
+
+					<Entry Text="{Binding Model.Name}" Placeholder="Full Name" Keyboard="Text" />
+
+					<Entry Text="{Binding Model.Credentials}" Placeholder="Credentials" Grid.Row="1" Keyboard="Text" />
+				
+
+					<Label Text="Bio" Font="12" TextColor="#333333" Grid.Row="2" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
+					<Editor BackgroundColor="#FAFAFA" Text="{Binding Model.Bio}" Keyboard="Text" Grid.Row="3" HeightRequest="100"  />
+
+					<Label Text="{Binding Model.ShalaName}" Font="14" TextColor="#636363" Grid.Row="4" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
+					<Entry Text="{Binding Model.ShalaName}" Keyboard="Text" Grid.Row="5" />
+
+					<Grid Grid.Row="6" HeightRequest="30">
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="*" />
+							<ColumnDefinition Width="*" />
+						</Grid.ColumnDefinitions>
+						<Label Text="{Binding Model.IsAvailableToggleMessage}" IsVisible="{Binding IsReady}" Font="14" TextColor="#636363" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
+						<Switch IsToggled="{Binding Model.IsAvailableForSub}" Grid.Column="1" HorizontalOptions="StartAndExpand" VerticalOptions="Center" />
+					</Grid>
+
+					<Label Text="Status Message" Grid.Row="7" Font="12" VerticalOptions="StartAndExpand" HorizontalOptions="StartAndExpand" LineBreakMode="WordWrap" />
+					<Editor BackgroundColor="#FAFAFA" Text="{Binding Model.IsAvailableMessage}" Grid.Row="8" Keyboard="Text"  />
+
+				</Grid>
+			</Grid>
+
+		</ScrollView>
+
+		<!---
+		<Grid BackgroundColor="#CCFAFAFA" VerticalOptions="Start">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" />
+			</Grid.ColumnDefinitions>
+			<Button Text="Save" Command="{Binding SaveTeacherCommand}" HorizontalOptions="CenterAndExpand" VerticalOptions="Center" />
+			<Button Text="Cancel" Grid.Column="1" Command="{Binding CancelEditCommand}" HorizontalOptions="CenterAndExpand" VerticalOptions="Center" />
+		</Grid> -->
+
+		<StackLayout Padding="10,10,10,10" BackgroundColor="#99FFFFFF" Grid.Row="0" Orientation="Horizontal" HorizontalOptions="Center" VerticalOptions="Center" IsVisible="{Binding IsLoading}">
+			<ActivityIndicator
+		       IsRunning="true"
+		       Color="Black"
+		       VerticalOptions="Start"
+		       HorizontalOptions="CenterAndExpand" />
+				<Label Text="{Binding StatusMessage}" Opacity="0.8"/>
+		</StackLayout>
+	</Grid>
+
+</ContentPage>

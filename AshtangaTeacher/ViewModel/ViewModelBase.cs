@@ -4,14 +4,30 @@ using System.Runtime.CompilerServices;
 using System.Linq.Expressions;
 using System.Collections.Generic;
 using System.Reflection;
+using XLabs.Ioc;
+using XLabs.Platform.Device;
 
 namespace AshtangaTeacher
 {
 	public abstract class ViewModelBase : INotifyPropertyChanged
 	{
+		protected readonly IDevice DeviceService;
+
 		public virtual event PropertyChangedEventHandler PropertyChanged;
 
 		public NavigationService Navigator { get; protected set; }
+
+		public Double ScreenWidth {
+			get {
+				return DeviceService.Display.WidthRequestInInches (DeviceService.ScreenWidthInches ());
+			}
+		}
+
+		public Double ScreenHeight {
+			get {
+				return DeviceService.Display.HeightRequestInInches (DeviceService.ScreenHeightInches ());
+			}
+		}
 
 		string errorMessage;
 		public string ErrorMessage {
@@ -42,6 +58,11 @@ namespace AshtangaTeacher
 			get {
 				return !isLoading;
 			}
+		}
+
+		public ViewModelBase() 
+		{
+			DeviceService = Resolver.Resolve<IDevice>();
 		}
 
 		protected void OnPropertyChanged([CallerMemberName] string property = null)

@@ -202,6 +202,7 @@
     <Compile Include="ParseModel\Shala.cs" />
     <Compile Include="Renderers\FacebookLoginRenderer.cs" />
     <Compile Include="ParseModel\ParseObjectBase.cs" />
+    <Compile Include="Renderers\ContentPageRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />

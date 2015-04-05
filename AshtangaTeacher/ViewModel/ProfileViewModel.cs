@@ -13,7 +13,6 @@ namespace AshtangaTeacher
 	{
 		ITeacher teacher;
 		readonly IParseService parseService;
-		readonly IDisplay display;
 		bool initialized;
 
 		ImageSource imageSource;
@@ -33,18 +32,6 @@ namespace AshtangaTeacher
 			}
 			set {
 				Set (() => IsEditMode, ref isEditMode, value);
-			}
-		}
-
-		public Double ScreenWidth {
-			get {
-				return display.WidthRequestInInches (display.ScreenWidthInches ());
-			}
-		}
-
-		public Double ScreenHeight {
-			get {
-				return display.HeightRequestInInches (display.ScreenHeightInches ());
 			}
 		}
 
@@ -79,7 +66,7 @@ namespace AshtangaTeacher
 			get {
 				return editProfileCommand
 					?? (editProfileCommand = new Command (
-						() => IsEditMode = true));
+					() => Navigator.NavigateTo (PageLocator.EditProfileKey, this)));
 			}
 		}
 
@@ -173,7 +160,6 @@ namespace AshtangaTeacher
 			StatusMessage = "Loading ...";
 
 			parseService = DependencyService.Get<IParseService>();
-			display = Resolver.Resolve<IDevice>().Display;
 
 			Navigator = new NavigationService ();
 

@@ -19,6 +19,7 @@ namespace AshtangaTeacher
 		public const string TeacherProfilePageKey = "TeacherProfilePage";
 		public const string ResetPasswordPageKey = "ResetPasswordPage";
 		public const string AddShalaPageKey = "AddShalaPage";
+		public const string EditProfileKey = "EditProfilePage";
 		public const string ShalaPageKey = "ShalaPage";
 
 		static Dictionary<string, Type> pagesByKey = new Dictionary<string, Type> () {
@@ -36,6 +37,7 @@ namespace AshtangaTeacher
 			{ ResetPasswordPageKey, typeof(ResetPasswordPage) },
 			{ AddShalaPageKey, typeof(AddShalaPage) },
 			{ ShalaPageKey, typeof(ShalaPage) },
+			{ EditProfileKey, typeof(EditProfilePage) },
 			{ StudentsPageKey, typeof(StudentsPage) }
 		};
 
