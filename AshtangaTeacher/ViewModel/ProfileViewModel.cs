@@ -35,6 +35,23 @@ namespace AshtangaTeacher
 			}
 		}
 
+		bool hasImage;
+		public bool HasImage {
+			get {
+				return hasImage;
+			}
+			set {
+				Set (() => HasImage, ref hasImage, value);
+				OnPropertyChanged ("NoImage");
+			}
+		}
+
+		public bool NoImage {
+			get {
+				return !hasImage;
+			}
+		}
+
 		string statusMessage;
 		public string StatusMessage {
 			get {
@@ -133,6 +150,7 @@ namespace AshtangaTeacher
 								IsLoading = false;
 
 								teacher.Image = thumb;
+								HasImage = true;
 							}
 							catch (Exception ex)
 							{
@@ -149,6 +167,7 @@ namespace AshtangaTeacher
 				await teacher.InitializeAsync (parseService.CurrentUser);
 				OnPropertyChanged ("Model");
 				IsLoading = false;
+				HasImage = teacher.Image != null;
 				initialized = true;
 			}
 		}

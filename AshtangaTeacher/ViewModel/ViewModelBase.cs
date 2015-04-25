@@ -23,6 +23,18 @@ namespace AshtangaTeacher
 			}
 		}
 
+		public Double ScreenWidthOneThird {
+			get {
+				return DeviceService.Display.WidthRequestInInches (DeviceService.ScreenWidthInches ()) / 3;
+			}
+		}
+
+		public Double ScreenWidthOneHalf {
+			get {
+				return DeviceService.Display.WidthRequestInInches (DeviceService.ScreenWidthInches ()) / 2;
+			}
+		}
+
 		public Double ScreenHeight {
 			get {
 				return DeviceService.Display.HeightRequestInInches (DeviceService.ScreenHeightInches ());
